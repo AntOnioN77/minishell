@@ -1,18 +1,13 @@
 
 //int execline(t_tree)//debe ejecutar y liberar cada nodo del arbol, y finalmente liberar el nodo inicial recibido
 
-//execline
-
 #include "libft/headers/libft.h"
-
-
 
 typedef struct s_token
 {
 	char *start;
 	char *end;
 } t_token;
-
 
 /*types 
 	frase	"
@@ -23,11 +18,6 @@ typedef struct s_token
 	redir	<< H
 	pipe	|
 */
-
-
-
-
-
 typedef struct s_tree
 {
 	char type;
@@ -40,11 +30,10 @@ typedef struct s_tree
 #define SYMBOLS "\"\'<>|"
 #define WHITESPACES " \r\n\v\t"
 
-
 /*-Avanza str hasta agotar espacios en blanco iniciales. Despues
 comprueba si el nuevo caracter apuntado por str, es alguno de los caracteres
 que contiene la cadena <wanted>, en caso afirmativo retorna 1. */
-int isthere(char **segment, char *endseg, char *wanted)
+/*int isitnext(char **segment, char *endseg, char *wanted)
 {
 	while(*segment > endseg && ft_strchr(WHITESPACES, **segment))
 		*segment++;
@@ -52,31 +41,51 @@ int isthere(char **segment, char *endseg, char *wanted)
 	 	return (1);
 	return (0);
 }
+*/
 
-
-static int chop(char *segment, char *endseg, t_tree *tree)
+/*	NO TESTEADAAA
+	-Retorna 1 si encuentra c en str, salvo que esté encapsulado en comillas simples o dobles, o doblemente encapsulado.
+	-avanza str hasta la primera coincidencia, si no encuentra chr str permanece igual*/
+int strchr_outquot(char **str, char c)
 {
-	char *endleft;
+	bool dquote;
+	bool squote;
+	int i;
+	char *strpnt;
 
-	isthere(segment, endseg, SYMBOLS);
-
-	next_in_precedence
-
-	setnode(segment, endleft, tree)
-
+	strpnt = *str;
+	dquote = FALSE;
+	squote = FALSE;
+	i = 0;
+	while(*strpnt != '\0')
+	{
+		if(*strpnt == c && !squote && !dquote)
+		{
+			*str = strpnt;
+			return (1);
+		}
+		if(!squote && *strpnt == '"' ) // cuando squote==TRUE strpnt estara apuntando a un caracter anidado y por tanto irrelevante
+			dquote = !dquote;
+		if(!dquote  && *strpnt == 39) //BORRAESTO ascii 39 = ' 
+			squote = !squote;
+		strpnt++;
+	}
 }
 
 
-
-t_tree parseline(char *line)//debe retornar un arbol con un nodo para cada fraccion del comando introducciodo
+int parsepipe(char *line, t_tree **ret)
 {
-	t_tree ret;
-
-	if (chop(line, line[ft_strlen(line)], &ret))
-		error();//TO DO:gestionar
 	
-	//to do
 
+}
+
+t_tree parseline(char *line)//debe retornar un arbol con un nodo para cada fraccion del comando introducido
+{
+	t_tree *ret;
+
+	if(0 == parsepipe(line, &ret) && ret == NULL)//parsepipe retorna 0 si no ocurrio un error, si ocurrio un error retorna 1 y pone ret=NULL
+		ret = parsetask(line);
+	//si parsetask o parsepipe falló, establecio ret a null.
 	return (ret);
 }
 
@@ -92,13 +101,18 @@ int command_flow(char **envp)
 			perror("readline:");
 			break;
 		}
-		execline(parseline(line)); //execline debe liberar los nodos desde las hojas hacia arriba.
+		if (execline(parseline(line))) //execline debe liberar los nodos desde las hojas hacia arriba. 
+
 		free(line);
 	}
 }
 
 int main(int argc, char **argv, char **envp)
 {
+	int	outstate;
+
 	upgrade_envp(envp);//no necesita liverar envp anterior despues de clonarlo, pues "env" no esta reservado dinamicamente
-	return(command_flow(envp));
+	outstate = command_flow(envp);
+	free(envp);
+	return(outstate);
 }
