@@ -45,37 +45,38 @@ que contiene la cadena <wanted>, en caso afirmativo retorna 1. */
 
 /*	NO TESTEADAAA
 	-Retorna 1 si encuentra c en str, salvo que esté encapsulado en comillas simples o dobles, o doblemente encapsulado.
-	-avanza str hasta la primera coincidencia, si no encuentra chr str permanece igual*/
+	-avanza str hasta la primera coincidencia, si no encuentra chr str permanece igual
+	-Probablemente no es util para buscar '\0'*/
 int strchr_outquot(char **str, char c)
 {
-	bool dquote;
-	bool squote;
-	int i;
 	char *strpnt;
 
 	strpnt = *str;
-	dquote = FALSE;
-	squote = FALSE;
-	i = 0;
 	while(*strpnt != '\0')
 	{
-		if(*strpnt == c && !squote && !dquote)
+		if(*strpnt == c)
 		{
 			*str = strpnt;
 			return (1);
 		}
-		if(!squote && *strpnt == '"' ) // cuando squote==TRUE strpnt estara apuntando a un caracter anidado y por tanto irrelevante
-			dquote = !dquote;
-		if(!dquote  && *strpnt == 39) //BORRAESTO ascii 39 = ' 
-			squote = !squote;
+		if(*strpnt == '"' && ft_strchr(strpnt +1, '"')) //sin  +1 strchr encontraria el propio caracter de partida
+			strpnt = ft_strchr(strpnt +1, '"');
+		if(*strpnt == 39 && ft_strchr(strpnt +1, 39)) //39 es ' en ascii
+			strpnt = ft_strchr(strpnt +1, 39);
 		strpnt++;
 	}
 }
+//constructor de pipetree, setea izquierda entre con parsetask(line, pnt), y derecha recurriendo a parsepipe(line +1)'
+//createpipe(line, pnt)
 
-
-int parsepipe(char *line, t_tree **ret)
+int parsepipe(char *line, t_tree **ret)//no está claro el flujo de error. Creo que el error sintacticose gestionaría mejor desde execline() y desde aqui gestionar solo errores de ejecución
 {
-	
+	char *pnt;
+
+	pnt = line;
+
+	if(strchr_outquot(pnt, '|'))
+		ret = createpipe(line, pnt, ret);
 
 }
 
