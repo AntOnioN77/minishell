@@ -3,11 +3,13 @@
 
 #include "libft/headers/libft.h"
 
+/*la esturctura t_token es complicada para las funciones de ejecucion.
 typedef struct s_token
 {
 	char *start;
 	char *end;
 } t_token;
+*/
 
 /*types 
 	frase	"
@@ -18,13 +20,18 @@ typedef struct s_token
 	redir	<< H
 	pipe	|
 */
+
+
 typedef struct s_tree
 {
-	char type;
-	t_tree *origin;
-	t_token token;
-	t_tree *rigth;
+	char type; //puede ser: < > >>(R)   <<(I) |(pipe)  line(L)  
+
+	char *token;//NULL, salvo en las hojas.//la esturctura t_token es complicada para las funciones de ejecucion.
+	char *endtok;
+	
 	t_tree *left;
+	t_tree *rigth;
+
 } t_tree;
 
 #define SYMBOLS "\"\'<>|"
@@ -66,7 +73,7 @@ int strchr_outquot(char **str, char c)
 		strpnt++;
 	}
 }
-//constructor de pipetree, setea izquierda entre con parsetask(line, pnt), y derecha recurriendo a parsepipe(line +1)'
+//constructor de pipetree, setea izquierda con parsetask(line, pnt), y derecha recurriendo a parsepipe(line +1)'
 //createpipe(line, pnt)
 
 int parsepipe(char *line, t_tree **ret)//no está claro el flujo de error. Creo que el error sintacticose gestionaría mejor desde execline() y desde aqui gestionar solo errores de ejecución
@@ -75,17 +82,20 @@ int parsepipe(char *line, t_tree **ret)//no está claro el flujo de error. Creo 
 
 	pnt = line;
 
-	if(strchr_outquot(pnt, '|'))
+	if(strchr_outquot(&pnt, '|'))
+	{
 		ret = createpipe(line, pnt, ret);
-
+		return (1);
+	}
+	return (0);
 }
 
-t_tree parseline(char *line)//debe retornar un arbol con un nodo para cada fraccion del comando introducido
+t_tree *parseline(char *line)//debe retornar un arbol con un nodo para cada fraccion del comando introducido
 {
 	t_tree *ret;
 
 	if(0 == parsepipe(line, &ret) && ret == NULL)//parsepipe retorna 0 si no ocurrio un error, si ocurrio un error retorna 1 y pone ret=NULL
-		ret = parsetask(line);
+		ret = parsetask(line, line + ft_strlen(line));// parsetask recibe line al completo
 	//si parsetask o parsepipe falló, establecio ret a null.
 	return (ret);
 }
