@@ -1,42 +1,69 @@
-
-//int execline(t_tree)//debe ejecutar y liberar cada nodo del arbol, y finalmente liberar el nodo inicial recibido
-
 #include "libft/headers/libft.h"
 
-/*la esturctura t_token es complicada para las funciones de ejecucion.
-typedef struct s_token
+typedef enum e_nodes
 {
-	char *start;
-	char *end;
-} t_token;
-*/
+	none,
+	line,//probablemente innecesario
+	pipe,
+	redir,//probablemente innecesario
+	task
+}	e_nodes;
 
-/*types 
-	frase	"
-	frase2	'
-	redir	<
-	redir	>
-	redir 	>> +
-	redir	<< H
-	pipe	|
-*/
+typedef enum e_symbols
+{
 
+	infile,//<
+	outfile,//>
+	heredoc,//<<
+	append//>>
+} e_symbols;
 
+/*Este struct no tiene un caso de uso real, funciona como interface. Los nodos del arbol
+son en realidad t_line t_pipe t_redir t_task.
+El uso de una interface nos permite pasar cualquiera de estos tipos como argumento a una
+función. El elemento type, permite a esa función determinar que tipo de dato ha recibido
+en realidad.*/
 typedef struct s_tree
 {
-	char type; //puede ser: < > >>(R)   <<(I) |(pipe)  line(L)  
+	e_nodes type;
+}	t_tree;
 
-	char *token;//NULL, salvo en las hojas.//la esturctura t_token es complicada para las funciones de ejecucion.
-	char *endtok;
-	
-	t_tree *left;
-	t_tree *rigth;
+/*La linea recibida como task se parsea de izquuierda a derecha, sucesivas redirecciones
+se sobreescriben. de manera que hay un solo t_redir por cada t_task.
+si no se encuentra ninguna redireccion los e_symbols pemanecen "none"
+*/
+typedef struct s_redir
+{
+	e_nodes	type;
 
-} t_tree;
+	e_symbols	insymbol;//< o <<
+	char		*infoo;// será un archivo para <, O un separator para <<
 
-#define SYMBOLS "\"\'<>|"
+	e_symbols	outsymbol;//>> o >
+	char		*outfile;
+}	t_redir;
+
+typedef struct s_task
+{
+	e_nodes	type;
+
+	t_redir redir;
+	char	*pathname;
+	char	*argv[];
+}	t_task;
+
+typedef struct s_pipe
+{
+	e_nodes	type;
+	t_task	*left;
+	t_tree	*rigth;
+}	t_pipe;
+
+t_tree *processline(char *line);
 #define WHITESPACES " \r\n\v\t"
 
+/*---------------------------STRING_UTILITIES-------------------------------------------------------------------------
+ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 /*-Avanza str hasta agotar espacios en blanco iniciales. Despues
 comprueba si el nuevo caracter apuntado por str, es alguno de los caracteres
 que contiene la cadena <wanted>, en caso afirmativo retorna 1. */
@@ -72,33 +99,68 @@ int strchr_outquot(char **str, char c)
 			strpnt = ft_strchr(strpnt +1, 39);
 		strpnt++;
 	}
+	return (0);
 }
-//constructor de pipetree, setea izquierda con parsetask(line, pnt), y derecha recurriendo a parsepipe(line +1)'
-//createpipe(line, pnt)
+//skip
+//char *get_patname() MIRAR EN PIPEX reciclable?
+//char *get_cmdargs()
 
-int parsepipe(char *line, t_tree **ret)//no está claro el flujo de error. Creo que el error sintacticose gestionaría mejor desde execline() y desde aqui gestionar solo errores de ejecución
+/*---------------------------CONSTRUCTORES-------------------------------------------------------------------------
+ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
+
+
+
+//t_redir *createredirs
+
+//t_tree *createtask(char *str, char *end)
+
+//constructor de pipetree, setea izquierda con createtask(line, pnt), y derecha recurriendo a parsepipe(line +1)'
+t_tree *createpipe(line, pnt, head)
+{
+	t_pipe *node;
+
+	node = malloc(sizeof(t_pipe));
+	if(node = NULL)
+		return (NULL);
+	ft_bzero(node, sizeof(t_pipe));
+	node->type = pipe;
+	node->left = createtask(line, pnt);
+	if(0 == parsepipe(pnt, node->rigth))//parsepipe retorna 0 si no encontro un |, si lo encontro retorna 1. Si ocurrió un error retorna 1 y pone ret=NULL
+		node->rigth = createtask(line, line + ft_strlen(line));// parsetask recibe line al completo
+	return((t_tree *)node);
+}
+
+
+/*---------------------------PARCES: me queé to sanahorio-------------------------------------------------------------------------
+ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
+
+int parsepipe(char *line, t_tree **ret)// desde aqui gestionar solo errores de ejecución, no de sintaxis.
 {
 	char *pnt;
 
 	pnt = line;
-
-	if(strchr_outquot(&pnt, '|'))
-	{
-		ret = createpipe(line, pnt, ret);
-		return (1);
-	}
-	return (0);
+	if(!strchr_outquot(&pnt, '|'))
+		return (0);
+	ret = createpipe(line, pnt, ret);
+	return (1);
 }
 
-t_tree *parseline(char *line)//debe retornar un arbol con un nodo para cada fraccion del comando introducido
+t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fraccion del comando introducido
 {
 	t_tree *ret;
 
-	if(0 == parsepipe(line, &ret) && ret == NULL)//parsepipe retorna 0 si no ocurrio un error, si ocurrio un error retorna 1 y pone ret=NULL
-		ret = parsetask(line, line + ft_strlen(line));// parsetask recibe line al completo
+	if(0 == parsepipe(line, &ret))//parsepipe retorna 0 si no encontro un |, si lo encontro 1. Si ocurrió un error retorna 1 y pone ret=NULL
+		ret = createtask(line, line + ft_strlen(line));// parsetask recibe line al completo
 	//si parsetask o parsepipe falló, establecio ret a null.
+	if (!ret)
+		//TO DO liberar algo?
 	return (ret);
 }
+
+
+
+/*---------------------------PRINCIPAL-------------------------------------------------------------------------
+ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 
 int command_flow(char **envp)
 {
@@ -112,7 +174,7 @@ int command_flow(char **envp)
 			perror("readline:");
 			break;
 		}
-		if (execline(parseline(line))) //execline debe liberar los nodos desde las hojas hacia arriba. 
+		if (execline(processline(line))) //execline debe liberar los nodos desde las hojas hacia arriba. 
 
 		free(line);
 	}
@@ -127,3 +189,10 @@ int main(int argc, char **argv, char **envp)
 	free(envp);
 	return(outstate);
 }
+
+
+
+/*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
+ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
+
+//int execline(t_tree)//debe ejecutar y liberar cada nodo del arbol, en los nodos typo task, y finalmente liberar el nodo inicial recibido
