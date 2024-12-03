@@ -74,45 +74,70 @@ que contiene la cadena <wanted>, en caso afirmativo retorna 1. */
 	if (ft_strchr(wanted, **segment))
 	 	return (1);
 	return (0);
-}
-*/
+}*/
 
-/*	NO TESTEADAAA
+//NO TESTEADA
+char	*ft_strnchr(const char *s, int c, int n)
+{
+	int				i;
+	unsigned char	uc;
+
+	uc = (unsigned char)c;
+	i = 0;
+	while (i < n && s[i] && (unsigned char)s[i] != uc)
+	{
+		i++;
+	}
+	if (s[i] == uc)
+		return ((char *)&s[i]);
+	else
+		return (NULL);
+}
+
+/*	NO TESTEADAA
 	-Retorna 1 si encuentra c en str, salvo que esté encapsulado en comillas simples o dobles, o doblemente encapsulado.
 	-avanza str hasta la primera coincidencia, si no encuentra chr str permanece igual
 	-Probablemente no es util para buscar '\0'*/
-int strchr_outquot(char **str, char c)
+int strnchr_outquot(char **str, char *end, char c)
 {
 	char *strpnt;
 
 	strpnt = *str;
-	while(*strpnt != '\0')
+	while(*strpnt <= end && *strpnt != '\0')//probablemente !='\0' innecesario
 	{
 		if(*strpnt == c)
 		{
 			*str = strpnt;
 			return (1);
 		}
-		if(*strpnt == '"' && ft_strchr(strpnt +1, '"')) //sin  +1 strchr encontraria el propio caracter de partida
-			strpnt = ft_strchr(strpnt +1, '"');
-		if(*strpnt == 39 && ft_strchr(strpnt +1, 39)) //39 es ' en ascii
-			strpnt = ft_strchr(strpnt +1, 39);
+		if(*strpnt == '"' && ft_strnchr(strpnt +1, '"', (end - strpnt))) //sin  +1 strchr encontraría el propio caracter de partida
+			strpnt = ft_strnchr(strpnt +1, '"', (end - strpnt));
+		if(*strpnt == 39 && ft_strnchr(strpnt +1, 39, (end - strpnt))) //39 es ' en ascii
+			strpnt = ft_strnchr(strpnt +1, 39, (end - strpnt));
 		strpnt++;
 	}
 	return (0);
 }
-//skip
+
+//skip_redir(char **segment, char *end) //si lo primero que contiene segment es uno o varioss redirs, situa segment despues y retorna 1. Si no, retorna 0 y dejasegment donde estaba.
+
 //char *get_patname() MIRAR EN PIPEX reciclable?
 //char *get_cmdargs()
 
 /*---------------------------CONSTRUCTORES-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 
+//t_redir *createredir
 
+t_tree *createtask(char *segment, char *end)
+{
+	t_task *task;
 
-//t_redir *createredirs
+	task = malloc(sizeof(t_task));
+	parseredirs(segment, end, task);
+	parse_cmdflags(segment, end, task);//
 
-//t_tree *createtask(char *str, char *end)
+}
 
 //constructor de pipetree, setea izquierda con createtask(line, pnt), y derecha recurriendo a parsepipe(line +1)'
 t_tree *createpipe(line, pnt, head)
@@ -134,12 +159,25 @@ t_tree *createpipe(line, pnt, head)
 /*---------------------------PARCES: me queé to sanahorio-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 
+parse_cmdflags(char *segment, char *end, t_task *task)
+{
+	skipredirs(&segment, end);
+	while(segment < end)
+	{
+		if(!(task->pathname))
+			task->pathname = *get_patname();
+		else
+			add_arg(task->argv);
+		skipredirs(&segment, end);
+	}
+}
+
 int parsepipe(char *line, t_tree **ret)// desde aqui gestionar solo errores de ejecución, no de sintaxis.
 {
 	char *pnt;
 
 	pnt = line;
-	if(!strchr_outquot(&pnt, '|'))
+	if(!strnchr_outquot(&pnt, '|', ft_strlen(pnt)))
 		return (0);
 	ret = createpipe(line, pnt, ret);
 	return (1);
