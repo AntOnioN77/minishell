@@ -263,10 +263,11 @@ int command_flow(char **envp)
 int main(int argc, char **argv, char **envp)
 {
 	int	outstate;
+	char **new_envp;
 
-	upgrade_envp(envp);//no necesita liverar envp anterior despues de clonarlo, pues "env" no esta reservado dinamicamente
+	upgrade_envp(envp, new_envp);//no necesita liverar envp anterior despues de clonarlo, pues "env" no esta reservado dinamicamente
 	outstate = command_flow(envp);
-	free(envp);
+	free(new_envp);
 	return(outstate);
 }
 
