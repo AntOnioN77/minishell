@@ -180,7 +180,7 @@ t_tree *createpipe(line, pnt)
 /*---------------------------PARCES: me queé to sanahorio-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 
-//NO TESTEADA skipwhitesp() no se ha creado
+//NO FUNCIONA
 int count_cmdflags(char *segment, char *end)
 {
 	int i;
@@ -191,6 +191,7 @@ int count_cmdflags(char *segment, char *end)
 		skipwhitesp(&segment, end);
 		if (*segment !='\0')
 			i++;
+		skipword()//avanza hasta el siguiente caracter separador o end
 		skipredirs(&segment, end);
 	}
 	return(i);
