@@ -145,6 +145,8 @@ t_tree *createtask(char *segment, char *end)
 		free(node);
 		return (NULL);
 	}
+//Quiza es mejor una sola funcion, que vaya discriminando si la palabra apuntada por segment es un redir un comando o un argumento
+//en lugar de parse_cmdflags por un lado y parsepipes por otro
 	if(parse_cmdflags(segment, end, node))//si falla alocando memoria retorna 1
 	{
 		free_tree(node);//En este caso de uso no libera nada mas que el nodo actual, liverar el resto del arbol debe gestionarse desde processline
@@ -155,6 +157,7 @@ t_tree *createtask(char *segment, char *end)
 		free_tree(node);//En este caso de uso no libera nada mas que el nodo actual, liverar el resto del arbol debe gestionarse desde processline
 		return (NULL);
 	}
+	*/
 	return (node);
 }
 
@@ -206,9 +209,9 @@ parse_cmdflags(char *segment, char *end, t_task *task)
 	while(segment < end)
 	{
 		if(!(task->pathname))
-			task->pathname = *get_patname(segment, end);
+			task->pathname = *get_patname(segment, end);//get_pathname toma la primera palabra que encuentra en segment como comando, y busca un path para el
 		else
-			add_arg(&segment, end, task->argv); //¿debe comprobar !'\0' y que *segment < end? Debe saltarse los espacios vacíos
+			add_arg(&segment, end, task->argv); //¿debe comprobar !'\0'. Debe saltarse los espacios vacíos
 
 		skipredirs(&segment, end);
 	}
