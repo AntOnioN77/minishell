@@ -52,8 +52,11 @@ typedef struct s_task
 	char	**argv;
 }	t_task;
 
-typedef struct s_pipe
-{
+//si left o rigth fuesen NULL indica error de reserva de memoria, hay que liverar el arbol entero y lanzar error.
+//Un pipe tal que "ls|   (nada)" generaria: pipe->rigth->task, y task tendria sus elementos vacios lo cual no es un error, este ejemplo en concreto deja a bash pendiente de entrada.
+//left siempre debe contener un elemento task, y no puede contener otra cosa
+//rigth puede contener otro elemento pipe o un elemento task
+typedef struct s_pipe {
 	e_nodes	type;
 	t_task	*left;
 	t_tree	*rigth;
@@ -64,6 +67,7 @@ t_tree *processline(char *line);
 
 /*---------------------------STRING_UTILITIES-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
+
 /*-Avanza str hasta agotar espacios en blanco iniciales. Despues
 comprueba si el nuevo caracter apuntado por str, es alguno de los caracteres
 que contiene la cadena <wanted>, en caso afirmativo retorna 1. */
@@ -147,17 +151,11 @@ t_tree *createtask(char *segment, char *end)
 	}
 //Quiza es mejor una sola funcion, que vaya discriminando si la palabra apuntada por segment es un redir un comando o un argumento
 //en lugar de parse_cmdflags por un lado y parsepipes por otro
-	if(parse_cmdflags(segment, end, node))//si falla alocando memoria retorna 1
+	if(parse_task(segment, end, node))//si falla alocando memoria retorna 1
 	{
-		free_tree(node);//En este caso de uso no libera nada mas que el nodo actual, liverar el resto del arbol debe gestionarse desde processline
+		free_tree(node);//En este caso no libera nada mas que el nodo actual, liverar el resto del arbol debe gestionarse desde processline
 		return (NULL);
 	}
-	if(parseredirs(segment, end, &node->redir))
-	{
-		free_tree(node);//En este caso de uso no libera nada mas que el nodo actual, liverar el resto del arbol debe gestionarse desde processline
-		return (NULL);
-	}
-	*/
 	return (node);
 }
 
@@ -168,53 +166,107 @@ t_tree *createpipe(line, pnt)
 {
 	t_pipe *node;
 
+	skipwithespaces(&line);
+	if (line == pnt)
+		//Lanzar error sintactico como en "bash$>  | ls" a la izquierda de un pipe debe haber un comando o una redirección
 	node = malloc(sizeof(t_pipe));
-	if(node = NULL)
+	if(node == NULL)
 		return (NULL);
 	ft_bzero(node, sizeof(t_pipe));
 	node->type = PIPE;
 	node->left = createtask(line, pnt);
+	pnt++;
 	if(0 == parsepipe(pnt, node->rigth))//parsepipe retorna 0 si no encontro un |, si lo encontro retorna 1. Si ocurrió un error retorna 1 y pone ret=NULL
 		node->rigth = createtask(pnt, line + ft_strlen(line));// parsetask recibe line al completo
 	return((t_tree *)node);
 }
 
 
-/*---------------------------PARCES: me queé to sanahorio-------------------------------------------------------------------------
+/*---------------------------PARSEOS-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
+
+//almacena un puntero a la primera letra de esa palabra, consume la siguiente palabra en segment, y nulifica si es necesario al final de la palabra
+getpntword(char **segment, char *end, char **dst)
+{
+	skipwhitesp(segment, end);
+	*dst = *segment;
+	while (*segment < end && ft_isalnum(*segment))
+		*segment++;
+}
+
+//Temporal, de prueba
+//si lo primero que encuentra en segment es un redir lo consume, avanzando segment. antes de poder usar la palabra apuntada por dest, una funcion deberia recorrer line nullificando espacios y otros separadores como < o |
+void	get_redir(char **segment, char *end, t_redir *redir)
+{
+	skipwhitesp(segment, end);
+	{
+		if (ft_strnstr(*segment, "<<", end - *segment))
+		{
+			redir->insymbol = heredoc;
+			*segment += 2;
+			getpntword(segment, end, &(redir->infoo));
+		}
+		else if (ft_strnstr(*segment, ">>", end - *segment))
+		{
+			redir->outsymbol = append;
+			*segment += 2;
+			getpntword(segment, redir->outfile);
+		}
+		else if (**segment == '<')
+		{
+			redir->insymbol = infile;
+			(*segment)++;
+			getpntword(segment, end, &(redir->infoo));
+		}
+		else if (**segment == '>')
+		{
+			redir->outsymbol = outfile;
+			(*segment)++;
+			getpntword(segment, redir->outfile);
+		}
+		else
+			return;
+	}
+}
 
 //NO FUNCIONA
 int count_cmdflags(char *segment, char *end)
 {
 	int i;
 
-	skipredirs(&segment, end);
+	i = 0;
 	while(segment < end)
 	{
-		skipwhitesp(&segment, end);
-		if (*segment !='\0')
-			i++;
-		skipword()//avanza hasta el siguiente caracter separador o end
 		skipredirs(&segment, end);
+		skipwhitesp(&segment, end);
+		i = i + skipword(&segment);//avanza hasta el siguiente caracter separador o end. Retorna 1 si avanzo al menos una posicion segment
+		
 	}
+
 	return(i);
 }
 
 //NO TESTEADA
+//si falla alocando memoria retorna 1
 //get_pathname no se ha implementado aún
 //add_arg no implementada
-parse_cmdflags(char *segment, char *end, t_task *task)
+int parse_task(char *segment, char *end, t_task *task)
 {
-	skipredirs(&segment, end);
 	while(segment < end)
 	{
+		get_redir(&segment, end, &(task->redir));//si lo primero que encuentra en segment es un redir lo consume, avanzando segment. Si ademas el caracter a continuacion no fue \0, lo nulifica y avanza uno mas.
 		if(!(task->pathname))
-			task->pathname = *get_patname(segment, end);//get_pathname toma la primera palabra que encuentra en segment como comando, y busca un path para el
+		{
+			if (get_patname(&segment, end, task->pathname))//get_pathname toma la primera palabra que encuentra en segment como comando, y busca un path para el con acces(..., F_OK) la funcion que ejecute debe encargarse de  X_OK. Si no encuentra una ruta, almacena la palabra literalmente sin añadir un path.
+				return (1);
+		}
 		else
-			add_arg(&segment, end, task->argv); //¿debe comprobar !'\0'. Debe saltarse los espacios vacíos
-
-		skipredirs(&segment, end);
+		{
+			if(add_arg(&segment, end, task->argv)) //¿debe comprobar !'\0'. Debe saltarse los espacios vacíos
+				return(1);
+		}
 	}
+	return (0);
 }
 
 int parsepipe(char *line, t_tree **ret)// desde aqui gestionar solo errores de ejecución, no de sintaxis.
@@ -236,8 +288,9 @@ t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fr
 		ret = createtask(line, line + ft_strlen(line));// parsetask recibe line al completo
 	//si parsetask o parsepipe falló, establecio ret a null.
 	if (!ret)
-		//TO DO liberar algo?
+		//Error en reserva de memoria, gestionar
 	check_tree(ret);
+	nullifiends(); //argumentos y redirecciones son punteros al string original line, esta funcion debe nulificar: whitespaces, |, <, >>, >, <<, y cualquier otro separador
 	return (ret);
 }
 
