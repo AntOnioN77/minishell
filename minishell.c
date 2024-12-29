@@ -1,69 +1,114 @@
-#include "libft/headers/libft.h"
 
-typedef enum e_nodes
+
+#include "minishell.h"
+//TEMPORAL TESTEO BORRAR Y REACER IMPORTANTEE---------------------------------------------------------------------------------------------------------------
+
+void	nullify_delimiters(char *str)
 {
-	NONE,
-	LINE,//probablemente innecesario
-	PIPE,
-	REDIR,//probablemente innecesario
-	TASK
-}	e_nodes;
+    int in_quotes;      // Para manejar comillas dobles
+    int in_squotes;     // Para manejar comillas simples
+    
+    if (!str)
+        return;
 
-typedef enum e_symbols
+    in_quotes = 0;
+    in_squotes = 0;
+    while (*str)
+    {
+        // Manejar comillas dobles
+        if (*str == '"' && !in_squotes)
+            in_quotes = !in_quotes;
+        // Manejar comillas simples
+        else if (*str == '\'' && !in_quotes)
+            in_squotes = !in_squotes;
+        // Solo sustituir si no estamos dentro de comillas
+        else if (!in_quotes && !in_squotes)
+        {
+            // Sustituir espacios en blanco
+            if (*str == ' ' || *str == '\t' || *str == '\n' || 
+                *str == '\v' || *str == '\r')
+                *str = '\0';
+            // Sustituir operadores
+            else if (*str == '|' || *str == '<' || *str == '>')
+            {
+                // Caso especial para >> y <<
+                if ((*str == '>' || *str == '<') && *(str + 1) == *str)
+                {
+                    *str = '\0';
+                    str++;
+                    *str = '\0';
+                }
+                else
+                    *str = '\0';
+            }
+        }
+        str++;
+    }
+}
+
+void free_tree(t_tree *node)
 {
+    if (!node)
+        return;
 
-	infile,//<
-	outfile,//>
-	heredoc,//<<
-	append//>>
-} e_symbols;
+    // Cast y liberar según el tipo de nodo
+    switch (node->type)
+    {
+        case PIPE:
+        {
+            t_pipe *pipe_node = (t_pipe *)node;
+            if (pipe_node->left)
+                free_tree((t_tree *)pipe_node->left);
+            if (pipe_node->rigth)
+                free_tree(pipe_node->rigth);
+            free(pipe_node);
+            break;
+        }
+        case TASK:
+        {
+            t_task *task_node = (t_task *)node;
+            // Los elementos dentro de task_node->redir y los strings 
+            // en task_node->cmd y task_node->argv no necesitan ser liberados
+            // Solo liberamos el array argv
+            if (task_node->argv)
+                free(task_node->argv);
+            free(task_node);
+            break;
+        }
+        default:
+            // En caso de encontrar un tipo desconocido, simplemente liberamos el nodo
+            free(node);
+            break;
+    }
+}
 
-/*Este struct no tiene un caso de uso real, funciona como interface. Los nodos del arbol
-son en realidad t_line t_pipe t_redir t_task.
-El uso de una interface nos permite pasar cualquiera de estos tipos como argumento a una
-función. El elemento type, permite a esa función determinar que tipo de dato ha recibido
-en realidad.*/
-typedef struct s_tree
+void print_tree(t_tree *node, int depth)
 {
-	e_nodes type;
-}	t_tree;
+	t_pipe *pipenode;
 
-/*La linea recibida como task se parsea de izquuierda a derecha, sucesivas redirecciones
-se sobreescriben. de manera que hay un solo t_redir por cada t_task.
-si no se encuentra ninguna redireccion los e_symbols pemanecen "none"
-*/
-typedef struct s_redir
-{
-	e_nodes	type;
+	if (!node)
+        return;
+    
+    for (int i = 0; i < depth; i++)
+        printf("  ");
+        
+    switch(node->type) {
+        case PIPE:
+            printf("PIPE\n");
+			pipenode = ((t_pipe *)((t_pipe *)node)->rigth);
+            print_tree((t_tree *)pipenode, depth + 1);
+            break;
+        case TASK:
+            printf("TASK: %s\n", ((t_task *)node)->cmd);
+            break;
+    }
+}
 
-	e_symbols	insymbol;//< o <<
-	char		*infoo;// será un archivo para <, O un separator para <<
+//______________ FIN BORRAR__________________________________________________________________________________
 
-	e_symbols	outsymbol;//>> o >
-	char		*outfile;
-}	t_redir;
 
-typedef struct s_task
-{
-	e_nodes	type;
 
-	t_redir redir;
-	char	*cmd;
-	char	**argv;
-}	t_task;
 
-//si left o rigth fuesen NULL indica error de reserva de memoria, hay que liverar el arbol entero y lanzar error.
-//Un pipe tal que "ls|   (nada)" generaria: pipe->rigth->task, y task tendria sus elementos vacios lo cual no es un error, este ejemplo en concreto deja a bash pendiente de entrada.
-//left siempre debe contener un elemento task, y no puede contener otra cosa
-//rigth puede contener otro elemento pipe o un elemento task
-typedef struct s_pipe {
-	e_nodes	type;
-	t_task	*left;
-	t_tree	*rigth;
-}	t_pipe;
-
-t_tree *processline(char *line);
-#define WHITESPACES " \r\n\v\t"
 
 /*---------------------------STRING_UTILITIES-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
@@ -79,6 +124,15 @@ que contiene la cadena <wanted>, en caso afirmativo retorna 1. */
 	 	return (1);
 	return (0);
 }*/
+
+void	skipwhitesp(char **segment, char *end)
+{
+	int	i;
+
+	while (*segment != end && ft_strchr(WHITESPACES , **segment))
+	(*segment)++;
+	return ;
+}
 
 void	skip_redir(char **segment, char *end)
 {
@@ -128,11 +182,16 @@ char	*ft_strnchr(const char *s, int c, int n)
 
 void skip_quotes(char **strpnt, char *end)
 {
-		if(*strpnt == '"' && ft_strnchr(strpnt +1, '"', (end - strpnt))) //sin  +1 strchr encontraría el propio caracter de partida
-			strpnt = ft_strnchr(strpnt +1, '"', (end - strpnt));
-		if(*strpnt == 39 && ft_strnchr(strpnt +1, 39, (end - strpnt))) //39 es ' en ascii
-			strpnt = ft_strnchr(strpnt +1, 39, (end - strpnt));
-		(*strpnt)++;
+	char *tmp;
+
+		tmp = *strpnt;
+		if(**strpnt == '"' && ft_strnchr((*strpnt) +1, '"', (end - *strpnt))) //sin  +1 strchr encontraría el propio caracter de partida
+			*strpnt = ft_strnchr(*strpnt +1, '"', (end - *strpnt));
+		if(**strpnt == 39 && ft_strnchr(*strpnt +1, 39, (end - *strpnt))) //39 es ' en ascii
+			*strpnt = ft_strnchr(*strpnt +1, 39, (end - *strpnt));
+		if (*strpnt != tmp)
+			(*strpnt)++;
+		return ;
 }
 
 /*	NO TESTEADAA
@@ -144,7 +203,7 @@ int strnchr_outquot(char **str, char *end, char c)
 	char *strpnt;
 
 	strpnt = *str;
-	while(*strpnt <= end && *strpnt != '\0')//probablemente !='\0' innecesario
+	while(strpnt <= end && *strpnt != '\0')//probablemente !='\0' innecesario
 	{
 		if(*strpnt == c)
 		{
@@ -152,6 +211,8 @@ int strnchr_outquot(char **str, char *end, char c)
 			return (1);
 		}
 		skip_quotes(&strpnt, end);
+		strpnt++;
+
 	}
 	return (0);
 }
@@ -167,7 +228,7 @@ int strnchr_outquot(char **str, char *end, char c)
 //t_redir *createredir
 
 //Si retorna null es un fallo de ejecución, habria que liberar todo el arbol y lanzar error
-t_tree *createtask(char *segment, char *end)
+t_task *createtask(char *segment, char *end)
 {
 	t_task *node;
 
@@ -186,7 +247,7 @@ t_tree *createtask(char *segment, char *end)
 //en lugar de parse_cmdflags por un lado y parsepipes por otro
 	if(parse_task(segment, end, node))//si falla alocando memoria retorna 1
 	{
-		free_tree(node);//En este caso no libera nada mas que el nodo actual, liverar el resto del arbol debe gestionarse desde processline
+		free_tree((t_tree *)node);//En este caso no libera nada mas que el nodo actual, liverar el resto del arbol debe gestionarse desde processline
 		return (NULL);
 	}
 	return (node);
@@ -199,8 +260,9 @@ t_tree *createpipe(char *line,char *pnt)
 {
 	t_pipe *node;
 
-	skipwithespaces(&line);
+	skipwhitesp(&line, pnt);
 	if (line == pnt)
+		printf ("BORRAESTOOOOO");
 		//Lanzar error sintactico como en "bash$>  | ls" a la izquierda de un pipe debe haber un comando o una redirección
 	node = malloc(sizeof(t_pipe));
 	if(node == NULL)
@@ -209,8 +271,8 @@ t_tree *createpipe(char *line,char *pnt)
 	node->type = PIPE;
 	node->left = createtask(line, pnt);
 	pnt++;
-	if(0 == parsepipe(pnt, node->rigth))//parsepipe retorna 0 si no encontro un |, si lo encontro retorna 1. Si ocurrió un error retorna 1 y pone ret=NULL
-		node->rigth = createtask(pnt, line + ft_strlen(line));// parsetask recibe line al completo
+	if(0 == parsepipe(pnt, &(node->rigth)))//parsepipe retorna 0 si no encontro un |, si lo encontro retorna 1. Si ocurrió un error retorna 1 y pone ret=NULL
+		node->rigth = (t_tree *)createtask(pnt, line + ft_strlen(line));// parsetask recibe line al completo
 	return((t_tree *)node);
 }
 
@@ -228,7 +290,7 @@ void	getpntword(char **segment, char *end, char **dst)
 	{
 		skip_quotes(segment, end);
 		if(ft_isalnum(**segment))
-			*segment++;
+			(*segment)++;
 		else
 			return ;
 	}
@@ -245,13 +307,13 @@ void	get_redir(char **segment, char *end, t_redir *redir)
 		if (*segment == ft_strnstr(*segment, "<<", end - *segment))
 		{
 			redir->insymbol = heredoc;
-			*segment += 2;
+			(*segment) += 2;
 			getpntword(segment, end, &(redir->infoo));
 		}
 		else if (*segment == ft_strnstr(*segment, ">>", end - *segment))
 		{
 			redir->outsymbol = append;
-			*segment += 2;
+			(*segment) += 2;
 			getpntword(segment, end, &(redir->outfile));
 		}
 		else if (**segment == '<')
@@ -307,13 +369,13 @@ int parse_task(char *segment, char *end, t_task *task)
 		get_redir(&segment, end, &(task->redir));//si lo primero que encuentra en segment es un redir lo consume, avanzando segment.
 		if(!(task->cmd))
 		{
-			getpntword(&segment, end, task->cmd);//get_word toma la primera palabra que encuentra en segment como comando,la funcion que ejecute debe encargarse de gestionar F_OK X_OK y buscar un path.
+			getpntword(&segment, end, &(task->cmd));//get_word toma la primera palabra que encuentra en segment como comando,la funcion que ejecute debe encargarse de gestionar F_OK X_OK y buscar un path.
 			task->argv[0] = task->cmd; // execve por convencion recibe por argv primero el nombre del comando y despues los argumentos con que se ejecuta.
 			i++;
 		}
 		else
 		{
-			getpntword(&segment, end, task->argv[i]);//¿debe comprobar !'\0'. Debe saltarse los espacios vacíos
+			getpntword(&segment, end, &(task->argv[i]));//¿debe comprobar !'\0'. Debe saltarse los espacios vacíos //MIRAR &(task...
 			i++;
 		}
 		task->argv[i] = NULL;
@@ -326,9 +388,9 @@ int parsepipe(char *line, t_tree **ret)// desde aqui gestionar solo errores de e
 	char *pnt;
 
 	pnt = line;
-	if(!strnchr_outquot(&pnt, '|', ft_strlen(pnt)))
+	if(!strnchr_outquot(&pnt, pnt + ft_strlen(pnt), '|'))
 		return (0);
-	ret = createpipe(line, pnt, ret);
+	*ret = createpipe(line, pnt);
 	return (1);
 }
 
@@ -337,12 +399,12 @@ t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fr
 	t_tree *ret;
 
 	if(0 == parsepipe(line, &ret))//parsepipe retorna 0 si no encontro un |, si lo encontro 1. Si ocurrió un error retorna 1 y pone ret=NULL
-		ret = createtask(line, line + ft_strlen(line));// parsetask recibe line al completo
+		ret = (t_tree *)createtask(line, line + ft_strlen(line));// parsetask recibe line al completo
 	//si parsetask o parsepipe falló, establecio ret a null.
 	if (!ret)
-		//Error en reserva de memoria, gestionar
-	check_tree(ret);
-	nullifiends(); //argumentos y redirecciones son punteros al string original line, esta funcion debe nulificar: whitespaces, |, <, >>, >, <<, y cualquier otro separador
+		printf("Error en reserva de memoria, gestionar");//BORRAESTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+//DESCOMENTAR CUANDO SE HAGA	check_tree(ret);
+	nullify_delimiters(line); //argumentos y redirecciones son punteros al string original line, esta funcion debe nulificar: whitespaces, |, <, >>, >, <<, y cualquier otro separador
 	return (ret);
 }
 
@@ -350,7 +412,7 @@ t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fr
 
 /*---------------------------PRINCIPAL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
-
+/*
 int command_flow(char **envp) //la gestion de errores de esta funcion es muy provisional
 {
 	char 	*line;
@@ -392,7 +454,37 @@ int main(int argc, char **argv, char **envp)
 	free(new_envp);
 	return(outstate);
 }
+*/
 
+int main(int argc, char **argv, char **envp)
+{
+	char 	*line;
+	t_tree	*tree;
+	int		error;
+
+	error = 0;
+	while(error == 0)
+	{
+		line = readline("mini$hell>");
+		if(!line)
+		{
+			perror("readline:");
+			return (1);
+		}
+		tree = processline(line);
+		if (tree == NULL)
+		{
+			free(line);
+			return (1);
+		}
+		print_tree(tree, 30);
+		if (error) //execline debe liberar los nodos desde las hojas hacia arriba. 
+		{
+			free(line);
+			free_tree(tree);
+		}
+	}
+}
 
 
 /*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
