@@ -1,4 +1,4 @@
-
+//compilacion  cc -g3 minishell.c -L. -lft -lreadline
 
 #include "minishell.h"
 //TEMPORAL TESTEO BORRAR Y REACER IMPORTANTEE---------------------------------------------------------------------------------------------------------------
@@ -127,6 +127,21 @@ que contiene la cadena <wanted>, en caso afirmativo retorna 1. */
 	 	return (1);
 	return (0);
 }*/
+/*
+int isspecial(char c)
+{
+	if (c == '|' || c == '<' || c == '>')
+		return (1) ;
+	return (0);
+}
+*/
+
+int isdelimiter(char c)
+{
+	if (c == '|' || c == '<' || c == '>' || ft_strchr(WHITESPACES, c))
+		return (1) ;
+	return (0);
+}
 
 void	skipwhitesp(char **segment, char *end)
 {
@@ -292,7 +307,7 @@ void	getpntword(char **segment, char *end, char **dst)
 	while (*segment < end)
 	{
 		skip_quotes(segment, end);
-		if(ft_isalnum(**segment))
+		if(!isdelimiter(**segment))
 			(*segment)++;
 		else
 			return ;
