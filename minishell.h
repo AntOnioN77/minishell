@@ -16,7 +16,7 @@ typedef enum e_nodes
 
 typedef enum e_symbols
 {
-
+	none,
 	infile,//<
 	outfile,//>
 	heredoc,//<<

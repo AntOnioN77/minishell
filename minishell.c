@@ -84,22 +84,25 @@ void free_tree(t_tree *node)
 
 void print_tree(t_tree *node, int depth)
 {
-	t_pipe *pipenode;
-
-	if (!node)
+    if (!node)
         return;
-    
     for (int i = 0; i < depth; i++)
         printf("  ");
-        
-    switch(node->type) {
+    switch(node->type)
+	{
         case PIPE:
             printf("PIPE\n");
-			pipenode = ((t_pipe *)((t_pipe *)node)->rigth);
-            print_tree((t_tree *)pipenode, depth + 1);
+            print_tree(((t_tree *)((t_pipe *)node)->left), depth + 1);
+            print_tree(((t_pipe *)node)->rigth, depth + 1);
             break;
         case TASK:
-            printf("TASK: %s\n", ((t_task *)node)->cmd);
+            printf("TASK->cmd: %s\n", ((t_task *)node)->cmd);
+			for (int j = 0; ((t_task *)node)->argv[j]; j++)
+				printf("TASK->argv[%d]: %s\n", j, ((t_task *)node)->argv[j]);
+			printf("TASK->redir->insymbol: %d\n", ((t_task *)node)->redir.insymbol);
+			printf("TASK->redir->infoo: %s\n", ((t_task *)node)->redir.infoo);
+			printf("TASK->redir->outsymbol: %d\n", ((t_task *)node)->redir.outsymbol);
+			printf("TASK->redir->infoo: %s\n", ((t_task *)node)->redir.outfile);
             break;
     }
 }
