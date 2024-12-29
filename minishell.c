@@ -48,7 +48,7 @@ typedef struct s_task
 	e_nodes	type;
 
 	t_redir redir;
-	char	*pathname;
+	char	*cmd;
 	char	**argv;
 }	t_task;
 
@@ -80,6 +80,33 @@ que contiene la cadena <wanted>, en caso afirmativo retorna 1. */
 	return (0);
 }*/
 
+void	skip_redir(char **segment, char *end)
+{
+	skipwhitesp(segment, end);
+	{
+		if (ft_strnstr(*segment, "<<", end - *segment))
+		{
+			*segment += 2;
+			getpntword(segment, end, NULL);
+		}
+		else if (ft_strnstr(*segment, ">>", end - *segment))
+		{
+			*segment += 2;
+			getpntword(segment, end, NULL);
+		}
+		else if (**segment == '<')
+		{
+			(*segment)++;
+			getpntword(segment, end, NULL);
+		}
+		else if (**segment == '>')
+		{
+			(*segment)++;
+			getpntword(segment, end, NULL);
+		}
+	}
+}
+
 //NO TESTEADA
 char	*ft_strnchr(const char *s, int c, int n)
 {
@@ -98,6 +125,15 @@ char	*ft_strnchr(const char *s, int c, int n)
 		return (NULL);
 }
 
+void skip_quotes(char **strpnt, char *end)
+{
+		if(*strpnt == '"' && ft_strnchr(strpnt +1, '"', (end - strpnt))) //sin  +1 strchr encontraría el propio caracter de partida
+			strpnt = ft_strnchr(strpnt +1, '"', (end - strpnt));
+		if(*strpnt == 39 && ft_strnchr(strpnt +1, 39, (end - strpnt))) //39 es ' en ascii
+			strpnt = ft_strnchr(strpnt +1, 39, (end - strpnt));
+		strpnt++;
+}
+
 /*	NO TESTEADAA
 	-Retorna 1 si encuentra c en str, salvo que esté encapsulado en comillas simples o dobles, o doblemente encapsulado.
 	-avanza str hasta la primera coincidencia, si no encuentra chr str permanece igual
@@ -114,11 +150,7 @@ int strnchr_outquot(char **str, char *end, char c)
 			*str = strpnt;
 			return (1);
 		}
-		if(*strpnt == '"' && ft_strnchr(strpnt +1, '"', (end - strpnt))) //sin  +1 strchr encontraría el propio caracter de partida
-			strpnt = ft_strnchr(strpnt +1, '"', (end - strpnt));
-		if(*strpnt == 39 && ft_strnchr(strpnt +1, 39, (end - strpnt))) //39 es ' en ascii
-			strpnt = ft_strnchr(strpnt +1, 39, (end - strpnt));
-		strpnt++;
+		skip_quotes(&strpnt, end);
 	}
 	return (0);
 }
@@ -143,7 +175,7 @@ t_tree *createtask(char *segment, char *end)
 		return (NULL);
 	ft_bzero(node, sizeof(t_task));//free_tree() recorre todo el arbol liverando todo deteniendose en NULL, si algún elemento puntero no llegase a ser alocado permanecería muy convenientemente NULL
 	node->type = TASK;
-	node->argv = malloc(sizeof(char *) * count_cmdflags(segment, end));
+	node->argv = malloc(sizeof(char *) * (count_cmdflags(segment, end) + 1));
 	if (node->argv == NULL)
 	{
 		free(node);
@@ -185,13 +217,21 @@ t_tree *createpipe(line, pnt)
 /*---------------------------PARSEOS-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 
-//almacena un puntero a la primera letra de esa palabra, consume la siguiente palabra en segment, y nulifica si es necesario al final de la palabra
-getpntword(char **segment, char *end, char **dst)
+//almacena un puntero a la primera letra de esa palabra, consume la siguiente palabra en segment. Si dst es NULL solamente consume un redir en segment
+void	getpntword(char **segment, char *end, char **dst)
 {
 	skipwhitesp(segment, end);
-	*dst = *segment;
-	while (*segment < end && ft_isalnum(*segment))
-		*segment++;
+	if (dst != NULL)
+		*dst = *segment;
+	while (*segment < end)
+	{
+		skip_quotes(segment, end);
+		if(ft_isalnum(**segment))
+			*segment++;
+		else
+			return ;
+	}
+	return ;
 }
 
 //Temporal, de prueba
@@ -199,18 +239,19 @@ getpntword(char **segment, char *end, char **dst)
 void	get_redir(char **segment, char *end, t_redir *redir)
 {
 	skipwhitesp(segment, end);
+	while (*segment < end)
 	{
-		if (ft_strnstr(*segment, "<<", end - *segment))
+		if (**segment == '<' && (*segment)[1] == '<')
 		{
 			redir->insymbol = heredoc;
 			*segment += 2;
 			getpntword(segment, end, &(redir->infoo));
 		}
-		else if (ft_strnstr(*segment, ">>", end - *segment))
+		else if (**segment == '>' && (*segment)[1] == '>')
 		{
 			redir->outsymbol = append;
 			*segment += 2;
-			getpntword(segment, redir->outfile);
+			getpntword(segment, end, &(redir->outfile));
 		}
 		else if (**segment == '<')
 		{
@@ -222,11 +263,12 @@ void	get_redir(char **segment, char *end, t_redir *redir)
 		{
 			redir->outsymbol = outfile;
 			(*segment)++;
-			getpntword(segment, redir->outfile);
+			getpntword(segment, end, &(redir->outfile));
 		}
 		else
 			return;
 	}
+	return ;
 }
 
 //NO FUNCIONA
@@ -237,14 +279,15 @@ int count_cmdflags(char *segment, char *end)
 	i = 0;
 	while(segment < end)
 	{
-		skipredirs(&segment, end);
+		skip_redir(&segment, end);
 		skipwhitesp(&segment, end);
-		i = i + skipword(&segment);//avanza hasta el siguiente caracter separador o end. Retorna 1 si avanzo al menos una posicion segment
+		i = i + skipword(&segment, end);//¿mejor getpntword? //avanza hasta el siguiente caracter separador o end. Retorna 1 si avanzo al menos una posicion segment
 		
 	}
 
 	return(i);
 }
+
 
 //NO TESTEADA
 //si falla alocando memoria retorna 1
@@ -252,19 +295,24 @@ int count_cmdflags(char *segment, char *end)
 //add_arg no implementada
 int parse_task(char *segment, char *end, t_task *task)
 {
+	int i;
+
+	i = 0;
 	while(segment < end)
 	{
-		get_redir(&segment, end, &(task->redir));//si lo primero que encuentra en segment es un redir lo consume, avanzando segment. Si ademas el caracter a continuacion no fue \0, lo nulifica y avanza uno mas.
-		if(!(task->pathname))
+		get_redir(&segment, end, &(task->redir));//si lo primero que encuentra en segment es un redir lo consume, avanzando segment.
+		if(!(task->cmd))
 		{
-			if (get_patname(&segment, end, task->pathname))//get_pathname toma la primera palabra que encuentra en segment como comando, y busca un path para el con acces(..., F_OK) la funcion que ejecute debe encargarse de  X_OK. Si no encuentra una ruta, almacena la palabra literalmente sin añadir un path.
-				return (1);
+			getpntword(&segment, end, task->cmd);//get_word toma la primera palabra que encuentra en segment como comando,la funcion que ejecute debe encargarse de gestionar F_OK X_OK y buscar un path.
+			task->argv[0] = task->cmd; // execve por convencion recibe por argv primero el nombre del comando y despues los argumentos con que se ejecuta.
+			i++;
 		}
 		else
 		{
-			if(add_arg(&segment, end, task->argv)) //¿debe comprobar !'\0'. Debe saltarse los espacios vacíos
-				return(1);
+			getpntword(&segment, end, task->argv[i]);//¿debe comprobar !'\0'. Debe saltarse los espacios vacíos
+			i++;
 		}
+		task->argv[i] = NULL;
 	}
 	return (0);
 }
