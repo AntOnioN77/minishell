@@ -1,8 +1,7 @@
 //compilacion  cc -g3 minishell.c -L. -lft -lreadline
 
 #include "minishell.h"
-//TEMPORAL TESTEO BORRAR Y REACER IMPORTANTEE---------------------------------------------------------------------------------------------------------------
-
+//TEMPORAL TESTEO BORRAR Y REACER IMPORTANTEE!!!---------------------------------------------------------------------------------------------------------------
 void	nullify_delimiters(char *str)
 {
     int in_quotes;      // Para manejar comillas dobles
@@ -319,9 +318,10 @@ void	getpntword(char **segment, char *end, char **dst)
 //si lo primero que encuentra en segment son redirs los consume, avanzando segment. antes de poder usar la palabra apuntada por dest, una funcion deberia recorrer line nullificando espacios y otros separadores como < o |
 void	get_redir(char **segment, char *end, t_redir *redir)
 {
-	skipwhitesp(segment, end);
+
 	while (*segment < end)
 	{
+		skipwhitesp(segment, end);
 		if (*segment == ft_strnstr(*segment, "<<", end - *segment))
 		{
 			redir->insymbol = heredoc;
