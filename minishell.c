@@ -82,14 +82,15 @@ que contiene la cadena <wanted>, en caso afirmativo retorna 1. */
 
 void	skip_redir(char **segment, char *end)
 {
+	//comprobar con asserts, tal vez controlar segment == NULL
 	skipwhitesp(segment, end);
 	{
-		if (ft_strnstr(*segment, "<<", end - *segment))
+		if (*segment == ft_strnstr(*segment, "<<", end - *segment))
 		{
 			*segment += 2;
 			getpntword(segment, end, NULL);
 		}
-		else if (ft_strnstr(*segment, ">>", end - *segment))
+		else if (*segment == ft_strnstr(*segment, ">>", end - *segment))
 		{
 			*segment += 2;
 			getpntword(segment, end, NULL);
@@ -131,7 +132,7 @@ void skip_quotes(char **strpnt, char *end)
 			strpnt = ft_strnchr(strpnt +1, '"', (end - strpnt));
 		if(*strpnt == 39 && ft_strnchr(strpnt +1, 39, (end - strpnt))) //39 es ' en ascii
 			strpnt = ft_strnchr(strpnt +1, 39, (end - strpnt));
-		strpnt++;
+		(*strpnt)++;
 }
 
 /*	NO TESTEADAA
@@ -194,7 +195,7 @@ t_tree *createtask(char *segment, char *end)
 //NO TESTEADA
 //TO DO debe liberar cosas en caso de fallo de algun malloc
 //constructor de pipetree, setea izquierda con createtask(line, pnt), y derecha recurriendo a parsepipe(line +1)'
-t_tree *createpipe(line, pnt)
+t_tree *createpipe(char *line,char *pnt)
 {
 	t_pipe *node;
 
@@ -235,19 +236,19 @@ void	getpntword(char **segment, char *end, char **dst)
 }
 
 //Temporal, de prueba
-//si lo primero que encuentra en segment es un redir lo consume, avanzando segment. antes de poder usar la palabra apuntada por dest, una funcion deberia recorrer line nullificando espacios y otros separadores como < o |
+//si lo primero que encuentra en segment son redirs los consume, avanzando segment. antes de poder usar la palabra apuntada por dest, una funcion deberia recorrer line nullificando espacios y otros separadores como < o |
 void	get_redir(char **segment, char *end, t_redir *redir)
 {
 	skipwhitesp(segment, end);
 	while (*segment < end)
 	{
-		if (**segment == '<' && (*segment)[1] == '<')
+		if (*segment == ft_strnstr(*segment, "<<", end - *segment))
 		{
 			redir->insymbol = heredoc;
 			*segment += 2;
 			getpntword(segment, end, &(redir->infoo));
 		}
-		else if (**segment == '>' && (*segment)[1] == '>')
+		else if (*segment == ft_strnstr(*segment, ">>", end - *segment))
 		{
 			redir->outsymbol = append;
 			*segment += 2;
@@ -275,14 +276,17 @@ void	get_redir(char **segment, char *end, t_redir *redir)
 int count_cmdflags(char *segment, char *end)
 {
 	int i;
+	char *tmp;
 
 	i = 0;
 	while(segment < end)
 	{
 		skip_redir(&segment, end);
 		skipwhitesp(&segment, end);
-		i = i + skipword(&segment, end);//¿mejor getpntword? //avanza hasta el siguiente caracter separador o end. Retorna 1 si avanzo al menos una posicion segment
-		
+		tmp = segment;
+		getpntword(&segment, end, NULL);
+		if (tmp != segment)//si getpntword consumio algo, entonces habia una palabra
+			i++;
 	}
 
 	return(i);
@@ -347,22 +351,35 @@ t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fr
 /*---------------------------PRINCIPAL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 
-int command_flow(char **envp)
+int command_flow(char **envp) //la gestion de errores de esta funcion es muy provisional
 {
-	char *line;
+	char 	*line;
+	t_tree	*tree;
+	int		error;
 
-	while(1)
+	error = 0;
+	while(error = 0)
 	{
 		line = readline("mini$hell>");
 		if(!line)
 		{
 			perror("readline:");
-			break;
+			return (1);
 		}
-		if (execline(processline(line), envp)) //execline debe liberar los nodos desde las hojas hacia arriba. 
-
-		free(line);
+		tree = processline(line);
+		if (tree == NULL)
+		{
+			free(line);
+			return (1);
+		}
+		error = execline(tree, envp);
+		if (error) //execline debe liberar los nodos desde las hojas hacia arriba. 
+		{
+			free(line);
+			free_tree(tree);
+		}
 	}
+	return (error);
 }
 
 int main(int argc, char **argv, char **envp)
@@ -370,7 +387,7 @@ int main(int argc, char **argv, char **envp)
 	int	outstate;
 	char **new_envp;
 
-	upgrade_envp(envp, new_envp);//no necesita liverar envp anterior despues de clonarlo, pues "env" no esta reservado dinamicamente
+	upgrade_envp(envp, new_envp);//no necesita liverar envp original despues de clonarlo, pues "env" no esta reservado dinamicamente
 	outstate = command_flow(envp);
 	free(new_envp);
 	return(outstate);
