@@ -2,48 +2,7 @@
 
 #include "minishell.h"
 //TEMPORAL TESTEO BORRAR Y REACER IMPORTANTEE!!!---------------------------------------------------------------------------------------------------------------
-void	nullify_delimiters(char *str)
-{
-    int in_quotes;      // Para manejar comillas dobles
-    int in_squotes;     // Para manejar comillas simples
-    
-    if (!str)
-        return;
 
-    in_quotes = 0;
-    in_squotes = 0;
-    while (*str)
-    {
-        // Manejar comillas dobles
-        if (*str == '"' && !in_squotes)
-            in_quotes = !in_quotes;
-        // Manejar comillas simples
-        else if (*str == '\'' && !in_quotes)
-            in_squotes = !in_squotes;
-        // Solo sustituir si no estamos dentro de comillas
-        else if (!in_quotes && !in_squotes)
-        {
-            // Sustituir espacios en blanco
-            if (*str == ' ' || *str == '\t' || *str == '\n' || 
-                *str == '\v' || *str == '\r')
-                *str = '\0';
-            // Sustituir operadores
-            else if (*str == '|' || *str == '<' || *str == '>')
-            {
-                // Caso especial para >> y <<
-                if ((*str == '>' || *str == '<') && *(str + 1) == *str)
-                {
-                    *str = '\0';
-                    str++;
-                    *str = '\0';
-                }
-                else
-                    *str = '\0';
-            }
-        }
-        str++;
-    }
-}
 
 void free_tree(t_tree *node)
 {
@@ -135,9 +94,22 @@ int isspecial(char c)
 }
 */
 
+void	nullify_delimiters(char *str)
+{
+    if (!str)
+        return;
+    while (*str)
+    {
+		skip_quotes(&str, str + ft_strlen(str));
+            if (isdelimiter(*str))
+                *str = '\0';
+        str++;
+    }
+}
+
 int isdelimiter(char c)
 {
-	if (c == '|' || c == '<' || c == '>' || ft_strchr(WHITESPACES, c))
+	if (ft_strchr(DELIMITERS, c))
 		return (1) ;
 	return (0);
 }

@@ -1,6 +1,6 @@
-//BORRA ESTA FUNCION ANTES DE ENTREGAR
+
+//FALTAN GUARDAS DE INCLUSION
 #include "libft/headers/libft.h"
-#include <stdio.h>
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -84,3 +84,4 @@ int parsepipe(char *line, t_tree **ret);
 
 
 #define WHITESPACES " \r\n\v\t"
+#define DELIMITERS "|<> \r\n\v\t"
