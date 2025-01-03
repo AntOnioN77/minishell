@@ -27,7 +27,7 @@ typedef enum e_symbols
 typedef enum e_errors
 {
 	TREE_OK,
-    ERROR_MALLOC,    // Error de asignación de memoria
+    ERROR_MALLOC,
     INVALID_STATE
 } e_errors;
 
@@ -40,13 +40,13 @@ typedef struct s_tree
 {
 	e_nodes type;
 }	t_tree;
-
+/*
 typedef struct s_syntax
 {
 	e_nodes type;
 	e_errors error;
 }	t_syntax;
-
+*/
 /*La linea recibida como task se parsea de izquuierda a derecha, sucesivas redirecciones
 se sobreescriben. de manera que hay un solo t_redir por cada t_task.
 si no se encuentra ninguna redireccion los e_symbols pemanecen "none"
@@ -82,12 +82,8 @@ typedef struct s_pipe {
 	t_tree	*rigth;
 }	t_pipe;
 
-typedef struct s_tree_result {
-    t_tree      *tree;
-    e_errors	error;
-} t_tree_result;
-
 //FUNCIONES PARA CONSTRUIR ARBOL SINTACTICO
+void free_tree(t_tree *node);
 t_tree *processline(char *line);
 void print_tree(t_tree *node, int depth);
 void	skip_redir(char **segment, char *end);

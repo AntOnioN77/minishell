@@ -49,21 +49,18 @@ void print_tree(t_tree *node, int depth)
         case TASK:
             printf("TASK->cmd: %s\n", ((t_task *)node)->cmd);
 			for (int j = 0; ((t_task *)node)->argv[j]; j++)
-				printf("TASK->argv[%d]: %s\n", j, ((t_task *)node)->argv[j]);
-			printf("TASK->redir->insymbol: %d\n", ((t_task *)node)->redir.insymbol);
-			printf("TASK->redir->infoo: %s\n", ((t_task *)node)->redir.infoo);
-			printf("TASK->redir->outsymbol: %d\n", ((t_task *)node)->redir.outsymbol);
-			printf("TASK->redir->infoo: %s\n", ((t_task *)node)->redir.outfile);
+				printf("\t->argv[%d]: %s\n", j, ((t_task *)node)->argv[j]);
+			printf("\t->redir->insymbol: %d\n", ((t_task *)node)->redir.insymbol);
+			printf("\t->redir->infoo: %s\n", ((t_task *)node)->redir.infoo);
+			printf("\t->redir->outsymbol: %d\n", ((t_task *)node)->redir.outsymbol);
+			printf("\t->redir->outfile: %s\n", ((t_task *)node)->redir.outfile);
             break;
-		case SYNTAX:
-			printf("SYNTAX->error: %d\n", ((t_syntax *)node)->error);
-			break;
     }
 }
 
 //______________ FIN BORRAR__________________________________________________________________________________
 
-
+/*
 t_tree	*new_syntax_error(e_errors error)
 {
 	t_tree *ret;
@@ -74,7 +71,7 @@ t_tree	*new_syntax_error(e_errors error)
 	ret = malloc(sizeof(t_syntax));
 
 }
-
+*/
 
 /*---------------------------STRING_UTILITIES-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
@@ -132,6 +129,7 @@ void	skip_redir(char **segment, char *end)
 {
 	//comprobar con asserts, tal vez controlar segment == NULL
 	skipwhitesp(segment, end);
+	while(*segment < end)
 	{
 		if (*segment == ft_strnstr(*segment, "<<", end - *segment))
 		{
@@ -153,6 +151,8 @@ void	skip_redir(char **segment, char *end)
 			(*segment)++;
 			getpntword(segment, end, NULL);
 		}
+		else
+			return ;
 	}
 }
 
@@ -222,7 +222,7 @@ int strnchr_outquot(char **str, char *end, char c)
 //t_redir *createredir
 
 //Si retorna null es un fallo de ejecución, habria que liberar todo el arbol y lanzar error
-t_tree_result *createtask(char *segment, char *end)
+t_task *createtask(char *segment, char *end)
 {
 	t_task *node;
 
@@ -232,6 +232,7 @@ t_tree_result *createtask(char *segment, char *end)
 	ft_bzero(node, sizeof(t_task));//free_tree() recorre todo el arbol liverando todo deteniendose en NULL, si algún elemento puntero no llegase a ser alocado permanecería muy convenientemente NULL
 	node->type = TASK;
 	node->argv = malloc(sizeof(char *) * (count_cmdflags(segment, end) + 1));
+//	printf("numero de punteros en argv: %d\n", (count_cmdflags(segment, end) + 1));
 	if (node->argv == NULL)
 	{
 		free(node);
@@ -239,11 +240,7 @@ t_tree_result *createtask(char *segment, char *end)
 	}
 //Quiza es mejor una sola funcion, que vaya discriminando si la palabra apuntada por segment es un redir un comando o un argumento
 //en lugar de parse_cmdflags por un lado y parsepipes por otro
-	if(parse_task(segment, end, node))//si falla alocando memoria retorna 1
-	{
-		free_tree((t_tree *)node);//En este caso no libera nada mas que el nodo actual, liverar el resto del arbol debe gestionarse desde processline
-		return (NULL);
-	}
+	parse_task(segment, end, node);//no aloca memoria nueva solo completa campos de node. 
 	return (node);
 }
 
@@ -255,9 +252,7 @@ t_tree *createpipe(char *line,char *pnt)
 	t_pipe *node;
 
 	skipwhitesp(&line, pnt);
-	if (line == pnt)
-		return (new_syntax_error(PIPELEFT_VOID));//seguramente es mas facil de manejar desde la funcion que recorre el arbol en busca de errores
-	//Lanzar error sintactico como en "bash$>  | ls" a la izquierda de un pipe debe haber un comando o una redirección
+//	if (line == pnt)
 	node = malloc(sizeof(t_pipe));
 	if(node == NULL)
 		return (NULL);
@@ -286,7 +281,10 @@ void	getpntword(char **segment, char *end, char **dst)
 		if(!isdelimiter(**segment))
 			(*segment)++;
 		else
+		{
+			skipwhitesp(segment, end);
 			return ;
+		}
 	}
 	return ;
 }
@@ -295,7 +293,6 @@ void	getpntword(char **segment, char *end, char **dst)
 //si lo primero que encuentra en segment son redirs los consume, avanzando segment. antes de poder usar la palabra apuntada por dest, una funcion deberia recorrer line nullificando espacios y otros separadores como < o |
 void	get_redir(char **segment, char *end, t_redir *redir)
 {
-
 	while (*segment < end)
 	{
 		skipwhitesp(segment, end);
@@ -339,7 +336,7 @@ int count_cmdflags(char *segment, char *end)
 	while(segment < end)
 	{
 		skip_redir(&segment, end);
-		skipwhitesp(&segment, end);
+		//skipwhitesp(&segment, end);
 		tmp = segment;
 		getpntword(&segment, end, NULL);
 		if (tmp != segment)//si getpntword consumio algo, entonces habia una palabra
@@ -362,6 +359,8 @@ int parse_task(char *segment, char *end, t_task *task)
 	while(segment < end)
 	{
 		get_redir(&segment, end, &(task->redir));//si lo primero que encuentra en segment es un redir lo consume, avanzando segment.
+		if (!(segment < end))
+			break ;
 		if(!(task->cmd))
 		{
 			getpntword(&segment, end, &(task->cmd));//get_word toma la primera palabra que encuentra en segment como comando,la funcion que ejecute debe encargarse de gestionar F_OK X_OK y buscar un path.
@@ -373,8 +372,9 @@ int parse_task(char *segment, char *end, t_task *task)
 			getpntword(&segment, end, &(task->argv[i]));//¿debe comprobar !'\0'. Debe saltarse los espacios vacíos //MIRAR &(task...
 			i++;
 		}
-		task->argv[i] = NULL;
+//printf("task->argv[%d]:%s\n", i-1, task->argv[i-1]);
 	}
+	task->argv[i] = NULL;
 	return (0);
 }
 
@@ -450,7 +450,7 @@ int main(int argc, char **argv, char **envp)
 	return(outstate);
 }
 */
-
+/*
 int main(int argc, char **argv, char **envp)
 {
 	char 	*line;
@@ -472,6 +472,7 @@ int main(int argc, char **argv, char **envp)
 			free(line);
 			return (1);
 		}
+//		check_tree(*tree);
 		print_tree(tree, 30);
 		if (error) //execline debe liberar los nodos desde las hojas hacia arriba. 
 		{
@@ -480,7 +481,7 @@ int main(int argc, char **argv, char **envp)
 		}
 	}
 }
-
+*/
 
 /*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
