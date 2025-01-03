@@ -3,43 +3,36 @@
 #include "minishell.h"
 //TEMPORAL TESTEO BORRAR Y REACER IMPORTANTEE!!!---------------------------------------------------------------------------------------------------------------
 
-
 void free_tree(t_tree *node)
 {
     if (!node)
         return;
 
-    // Cast y liberar según el tipo de nodo
-    switch (node->type)
-    {
-        case PIPE:
-        {
-            t_pipe *pipe_node = (t_pipe *)node;
-            if (pipe_node->left)
-                free_tree((t_tree *)pipe_node->left);
-            if (pipe_node->rigth)
-                free_tree(pipe_node->rigth);
-            free(pipe_node);
-            break;
-        }
-        case TASK:
-        {
-            t_task *task_node = (t_task *)node;
-            // Los elementos dentro de task_node->redir y los strings 
-            // en task_node->cmd y task_node->argv no necesitan ser liberados
-            // Solo liberamos el array argv
-            if (task_node->argv)
-                free(task_node->argv);
-            free(task_node);
-            break;
-        }
-        default:
-            // En caso de encontrar un tipo desconocido, simplemente liberamos el nodo
-            free(node);
-            break;
-    }
+	if (node->type == PIPE)
+	{
+		t_pipe *pipe_node = (t_pipe *)node;
+		if (pipe_node->left)
+			free_tree((t_tree *)pipe_node->left);
+		if (pipe_node->rigth)
+			free_tree(pipe_node->rigth);
+		free(pipe_node);
+	}
+    else if (node->type == TASK)
+	{
+		t_task *task_node = (t_task *)node;
+		// Los elementos dentro de task_node->redir y los strings 
+		// en task_node->cmd y task_node->argv solo necesitan ser liberados si fueron expandidos
+		// eso va a ser bastante problematico.
+		// Solo liberamos el array argv
+		if (task_node->argv)
+			free(task_node->argv);
+		free(task_node);
+	}
+	//FALTA LIBERRAR t_syntax!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	return ;
 }
 
+//SOLO PARA PRUEBAS imprime el arbol
 void print_tree(t_tree *node, int depth)
 {
     if (!node)
@@ -62,13 +55,25 @@ void print_tree(t_tree *node, int depth)
 			printf("TASK->redir->outsymbol: %d\n", ((t_task *)node)->redir.outsymbol);
 			printf("TASK->redir->infoo: %s\n", ((t_task *)node)->redir.outfile);
             break;
+		case SYNTAX:
+			printf("SYNTAX->error: %d\n", ((t_syntax *)node)->error);
+			break;
     }
 }
 
 //______________ FIN BORRAR__________________________________________________________________________________
 
 
+t_tree	*new_syntax_error(e_errors error)
+{
+	t_tree *ret;
+	if (ret)
+        ret->type = SYNTAX;
+		((t_syntax *)ret)->error = error;
 
+	ret = malloc(sizeof(t_syntax));
+
+}
 
 
 /*---------------------------STRING_UTILITIES-------------------------------------------------------------------------
@@ -94,6 +99,13 @@ int isspecial(char c)
 }
 */
 
+int isdelimiter(char c)
+{
+	if (ft_strchr(DELIMITERS, c))
+		return (1) ;
+	return (0);
+}
+
 void	nullify_delimiters(char *str)
 {
     if (!str)
@@ -105,13 +117,6 @@ void	nullify_delimiters(char *str)
                 *str = '\0';
         str++;
     }
-}
-
-int isdelimiter(char c)
-{
-	if (ft_strchr(DELIMITERS, c))
-		return (1) ;
-	return (0);
 }
 
 void	skipwhitesp(char **segment, char *end)
@@ -217,7 +222,7 @@ int strnchr_outquot(char **str, char *end, char c)
 //t_redir *createredir
 
 //Si retorna null es un fallo de ejecución, habria que liberar todo el arbol y lanzar error
-t_task *createtask(char *segment, char *end)
+t_tree_result *createtask(char *segment, char *end)
 {
 	t_task *node;
 
@@ -251,8 +256,8 @@ t_tree *createpipe(char *line,char *pnt)
 
 	skipwhitesp(&line, pnt);
 	if (line == pnt)
-		printf ("BORRAESTOOOOO");
-		//Lanzar error sintactico como en "bash$>  | ls" a la izquierda de un pipe debe haber un comando o una redirección
+		return (new_syntax_error(PIPELEFT_VOID));//seguramente es mas facil de manejar desde la funcion que recorre el arbol en busca de errores
+	//Lanzar error sintactico como en "bash$>  | ls" a la izquierda de un pipe debe haber un comando o una redirección
 	node = malloc(sizeof(t_pipe));
 	if(node == NULL)
 		return (NULL);

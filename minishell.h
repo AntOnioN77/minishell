@@ -11,7 +11,8 @@ typedef enum e_nodes
 	LINE,//probablemente innecesario
 	PIPE,
 	REDIR,//probablemente innecesario
-	TASK
+	TASK,
+	SYNTAX
 }	e_nodes;
 
 typedef enum e_symbols
@@ -23,6 +24,13 @@ typedef enum e_symbols
 	append//>>
 } e_symbols;
 
+typedef enum e_errors
+{
+	TREE_OK,
+    ERROR_MALLOC,    // Error de asignación de memoria
+    INVALID_STATE
+} e_errors;
+
 /*Este struct no tiene un caso de uso real, funciona como interface. Los nodos del arbol
 son en realidad t_line t_pipe t_redir t_task.
 El uso de una interface nos permite pasar cualquiera de estos tipos como argumento a una
@@ -32,6 +40,12 @@ typedef struct s_tree
 {
 	e_nodes type;
 }	t_tree;
+
+typedef struct s_syntax
+{
+	e_nodes type;
+	e_errors error;
+}	t_syntax;
 
 /*La linea recibida como task se parsea de izquuierda a derecha, sucesivas redirecciones
 se sobreescriben. de manera que hay un solo t_redir por cada t_task.
@@ -55,6 +69,7 @@ typedef struct s_task
 	t_redir redir;
 	char	*cmd;
 	char	**argv;
+	void	**garbage;
 }	t_task;
 
 //si left o rigth fuesen NULL indica error de reserva de memoria, hay que liverar el arbol entero y lanzar error.
@@ -66,6 +81,11 @@ typedef struct s_pipe {
 	t_task	*left;
 	t_tree	*rigth;
 }	t_pipe;
+
+typedef struct s_tree_result {
+    t_tree      *tree;
+    e_errors	error;
+} t_tree_result;
 
 //FUNCIONES PARA CONSTRUIR ARBOL SINTACTICO
 t_tree *processline(char *line);
