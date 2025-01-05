@@ -1,4 +1,4 @@
-// gcc -g3 minishell-test.c minishell.c -L. -lft -lreadline
+// gcc -g3 parse-test.c minishell.c -L. -lft -lreadline
 
 #include "minishell.h"
 #include <assert.h>
