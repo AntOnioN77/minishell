@@ -5,12 +5,14 @@
 
 void free_tree(t_tree *node)
 {
+	t_pipe *pipe_node;
+
     if (!node)
         return;
 
 	if (node->type == PIPE)
 	{
-		t_pipe *pipe_node = (t_pipe *)node;
+		pipe_node = (t_pipe *)node;
 		if (pipe_node->left)
 			free_tree((t_tree *)pipe_node->left);
 		if (pipe_node->rigth)
