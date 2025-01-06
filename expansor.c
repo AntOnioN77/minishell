@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/06 23:51:42 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/07 00:48:47 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	is_expansible(char *str)
 	return (0);
 }
 
-static int	expand_var_len(char **str, char *envp[])
+static int	calculate_variable_length(char **str, char *envp[])
 {
 	int j = 0;
 	char *aux;
@@ -34,7 +34,7 @@ static int	expand_var_len(char **str, char *envp[])
 
 	(*str)++;
 	while ((*str)[j] && !ft_strchr(WHITESPACES, (*str)[j])
-	&& (*str)[j] != '"' && (*str)[j] != 39)
+	&& (*str)[j] != '"' && (*str)[j] != 39 && (*str)[j] != '$') //echo $VAR$VAR es valido.
 		j++;
 	aux = ft_substr(*str, 0, j);
 	if (aux == NULL)
@@ -46,14 +46,14 @@ static int	expand_var_len(char **str, char *envp[])
 }
 
 //NO SEPARAR DE EXPANDSTR()
-static int	expand_all_len(char *str, char *envp[])
+static int	calculate_expansion_length(char *str, char *envp[])
 {
 	int len;
 	int	j;
 	char *aux;
 
 	len = 0;
-	while (str)
+	while (*str)
 	{
 			if (*str == 39 && ft_strchr(str + 1, 39))
 			{
@@ -62,21 +62,26 @@ static int	expand_all_len(char *str, char *envp[])
 				len += (str - aux);
 			}
 			if(*str == '$')
-				len += expand_var_len(&str, envp);
+			{
+				len += calculate_variable_length(&str, envp);//consume en str $NOMBRE_DE_VARIABLE
+				continue ;
+			}
 			str++;
 			len++;
 	}
 	return (len);
 }
 
-int	expandstr(char *str, t_garbage *garbage, char *envp) //envp debe recibir el array de strings que hemos creado y sobre el que se reflejan las modificaciones que pueda hacer minishell durante la ejecucion
+int	expandstr(char **origin, t_garbage *garbage, char *envp) //envp debe recibir el array de strings que hemos creado y sobre el que se reflejan las modificaciones que pueda hacer minishell durante la ejecucion
 {
 	char	*marker;
 	char	*new_str;
+	char	*str;
 	char	*aux;
 	int		len;
 
-	len = expand_all_len(str, envp);
+	str = *origin;
+	len = calculate_expansion_length(str, envp);
 	if (len == ft_strlen(str))
 		return (0);
 
@@ -90,6 +95,7 @@ int	expandstr(char *str, t_garbage *garbage, char *envp) //envp debe recibir el 
 	 }
 	garbage->pointers[garbage->current] = new_str;
 	garbage->current = garbage->current++;
+	*origin = new_str;
 	new_str[len] = '\0';
 
 	marker = str;
@@ -99,9 +105,10 @@ int	expandstr(char *str, t_garbage *garbage, char *envp) //envp debe recibir el 
 		{
 			ft_strlcpy(new_str, str, marker - str);
 			new_str = new_str + (marker - str);
-			str = marker + 1;
+			marker++;
+			str = marker;
 			while (*marker && !ft_strchr(WHITESPACES, *marker)
-			&& *marker != '"' && *marker != 39)
+			&& *marker != '"' && *marker != 39 && *marker != '$')//
 				marker++;
 			aux = ft_substr(str, 0, marker - str);
 			if (aux == NULL)
@@ -111,12 +118,11 @@ int	expandstr(char *str, t_garbage *garbage, char *envp) //envp debe recibir el 
 			free(aux);
 			new_str = new_str + ft_strlen(new_str);
 		}
-		if (*marker == 39 && ft_strchr(marker + 1, 39))
+		else if (*marker == 39 && ft_strchr(marker + 1, 39))
 			marker = ft_strchr(marker + 1, 39);
-		marker++;
+		else
+			marker++;
 	}
-	
-
 }
 
 int	expand_task(t_task *node, char *envp)
@@ -129,16 +135,16 @@ int	expand_task(t_task *node, char *envp)
 			return (1);
 		(node->garb.pointers)[node->garb.size] == NULL;
 		
-		if (expandstr(node->cmd, &(node->garb), envp))
+		if (expandstr(&(node->cmd), &(node->garb), envp))
 			return (1);
-		if (expandstr(node->redir.infoo, $(node->garb), envp))
+		if (expandstr(&(node->redir.infoo), $(node->garb), envp))
 			return (1);
-		if (expandstr(node->redir.outfile, $(node->garb), envp))
+		if (expandstr(&(node->redir.outfile), $(node->garb), envp))
 			return (1);
 		i = 0;
 		while ((node->argv)[i])
 		{
-			if (expandstr((node->argv)[i], $(node->garb), envp))
+			if (expandstr((&(node->argv)[i]), $(node->garb), envp))
 			return (1);
 			i++;
 		}
