@@ -54,22 +54,25 @@ si no se encuentra ninguna redireccion los e_symbols pemanecen "none"
 typedef struct s_redir
 {
 	e_nodes	type;
-
 	e_symbols	insymbol;//< o <<
 	char		*infoo;// será un archivo para <, O un separator para <<
-
 	e_symbols	outsymbol;//>> o >
 	char		*outfile;
 }	t_redir;
 
+typedef struct s_garbage {
+	void	**pointers;
+	int		size;
+	int		current;
+}	t_garbage;
+
 typedef struct s_task
 {
-	e_nodes	type;
-
-	t_redir redir;
-	char	*cmd;
-	char	**argv;
-	void	**garbage;
+	e_nodes		type;
+	t_redir 	redir;
+	char		*cmd;
+	char		**argv;
+	t_garbage	garb;
 }	t_task;
 
 //si left o rigth fuesen NULL indica error de reserva de memoria, hay que liverar el arbol entero y lanzar error.
@@ -81,6 +84,8 @@ typedef struct s_pipe {
 	t_task	*left;
 	t_tree	*rigth;
 }	t_pipe;
+
+
 
 //FUNCIONES PARA CONSTRUIR ARBOL SINTACTICO
 void free_tree(t_tree *node);

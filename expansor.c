@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expansor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
+/*   Updated: 2025/01/06 23:51:42 by antofern         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
+//puede que ionnecesaria
 int	is_expansible(char *str)
 {
 	while (*str)
@@ -14,75 +26,140 @@ int	is_expansible(char *str)
 	return (0);
 }
 
-expandstr(char *str, void **garbaje, int position)
+static int	expand_var_len(char **str, char *envp[])
 {
-	char *tmp_str;
+	int j = 0;
+	char *aux;
+	int len;
 
-	tmp_str = str;
-	while (*tmp_str)
+	(*str)++;
+	while ((*str)[j] && !ft_strchr(WHITESPACES, (*str)[j])
+	&& (*str)[j] != '"' && (*str)[j] != 39)
+		j++;
+	aux = ft_substr(*str, 0, j);
+	if (aux == NULL)
+		return (-1);
+	*str += j;
+	len = ft_strlen(ft_getenv(aux, envp));
+	free(aux);
+	return len;
+}
+
+//NO SEPARAR DE EXPANDSTR()
+static int	expand_all_len(char *str, char *envp[])
+{
+	int len;
+	int	j;
+	char *aux;
+
+	len = 0;
+	while (str)
 	{
-		if (*tmp_str == '$')
-		
-			
-		if (*tmp_str == 39 && ft_strchr(tmp_str + 1, 39))
-			tmp_str = ft_strchr(tmp_str + 1, 39);
-		tmp_str++;
+			if (*str == 39 && ft_strchr(str + 1, 39))
+			{
+				aux = str;
+				str = ft_strchr(str + 1, 39);
+				len += (str - aux);
+			}
+			if(*str == '$')
+				len += expand_var_len(&str, envp);
+			str++;
+			len++;
 	}
+	return (len);
+}
 
+int	expandstr(char *str, t_garbage *garbage, char *envp) //envp debe recibir el array de strings que hemos creado y sobre el que se reflejan las modificaciones que pueda hacer minishell durante la ejecucion
+{
+	char	*marker;
+	char	*new_str;
+	char	*aux;
+	int		len;
+
+	len = expand_all_len(str, envp);
+	if (len == ft_strlen(str))
+		return (0);
+
+	new_str = ft_calloc(len + 1, sizeof(char));
+	if (new_str == NULL)
+	 return (1);
+	 if (garbage->current >= garbage->size)
+	 {
+		ft_putstr_fd("Bad count on expandstr", 2);//DEBUGEO
+	 	return(1);
+	 }
+	garbage->pointers[garbage->current] = new_str;
+	garbage->current = garbage->current++;
+	new_str[len] = '\0';
+
+	marker = str;
+	while (*marker)
+	{
+		if (*marker == '$')
+		{
+			ft_strlcpy(new_str, str, marker - str);
+			new_str = new_str + (marker - str);
+			str = marker + 1;
+			while (*marker && !ft_strchr(WHITESPACES, *marker)
+			&& *marker != '"' && *marker != 39)
+				marker++;
+			aux = ft_substr(str, 0, marker - str);
+			if (aux == NULL)
+				return (1);
+			str = marker;
+			ft_strlcpy(new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)));
+			free(aux);
+			new_str = new_str + ft_strlen(new_str);
+		}
+		if (*marker == 39 && ft_strchr(marker + 1, 39))
+			marker = ft_strchr(marker + 1, 39);
+		marker++;
+	}
+	
 
 }
 
-void	expand_task(t_task *node)
+int	expand_task(t_task *node, char *envp)
 {
-		int	counter;
 		int	i;
 
-		counter = count_expansions(((t_task *)node));
-		node->garbage = ft_calloc(counter + 1, sizeof(char *));
-		if (node->garbage == NULL)
-			assert(0);//GESTIONAR ERROR
-		(node->garbage)[counter] == NULL;
-		counter--; //los arrays tienen elemento 0
-		if (is_expansible(node->cmd))
-		{
-			expandstr(node->cmd, node->garbage, counter);
-			counter--;
-		}
-		if (is_expansible(node->redir.infoo))
-		{
-			expandstr(node->redir.infoo, node->garbage, counter);
-			counter--;
-		}
-		if (is_expansible(node->redir.outfile))
-		{
-			expandstr(node->redir.outfile, node->garbage, counter);
-			counter--;
-		}
+		node->garb.size = count_expansions(((t_task *)node));
+		node->garb.pointers = ft_calloc(node->garb.size + 1, sizeof(void *));
+		if (node->garb.pointers == NULL)
+			return (1);
+		(node->garb.pointers)[node->garb.size] == NULL;
+		
+		if (expandstr(node->cmd, &(node->garb), envp))
+			return (1);
+		if (expandstr(node->redir.infoo, $(node->garb), envp))
+			return (1);
+		if (expandstr(node->redir.outfile, $(node->garb), envp))
+			return (1);
 		i = 0;
 		while ((node->argv)[i])
 		{
-			if (is_expansible((node->argv)[i]))
-			{
-				expandstr((node->argv)[i], node->garbage, counter);
-				counter--;
-			}
+			if (expandstr((node->argv)[i], $(node->garb), envp))
+			return (1);
 			i++;
 		}
 }
 
-//¿seria viable fundir expansion y cecking?
-int	expand_tree(t_tree *node)
+//Si retorna 1 imprimir perror(errno)
+int	expand_tree(t_tree *node, char *envp)
 {
-
+	int trace;
 
 	if (node->type == PIPE)
 	{
-		expand_tree(((t_pipe *)node)->left);
-		expand_tree(((t_pipe *)node)->rigth);
+		if(expand_tree(((t_pipe *)node)->left, envp))
+			return (1);
+		if(expand_tree(((t_pipe *)node)->rigth, envp))
+			return (1);
 	}
 	else if (node->type == TASK)
 	{
-		expand_task(((t_task *)node));
-		unwarp(node);//limpia comillas no anidadas en otras comillas 
+		if(expand_task(((t_task *)node), envp))
+			return (1);
 	}
+	return (0);
 }

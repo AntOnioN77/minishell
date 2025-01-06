@@ -452,13 +452,16 @@ int main(int argc, char **argv, char **envp)
 	return(outstate);
 }
 */
-/*
+
 int main(int argc, char **argv, char **envp)
 {
 	char 	*line;
 	t_tree	*tree;
 	int		error;
+	char	**new_envp;
 
+
+	
 	error = 0;
 	while(error == 0)
 	{
@@ -474,6 +477,7 @@ int main(int argc, char **argv, char **envp)
 			free(line);
 			return (1);
 		}
+		expand_tree(tree);
 //		check_tree(*tree);
 		print_tree(tree, 30);
 		if (error) //execline debe liberar los nodos desde las hojas hacia arriba. 
@@ -483,7 +487,7 @@ int main(int argc, char **argv, char **envp)
 		}
 	}
 }
-*/
+
 
 /*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
