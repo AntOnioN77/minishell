@@ -3,9 +3,42 @@
 #include "minishell.h"
 //TEMPORAL TESTEO BORRAR Y REACER IMPORTANTEE!!!---------------------------------------------------------------------------------------------------------------
 
+// Mock de ft_getenv para testing
+char *ft_getenv(const char *name, char *envp[])
+{
+    if (strcmp(name, "VAR") == 0)
+		return "value";
+    if (strcmp(name, "EMPTY") == 0)
+		return "";
+    if (strcmp(name, "LONG") == 0)
+		return "this_is_a_very_long_value";
+    if (strcmp(name, "SPACE") == 0)
+		return "value with spaces";
+    if (strcmp(name, "QUOTES") == 0)
+		return "value'with'quotes";
+    return NULL;
+}
+
+//solo para test REHACER
+void cleanup_garbage(t_garbage *garbage)
+{
+	int i;
+	
+	i = 0;
+    while (i < garbage->current)
+    {
+		printf("free garbage->pointers[%d]\n", i);
+        free(garbage->pointers[i]);
+		i++;
+    }
+    free(garbage->pointers);
+	
+}
+
 void free_tree(t_tree *node)
 {
 	t_pipe *pipe_node;
+	t_task *task_node;
 
     if (!node)
         return;
@@ -21,7 +54,8 @@ void free_tree(t_tree *node)
 	}
     else if (node->type == TASK)
 	{
-		t_task *task_node = (t_task *)node;
+		task_node = (t_task *)node;
+		cleanup_garbage(&(task_node->garb));
 		// Los elementos dentro de task_node->redir y los strings 
 		// en task_node->cmd y task_node->argv solo necesitan ser liberados si fueron expandidos
 		// eso va a ser bastante problematico.
@@ -30,7 +64,6 @@ void free_tree(t_tree *node)
 			free(task_node->argv);
 		free(task_node);
 	}
-	//FALTA LIBERRAR t_syntax!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	return ;
 }
 
@@ -395,6 +428,8 @@ t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fr
 {
 	t_tree *ret;
 
+	if (ft_strnstr(line, "exit", 4))// EXIT PROVISIONAL!!!!!!!!
+		return (NULL);//
 	if(0 == parsepipe(line, &ret))//parsepipe retorna 0 si no encontro un |, si lo encontro 1. Si ocurrió un error retorna 1 y pone ret=NULL
 		ret = (t_tree *)createtask(line, line + ft_strlen(line));// parsetask recibe line al completo
 	//si parsetask o parsepipe falló, establecio ret a null.
@@ -474,17 +509,15 @@ int main(int argc, char **argv, char **envp)
 		tree = processline(line);
 		if (tree == NULL)
 		{
+			rl_clear_history();
 			free(line);
 			return (1);
 		}
-		expand_tree(tree);
+		expand_tree(tree, envp);
 //		check_tree(*tree);
 		print_tree(tree, 30);
-		if (error) //execline debe liberar los nodos desde las hojas hacia arriba. 
-		{
-			free(line);
-			free_tree(tree);
-		}
+		free(line);
+		free_tree(tree);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/07 16:22:40 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/08 00:40:23 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 //puede que innecesaria
 int	is_expansible(char *str)
 {
+	if(!str)
+		return (0);
 	while (*str)
 	{
 		if (*str == '$')
@@ -37,9 +39,9 @@ int	count_expansions(t_task *node)
 	count += is_expansible(node->redir.outfile);
 
 	i = 0;
-	while ((node->argv)[count])
+	while ((node->argv)[i])
 	{
-		count += is_expansible((node->argv[count]));
+		count += is_expansible((node->argv[i]));
 		i++;
 	}
 	return (count);
@@ -103,6 +105,8 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 	char	*aux;
 	int		len;
 
+	if(!is_expansible(*origin))
+		return (0);
 	str = *origin;
 	len = calculate_expansion_length(str, envp);
 	if (len < 0)
@@ -110,7 +114,7 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 	new_str = ft_calloc(len + 1, sizeof(char));
 	if (new_str == NULL)
 	 	return (1);
-	if (garbage->current >= garbage->size)
+	if (garbage->size <= garbage->current)
 	{
 		ft_putstr_fd("Bad count on expandstr", 2);//DEBUGEO
 	 	return(1);
@@ -170,7 +174,7 @@ int	expand_task(t_task *node, char *envp[])
 	while ((node->argv)[i])
 	{
 		if (expandstr((&(node->argv)[i]), &(node->garb), envp))
-		return (1);
+			return (1);
 		i++;
 	}
 }

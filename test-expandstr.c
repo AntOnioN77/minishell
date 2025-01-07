@@ -20,16 +20,17 @@ char *ft_getenv(const char *name, char *envp[])
     if (strcmp(name, "QUOTES") == 0) return "value'with'quotes";
     return NULL;
 }
-/*
+
 void cleanup_garbage(t_garbage *garbage)
 {
     for (int i = 0; i < garbage->current; i++)
     {
+		printf("free garbage->pointers[%d]\n", i);
         free(garbage->pointers[i]);
     }
     free(garbage->pointers);
 }
-*/
+
 
 void run_test(char *test_name, char *input, char *expected, char *envp[])
 {
@@ -38,7 +39,8 @@ void run_test(char *test_name, char *input, char *expected, char *envp[])
     garbage.pointers = malloc(sizeof(void *) * (garbage.size + 1));
     garbage.current = 0;
 
-    char *str = strdup(input);
+    char *str_original = strdup(input);
+	char *str = str_original;
     if (expandstr(&str, &garbage, envp) == 0)
     {
         print_test_result(test_name, input, expected, str);
@@ -49,8 +51,8 @@ void run_test(char *test_name, char *input, char *expected, char *envp[])
         printf("❌ FAIL: expandstr returned error\n");
     }
     
-    //cleanup_garbage(&garbage);
-    free(str);
+    cleanup_garbage(&garbage);
+    //free(str);
 }
 
 int main(void)
