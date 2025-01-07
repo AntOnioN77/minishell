@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/07 15:29:35 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/07 16:22:40 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 	{
 		if (*marker == '$')
 		{
-			ft_strlcpy(new_str, str, marker - str);
+			ft_strlcpy(new_str, str, marker - str + 1);
 			new_str = new_str + (marker - str);
 			marker++;
 			str = marker;

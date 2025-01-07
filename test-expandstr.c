@@ -56,7 +56,7 @@ void run_test(char *test_name, char *input, char *expected, char *envp[])
 int main(void)
 {
     char *envp[] = {NULL};  // No necesitamos envp real porque mockeamos ft_getenv
-/*LLDBUGEO
+
     // Test 1: Simple variable expansion
     run_test("1.Simple expansion", 
              "$VAR", 
@@ -68,7 +68,7 @@ int main(void)
              "$VAR$VAR", 
              "valuevalue",
              envp);
-*/
+
     // Test 3: Variables with text
     run_test("3.Variables with text", 
              "prefix $VAR suffix", 
