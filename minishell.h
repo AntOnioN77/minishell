@@ -102,7 +102,10 @@ void	get_redir(char **segment, char *end, t_redir *redir);
 int count_cmdflags(char *segment, char *end);
 int parse_task(char *segment, char *end, t_task *task);
 int parsepipe(char *line, t_tree **ret);
+char *ft_getenv(const char *name, char *envp[]);
+int	expandstr(char **origin, t_garbage *garbage, char *envp[]);
 
 
 #define WHITESPACES " \r\n\v\t"
 #define DELIMITERS "|<> \r\n\v\t"
+

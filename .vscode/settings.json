@@ -3,6 +3,7 @@
 		"history.h": "c",
 		"readline.h": "c",
 		"libft.h": "c",
-		"ios": "c"
+		"ios": "c",
+		"__node_handle": "c"
 	}
 }

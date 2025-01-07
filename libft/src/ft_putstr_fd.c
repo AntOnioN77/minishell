@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 17:13:06 by antofern          #+#    #+#             */
-/*   Updated: 2024/08/26 13:33:19 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/07 03:14:23 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,11 @@
 
 void	ft_putstr_fd(char *s, int fd)
 {
-	int	i;
+	int	len;
 
 	if (!s)
 		return ;
-	i = 0;
-	while (s[i] != '\0')
-	{
-		ft_putchar_fd(s[i], fd);
-		i++;
-	}
+	len = ft_strlen(s);
+	write(fd, s, len);
+	return ;
 }
