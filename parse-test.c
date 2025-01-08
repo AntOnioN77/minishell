@@ -23,6 +23,7 @@ void test_minishell(void)
 		"cat<input.txt",							// Redirección de entrada sin espacio y con el comando sin espacio
 		"ls -la <infile",                           // Comando simple con argumentos y redir in
         "ls -la <infile <infile2",                  // Comando simple con argumentos y dos infiles, infile esperado: infile2
+		"\"\"|<input",
         NULL
     };
 

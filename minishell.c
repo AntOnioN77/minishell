@@ -1,4 +1,4 @@
-//compilacion  cc -g3 minishell.c -L. -lft -lreadline
+//compilacion  cc -g3 minishell.c expansor.c -L. -lft -lreadline
 
 #include "minishell.h"
 //TEMPORAL TESTEO BORRAR Y REACER IMPORTANTEE!!!---------------------------------------------------------------------------------------------------------------
@@ -209,7 +209,7 @@ char	*ft_strnchr(const char *s, int c, int n)
 		return (NULL);
 }
 
-void skip_quotes(char **strpnt, char *end)
+int skip_quotes(char **strpnt, char *end)
 {
 	char *tmp;
 
@@ -219,8 +219,11 @@ void skip_quotes(char **strpnt, char *end)
 		if(**strpnt == 39 && ft_strnchr(*strpnt +1, 39, (end - *strpnt))) //39 es ' en ascii
 			*strpnt = ft_strnchr(*strpnt +1, 39, (end - *strpnt));
 		if (*strpnt != tmp)
+		{
 			(*strpnt)++;
-		return ;
+			return (1);
+		}
+		return (0);
 }
 
 /*	NO TESTEADAA
@@ -239,8 +242,8 @@ int strnchr_outquot(char **str, char *end, char c)
 			*str = strpnt;
 			return (1);
 		}
-		skip_quotes(&strpnt, end);
-		strpnt++;
+		if(!skip_quotes(&strpnt, end))
+			strpnt++;
 
 	}
 	return (0);
@@ -487,7 +490,7 @@ int main(int argc, char **argv, char **envp)
 	return(outstate);
 }
 */
-/*
+
 int main(int argc, char **argv, char **envp)
 {
 	char 	*line;
@@ -520,7 +523,7 @@ int main(int argc, char **argv, char **envp)
 		free_tree(tree);
 	}
 }
-*/
+
 
 /*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/

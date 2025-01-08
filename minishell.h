@@ -93,7 +93,7 @@ t_tree *processline(char *line);
 void print_tree(t_tree *node, int depth);
 void	skip_redir(char **segment, char *end);
 char	*ft_strnchr(const char *s, int c, int n);
-void skip_quotes(char **strpnt, char *end);
+int		skip_quotes(char **strpnt, char *end);
 int strnchr_outquot(char **str, char *end, char c);
 t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);
