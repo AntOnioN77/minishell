@@ -106,7 +106,8 @@ char *ft_getenv(const char *name, char *envp[]);
 int	expandstr(char **origin, t_garbage *garbage, char *envp[]);
 int	expand_tree(t_tree *node, char *envp[]);
 char *ft_getenv(const char *name, char *envp[]);
-
+void cleanup_garbage(t_garbage *garbage);
+char *ft_getenv(const char *name, char *envp[]);
 
 #define WHITESPACES " \r\n\v\t"
 #define DELIMITERS "|<> \r\n\v\t"

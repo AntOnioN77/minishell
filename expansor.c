@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/08 00:40:23 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/08 13:38:51 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 			marker++;
 			str = marker;
 			while (*marker && !ft_strchr(WHITESPACES, *marker)
-			&& *marker != '"' && *marker != 39 && *marker != '$')//
+			&& *marker != '"' && *marker != 39 && *marker != '$')
 				marker++;
 			aux = ft_substr(str, 0, marker - str);
 			if (aux == NULL)
@@ -145,7 +145,10 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 			new_str = new_str + ft_strlen(new_str);
 		}
 		else if (*marker == 39 && ft_strchr(marker + 1, 39))
+		{
 			marker = ft_strchr(marker + 1, 39);
+			marker++;
+		}
 		else
 			marker++;
 	}

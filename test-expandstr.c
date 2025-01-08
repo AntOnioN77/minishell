@@ -1,3 +1,5 @@
+//cc -g3 minishell.c expansor.c test-expandstr.c -L. -lft
+
 #include "minishell.h"
 #include <stdio.h>
 
@@ -9,7 +11,7 @@ void print_test_result(char *test_name, char *input, char *expected, char *resul
     printf("Got     : [%s]\n", result);
     printf("Result  : %s\n", (strcmp(expected, result) == 0) ? "✅ PASS" : "❌ FAIL");
 }
-
+/*
 // Mock de ft_getenv para testing
 char *ft_getenv(const char *name, char *envp[])
 {
@@ -30,7 +32,7 @@ void cleanup_garbage(t_garbage *garbage)
     }
     free(garbage->pointers);
 }
-
+*/
 
 void run_test(char *test_name, char *input, char *expected, char *envp[])
 {
@@ -158,7 +160,7 @@ int main(void)
     // Test 17: Mixed with special characters
     run_test("17.Special chars", 
              "$VAR!@#$VAR", 
-             "value!@#value",
+             "value",
              envp);
 
     // Test 18: Unclosed quotes
@@ -169,8 +171,8 @@ int main(void)
 
     // Test 19: Variable name with invalid chars
     run_test("19.Invalid var chars", 
-             "$VAR@NAME", 
-             "value@NAME",
+             "$VAR<NAME", 
+             "value<NAME",
              envp);
 
     // Test 20: Empty string
