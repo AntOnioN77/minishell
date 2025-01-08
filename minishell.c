@@ -490,7 +490,7 @@ int main(int argc, char **argv, char **envp)
 	return(outstate);
 }
 */
-
+/*
 int main(int argc, char **argv, char **envp)
 {
 	char 	*line;
@@ -523,7 +523,7 @@ int main(int argc, char **argv, char **envp)
 		free_tree(tree);
 	}
 }
-
+*/
 
 /*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
