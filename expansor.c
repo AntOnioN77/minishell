@@ -6,11 +6,23 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/08 13:38:51 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/08 14:42:22 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	add_pathname(char **cmd,  t_garbage *garbage, char *envp[])
+{
+	//To do:
+		//usa access para verificar cmd como ruta absoluta
+		
+		//busca en PATH una ruta valida para cmd
+		//	si la encuentra:
+		//	-libera garbaje (aun no se como va a saber si cmd fue o no fue expandida )
+		//	-costruye path/name
+
+}
 
 //puede que innecesaria
 int	is_expansible(char *str)
@@ -33,7 +45,7 @@ int	count_expansions(t_task *node)
 	int	count;
 	int	i;
 	
-	count = 0;
+	count = 1;//reservamos al menos uno extra para add_pathname(), aunque pueda quedar sin uso en algunos casos.
 	count += is_expansible(node->cmd);
 	count += is_expansible(node->redir.infoo);
 	count += is_expansible(node->redir.outfile);
@@ -169,6 +181,8 @@ int	expand_task(t_task *node, char *envp[])
 	
 	if (expandstr(&(node->cmd), &(node->garb), envp))
 		return (1);
+//	if (add_pathname(&(node->cmd), &(node->garb), envp))
+//		return (1);
 	if (expandstr(&(node->redir.infoo), &(node->garb), envp))
 		return (1);
 	if (expandstr(&(node->redir.outfile), &(node->garb), envp))

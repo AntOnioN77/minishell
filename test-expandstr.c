@@ -158,7 +158,7 @@ int main(void)
              envp);
 
     // Test 17: Mixed with special characters
-    run_test("17.Special chars", 
+    run_test("17.Special chars (subject no gestionar)", 
              "$VAR!@#$VAR", 
              "value",
              envp);
