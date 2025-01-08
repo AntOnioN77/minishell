@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/08 14:42:22 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:11:22 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ static int	calculate_variable_length(char **str, char *envp[])
 		return (-1);
 	*str += j;
 	len = ft_strlen(ft_getenv(aux, envp));
+	if (!ft_strcmp(aux,""))
+		len++;
 	free(aux);
 	return len;
 }
@@ -153,6 +155,8 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 				return (1);
 			str = marker;
 			ft_strlcpy(new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)) + 1);
+			if (!ft_strcmp(aux, ""))
+				*new_str='$';
 			free(aux);
 			new_str = new_str + ft_strlen(new_str);
 		}

@@ -428,7 +428,7 @@ t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fr
 {
 	t_tree *ret;
 
-	if (ft_strnstr(line, "exit", 4))// EXIT PROVISIONAL!!!!!!!!
+	if (!ft_strcmp(line, "exit"))// EXIT PROVISIONAL!!!!!!!!
 		return (NULL);//
 	if(0 == parsepipe(line, &ret))//parsepipe retorna 0 si no encontro un |, si lo encontro 1. Si ocurrió un error retorna 1 y pone ret=NULL
 		ret = (t_tree *)createtask(line, line + ft_strlen(line));// parsetask recibe line al completo
