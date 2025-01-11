@@ -479,26 +479,14 @@ int command_flow(char **envp) //la gestion de errores de esta funcion es muy pro
 	return (error);
 }
 
-int main(int argc, char **argv, char **envp)
-{
-	int	outstate;
-	char **new_envp;
-
-	upgrade_envp(envp, new_envp);//no necesita liverar envp original despues de clonarlo, pues "env" no esta reservado dinamicamente
-	outstate = command_flow(envp);
-	free(new_envp);
-	return(outstate);
-}
 */
-/*
+
 int main(int argc, char **argv, char **envp)
 {
 	char 	*line;
 	t_tree	*tree;
 	int		error;
 	char	**new_envp;
-
-
 	
 	error = 0;
 	while(error == 0)
@@ -517,13 +505,12 @@ int main(int argc, char **argv, char **envp)
 			return (1);
 		}
 		expand_tree(tree, envp);
-//		check_tree(*tree);
-		print_tree(tree, 30);
+//		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores de tipo sintactico
+		print_tree(tree, 30);// SUSTITUYE  esta funcion por la función que se encarga de la ejecucion del arbol.
 		free(line);
 		free_tree(tree);
 	}
 }
-*/
 
 /*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
