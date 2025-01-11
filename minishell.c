@@ -501,13 +501,15 @@ int main(int argc, char **argv, char **envp)
 		tree = processline(line);
 		if (tree == NULL)
 		{
+			perror("processline:");
 			rl_clear_history();
 			free(line);
 			return (1);
 		}
-		expand_tree(tree, envp);
+		if(expand_tree(tree, envp))
+			perror("expandtree:");//esta gestion de error es muy mejorable
 //		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores
-		//print_tree(tree, 30);// SUSTITUYE  esta funcion por la función que se encarga de la ejecucion del arbol.
+		//print_tree(tree, 30);
 		error = execute(tree, envp);
 		free(line);
 		free_tree(tree);
