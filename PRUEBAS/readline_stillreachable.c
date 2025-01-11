@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "libft/headers/libft.h"
+#include "../libft/headers/libft.h"
 
 int main() {
     char *input;

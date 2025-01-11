@@ -145,10 +145,13 @@ void	nullify_delimiters(char *str)
         return;
     while (*str)
     {
-		skip_quotes(&str, str + ft_strlen(str));
-            if (isdelimiter(*str))
-                *str = '\0';
-        str++;
+		
+		if(!skip_quotes(&str, str + ft_strlen(str)))
+		{
+        	if (isdelimiter(*str))
+            	*str = '\0';
+		}
+		str++;
     }
 }
 
@@ -215,15 +218,17 @@ int skip_quotes(char **strpnt, char *end)
 	char *tmp;
 
 		tmp = *strpnt;
-		if(**strpnt == '"' && ft_strnchr((*strpnt) +1, '"', (end - *strpnt))) //sin  +1 strchr encontraría el propio caracter de partida
-			*strpnt = ft_strnchr(*strpnt +1, '"', (end - *strpnt));
-		if(**strpnt == 39 && ft_strnchr(*strpnt +1, 39, (end - *strpnt))) //39 es ' en ascii
-			*strpnt = ft_strnchr(*strpnt +1, 39, (end - *strpnt));
-		if (*strpnt != tmp)
+		while (**strpnt == '"' || **strpnt == 39)
 		{
-			(*strpnt)++;
-			return (1);
+			if(**strpnt == '"' && ft_strnchr((*strpnt) +1, '"', (end - *strpnt))) //sin  +1 strchr encontraría el propio caracter de partida
+				*strpnt = ft_strnchr(*strpnt +1, '"', (end - *strpnt));
+			else if(**strpnt == 39 && ft_strnchr(*strpnt +1, 39, (end - *strpnt))) //39 es ' en ascii
+				*strpnt = ft_strnchr(*strpnt +1, 39, (end - *strpnt));
+			else
+				break ;
 		}
+		if (*strpnt != tmp)
+			return (1);
 		return (0);
 }
 
@@ -243,8 +248,8 @@ int strnchr_outquot(char **str, char *end, char c)
 			*str = strpnt;
 			return (1);
 		}
-		if(!skip_quotes(&strpnt, end))
-			strpnt++;
+		skip_quotes(&strpnt, end);
+		strpnt++;
 
 	}
 	return (0);
@@ -316,7 +321,8 @@ void	getpntword(char **segment, char *end, char **dst)
 		*dst = *segment;
 	while (*segment < end)
 	{
-		skip_quotes(segment, end);
+		if (skip_quotes(segment, end))
+			(*segment)++;
 		if(!isdelimiter(**segment))
 			(*segment)++;
 		else
@@ -328,8 +334,7 @@ void	getpntword(char **segment, char *end, char **dst)
 	return ;
 }
 
-//Temporal, de prueba
-//si lo primero que encuentra en segment son redirs los consume, avanzando segment. antes de poder usar la palabra apuntada por dest, una funcion deberia recorrer line nullificando espacios y otros separadores como < o |
+
 void	get_redir(char **segment, char *end, t_redir *redir)
 {
 	while (*segment < end)
@@ -397,7 +402,7 @@ int parse_task(char *segment, char *end, t_task *task)
 	i = 0;
 	while(segment < end)
 	{
-		get_redir(&segment, end, &(task->redir));//si lo primero que encuentra en segment es un redir lo consume, avanzando segment.
+		get_redir(&segment, end, &(task->redir));//si lo primero que encuentra en segment es uno o varios redir los consume, avanzando segment.
 		if (!(segment < end))
 			break ;
 		if(!(task->cmd))
@@ -482,6 +487,7 @@ int command_flow(char **envp) //la gestion de errores de esta funcion es muy pro
 
 */
 
+
 int main(int argc, char **argv, char **envp)
 {
 	char 	*line;
@@ -509,8 +515,8 @@ int main(int argc, char **argv, char **envp)
 		if(expand_tree(tree, envp))
 			perror("expandtree:");//esta gestion de error es muy mejorable
 //		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores
-		//print_tree(tree, 30);
-		error = execute(tree, envp);
+		print_tree(tree, 30);
+//		error = execute(tree, envp);
 		free(line);
 		free_tree(tree);
 	}

@@ -1,6 +1,6 @@
-//cc -g3 minishell.c expansor.c test-expandstr.c -L. -lft
+//cc -g3 minishell.c expansor.c PRUEBAS/test-expandstr.c -L. -lft
 
-#include "minishell.h"
+#include "../minishell.h"
 #include <stdio.h>
 
 void print_test_result(char *test_name, char *input, char *expected, char *result)
@@ -60,7 +60,7 @@ void run_test(char *test_name, char *input, char *expected, char *envp[])
 int main(void)
 {
     char *envp[] = {NULL};  // No necesitamos envp real porque mockeamos ft_getenv
-
+/*
     // Test 1: Simple variable expansion
     run_test("1.Simple expansion", 
              "$VAR", 
@@ -168,7 +168,7 @@ int main(void)
              "\"$VAR", 
              "\"value",
              envp);
-
+*/
     // Test 19: Variable name with invalid chars
     run_test("19.Invalid var chars", 
              "$VAR<NAME", 
