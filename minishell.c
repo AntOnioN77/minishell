@@ -507,7 +507,8 @@ int main(int argc, char **argv, char **envp)
 		}
 		expand_tree(tree, envp);
 //		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores
-		print_tree(tree, 30);// SUSTITUYE  esta funcion por la función que se encarga de la ejecucion del arbol.
+		//print_tree(tree, 30);// SUSTITUYE  esta funcion por la función que se encarga de la ejecucion del arbol.
+		error = execute(tree, envp);
 		free(line);
 		free_tree(tree);
 	}
