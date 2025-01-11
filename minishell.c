@@ -74,14 +74,14 @@ void print_tree(t_tree *node, int depth)
         return;
     for (int i = 0; i < depth; i++)
         printf("  ");
-    switch(node->type)
+    if(node->type == PIPE)
 	{
-        case PIPE:
-            printf("PIPE\n");
-            print_tree(((t_tree *)((t_pipe *)node)->left), depth + 1);
-            print_tree(((t_pipe *)node)->rigth, depth + 1);
-            break;
-        case TASK:
+    	printf("PIPE\n");
+        print_tree(((t_tree *)((t_pipe *)node)->left), depth + 1);
+        print_tree(((t_pipe *)node)->rigth, depth + 1);
+	}
+    else if(node->type == TASK)
+    {
             printf("TASK->cmd: %s\n", ((t_task *)node)->cmd);
 			for (int j = 0; ((t_task *)node)->argv[j]; j++)
 				printf("\t->argv[%d]: %s\n", j, ((t_task *)node)->argv[j]);
@@ -89,8 +89,9 @@ void print_tree(t_tree *node, int depth)
 			printf("\t->redir->infoo: %s\n", ((t_task *)node)->redir.infoo);
 			printf("\t->redir->outsymbol: %d\n", ((t_task *)node)->redir.outsymbol);
 			printf("\t->redir->outfile: %s\n", ((t_task *)node)->redir.outfile);
-            break;
     }
+	else
+		return; //llegar aqui indicaria un error
 }
 
 //______________ FIN BORRAR__________________________________________________________________________________
@@ -505,7 +506,7 @@ int main(int argc, char **argv, char **envp)
 			return (1);
 		}
 		expand_tree(tree, envp);
-//		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores de tipo sintactico
+//		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores
 		print_tree(tree, 30);// SUSTITUYE  esta funcion por la función que se encarga de la ejecucion del arbol.
 		free(line);
 		free_tree(tree);
