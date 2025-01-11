@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/08 15:11:22 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/10 13:34:10 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 
 int	add_pathname(char **cmd,  t_garbage *garbage, char *envp[])
 {
-	//To do:
-		//usa access para verificar cmd como ruta absoluta
+	//usa access para verificar cmd como ruta absoluta
+	if (cmd[0] == '/' || strncmp(cmd, "../", 3) == 0 || strncmp(cmd, "./", 2) == 0)
+		retrurn (0);
+
+	//busca en PATH una ruta valida para cmd
 		
-		//busca en PATH una ruta valida para cmd
 		//	si la encuentra:
 		//	-libera garbaje (aun no se como va a saber si cmd fue o no fue expandida )
 		//	-costruye path/name
