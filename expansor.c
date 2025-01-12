@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/11 16:47:22 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/12 12:18:32 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,30 @@ static int	calculate_expansion_length(char *str, char *envp[])
 	return (len);
 }
 
+int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
+{
+	char *aux;
+
+	ft_strlcpy(*new_str, *str, *marker - *str + 1);
+	*new_str = *new_str + (*marker - *str);
+	(*marker)++;
+	*str = *marker;
+	while (**marker && !ft_strchr(WHITESPACES, **marker)
+	&& **marker != '"' && **marker != 39 && **marker != '$')
+		(*marker)++;
+	aux = ft_substr(*str, 0, *marker - *str);
+	if (aux == NULL)
+		return (1);
+	*str = *marker;
+	ft_strlcpy(*new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)) + 1);
+	if (!ft_strcmp(aux, ""))
+		**new_str='$';
+	free(aux);
+	*new_str = *new_str + ft_strlen(*new_str);
+	return (0);
+}
+
+
 int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recibir el array de strings que hemos creado y sobre el que se reflejan las modificaciones que pueda hacer minishell durante la ejecucion
 {
 	char	*marker;
@@ -145,22 +169,8 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 	{
 		if (*marker == '$')
 		{
-			ft_strlcpy(new_str, str, marker - str + 1);
-			new_str = new_str + (marker - str);
-			marker++;
-			str = marker;
-			while (*marker && !ft_strchr(WHITESPACES, *marker)
-			&& *marker != '"' && *marker != 39 && *marker != '$')
-				marker++;
-			aux = ft_substr(str, 0, marker - str);
-			if (aux == NULL)
+			if(handle_dollar(&new_str, &str, &marker, envp))
 				return (1);
-			str = marker;
-			ft_strlcpy(new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)) + 1);
-			if (!ft_strcmp(aux, ""))
-				*new_str='$';
-			free(aux);
-			new_str = new_str + ft_strlen(new_str);
 		}
 		else if (*marker == 39 && ft_strchr(marker + 1, 39))
 		{

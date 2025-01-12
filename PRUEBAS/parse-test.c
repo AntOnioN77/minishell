@@ -29,6 +29,28 @@ void test_minishell(void)
 		"echo 'comillas''dos veces'>outfile",		// 20. comillas dos veces sin espacio en medio y luego redir
 		"echo >outfile'comillas''dos veces'",		// 21. redir y luego comillas dos veces sin espacio en medio
 		"echo 'comillas'>outfile'dos veces'",		// 22. comillas cerradas y luego redir y luego comillas cerradas otra vez
+		"'|",										// 23.
+		"|'",										// 24.
+		"$VAR",
+		"$VAR$VAR", 
+		"prefix $VAR suffix",
+		"'$VAR'", 
+		"\"$VAR\"", 
+		"\"$VAR'$VAR'\"",
+		"$NONEXISTENT",
+		"$EMPTY", 
+		"$SPACE", 
+		"\"$VAR'$VAR'$VAR\"'$VAR'", 
+		"$VAR\t$VAR\n$VAR", 
+		"$QUOTES", 
+		"$LONG", 
+		"$", 
+		"text$", 
+		"$$$$VAR", 
+		"$VAR!@#$VAR", 
+		"\"$VAR", 
+		"$VAR<NAME", 
+		"", 
         NULL
     };
 
@@ -43,6 +65,9 @@ void test_minishell(void)
             printf("Error: processline devolvió NULL\n");
             continue;
         }
+		char *envp[] = {NULL};  // No necesitamos envp real porque mockeamos ft_getenv
+		if(expand_tree(tree, envp))
+			perror("expandtree:");//esta gestion de error es muy mejorable
         
         print_tree(tree, 0);
         free_tree(tree);

@@ -281,4 +281,277 @@ TASK->cmd: echo
 	->redir->outfile: (null)
 
 
+Test 23: ''|'
+-----------------------------------------------
+PIPE
+  TASK->cmd: '
+	->argv[0]: '
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+  TASK->cmd: (null)
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 24: '|''
+-----------------------------------------------
+PIPE
+  TASK->cmd: (null)
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+  TASK->cmd: '
+	->argv[0]: '
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 25: '$VAR'
+-----------------------------------------------
+TASK->cmd: value
+	->argv[0]: value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 26: '$VAR$VAR'
+-----------------------------------------------
+TASK->cmd: valuevalue
+	->argv[0]: valuevalue
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 27: 'prefix $VAR suffix'
+-----------------------------------------------
+TASK->cmd: prefix
+	->argv[0]: prefix
+	->argv[1]: value
+	->argv[2]: suffix
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+
+
+Test 28: ''$VAR''
+-----------------------------------------------
+TASK->cmd: '$VAR'
+	->argv[0]: '$VAR'
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 29: '"$VAR"'
+-----------------------------------------------
+TASK->cmd: "value"
+	->argv[0]: "value"
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 30: '"$VAR'$VAR'"'
+-----------------------------------------------
+TASK->cmd: "value'$VAR'"
+	->argv[0]: "value'$VAR'"
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 31: '$NONEXISTENT'
+-----------------------------------------------
+TASK->cmd: 
+	->argv[0]: 
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 32: '$EMPTY'
+-----------------------------------------------
+TASK->cmd: 
+	->argv[0]: 
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 33: '$SPACE'
+-----------------------------------------------
+TASK->cmd: value with spaces
+	->argv[0]: value with spaces
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 34: '"$VAR'$VAR'$VAR"'$VAR''
+-----------------------------------------------
+TASK->cmd: "value'$VAR'value"'$VAR'
+	->argv[0]: "value'$VAR'value"'$VAR'
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 35: '$VAR	$VAR
+$VAR'
+-----------------------------------------------
+TASK->cmd: value
+	->argv[0]: value
+	->argv[1]: value
+	->argv[2]: value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+free garbage->pointers[2]
+free garbage->pointers[3]
+
+
+Test 36: '$QUOTES'
+-----------------------------------------------
+TASK->cmd: value'with'quotes
+	->argv[0]: value'with'quotes
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 37: '$LONG'
+-----------------------------------------------
+TASK->cmd: this_is_a_very_long_value
+	->argv[0]: this_is_a_very_long_value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 38: '$'
+-----------------------------------------------
+TASK->cmd: $
+	->argv[0]: $
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 39: 'text$'
+-----------------------------------------------
+TASK->cmd: text$
+	->argv[0]: text$
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 40: '$$$$VAR'
+-----------------------------------------------
+TASK->cmd: $$$value
+	->argv[0]: $$$value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 41: '$VAR!@#$VAR'
+-----------------------------------------------
+TASK->cmd: value
+	->argv[0]: value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 42: '"$VAR'
+-----------------------------------------------
+TASK->cmd: "value
+	->argv[0]: "value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 43: '$VAR<NAME'
+-----------------------------------------------
+TASK->cmd: value
+	->argv[0]: value
+	->redir->insymbol: 1
+	->redir->infoo: NAME
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+free garbage->pointers[0]
+free garbage->pointers[1]
+
+
+Test 44: ''
+-----------------------------------------------
+TASK->cmd: (null)
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
 === Tests completados ===

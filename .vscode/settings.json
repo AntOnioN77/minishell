@@ -4,6 +4,7 @@
 		"readline.h": "c",
 		"libft.h": "c",
 		"ios": "c",
-		"__node_handle": "c"
+		"__node_handle": "c",
+		"sstream": "c"
 	}
 }

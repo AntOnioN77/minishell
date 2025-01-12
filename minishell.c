@@ -164,9 +164,9 @@ void	skipwhitesp(char **segment, char *end)
 	return ;
 }
 
+/*
 void	skip_redir(char **segment, char *end)
 {
-	//comprobar con asserts, tal vez controlar segment == NULL
 	skipwhitesp(segment, end);
 	while(*segment < end)
 	{
@@ -194,6 +194,7 @@ void	skip_redir(char **segment, char *end)
 			return ;
 	}
 }
+*/
 
 //NO TESTEADA
 char	*ft_strnchr(const char *s, int c, int n)
@@ -334,6 +335,56 @@ void	getpntword(char **segment, char *end, char **dst)
 	return ;
 }
 
+//SEPARAR a getredir.c
+void handle_heredoc(char **segment, char *end, t_redir *redir)
+{
+	(*segment) += 2;
+ 	if (redir)
+	{
+		redir->insymbol = heredoc;
+		getpntword(segment, end, &(redir->infoo));
+	}
+	else
+		getpntword(segment, end, NULL);
+}
+
+void handle_append(char **segment, char *end, t_redir *redir)
+{
+	(*segment) += 2;
+ 	if (redir)
+	{
+		redir->outsymbol = append;
+		getpntword(segment, end, &(redir->outfile));
+	}
+	else
+		getpntword(segment, end, NULL);
+}
+
+void handle_input(char **segment, char *end, t_redir *redir)
+{
+	(*segment)++;
+ 	if (redir)
+	{
+		redir->insymbol = infile;
+		getpntword(segment, end, &(redir->infoo));
+	}
+	else
+		getpntword(segment, end, NULL);
+}
+
+void handle_output(char **segment, char *end, t_redir *redir)
+{
+{
+	(*segment)++;
+ 	if (redir)
+	{
+		redir->outsymbol = outfile;
+		getpntword(segment, end, &(redir->outfile));
+	}
+	else
+		getpntword(segment, end, NULL);
+}
+}
 
 void	get_redir(char **segment, char *end, t_redir *redir)
 {
@@ -341,34 +392,19 @@ void	get_redir(char **segment, char *end, t_redir *redir)
 	{
 		skipwhitesp(segment, end);
 		if (*segment == ft_strnstr(*segment, "<<", end - *segment))
-		{
-			redir->insymbol = heredoc;
-			(*segment) += 2;
-			getpntword(segment, end, &(redir->infoo));
-		}
+			handle_heredoc(segment, end, redir);
 		else if (*segment == ft_strnstr(*segment, ">>", end - *segment))
-		{
-			redir->outsymbol = append;
-			(*segment) += 2;
-			getpntword(segment, end, &(redir->outfile));
-		}
+			handle_append(segment, end, redir);
 		else if (**segment == '<')
-		{
-			redir->insymbol = infile;
-			(*segment)++;
-			getpntword(segment, end, &(redir->infoo));
-		}
+			handle_input(segment, end, redir);
 		else if (**segment == '>')
-		{
-			redir->outsymbol = outfile;
-			(*segment)++;
-			getpntword(segment, end, &(redir->outfile));
-		}
+			handle_output(segment, end, redir);
 		else
 			return;
 	}
 	return ;
 }
+// hasta aqui separar
 
 //NO FUNCIONA
 int count_cmdflags(char *segment, char *end)
@@ -379,8 +415,7 @@ int count_cmdflags(char *segment, char *end)
 	i = 0;
 	while(segment < end)
 	{
-		skip_redir(&segment, end);
-		//skipwhitesp(&segment, end);
+		get_redir(&segment, end, NULL);// aqui lo usamos solo para consumir las redirecciones, no almacenamos nada
 		tmp = segment;
 		getpntword(&segment, end, NULL);
 		if (tmp != segment)//si getpntword consumio algo, entonces habia una palabra
@@ -487,7 +522,7 @@ int command_flow(char **envp) //la gestion de errores de esta funcion es muy pro
 
 */
 
-
+/*
 int main(int argc, char **argv, char **envp)
 {
 	char 	*line;
@@ -521,7 +556,7 @@ int main(int argc, char **argv, char **envp)
 		free_tree(tree);
 	}
 }
-
+*/
 /*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 
