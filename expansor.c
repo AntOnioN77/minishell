@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/12 16:04:07 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/12 16:34:15 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,13 +176,11 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 		{
 			if(handle_dollar(&new_str, &str, &marker, envp))
 				return (1);
+			continue ;
 		}
-		else 
-		{
-			if (*marker == 39 && ft_strchr(marker + 1, 39))
-				marker = ft_strchr(marker + 1, 39);
-			marker++;
-		}
+		if (*marker == 39 && ft_strchr(marker + 1, 39))
+			marker = ft_strchr(marker + 1, 39);
+		marker++;
 	}
 	if (*str)
         ft_strlcpy(new_str, str, marker - str + 1);
