@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/12 12:18:32 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/12 16:04:07 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,34 +136,39 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 	return (0);
 }
 
-
-int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recibir el array de strings que hemos creado y sobre el que se reflejan las modificaciones que pueda hacer minishell durante la ejecucion
+int	prepare_expansion(char **origin, char **new_str, t_garbage *garbage, char *envp[])
 {
-	char	*marker;
-	char	*new_str;
-	char	*str;
-	char	*aux;
-	int		len;
+	int	len;
 
-	if(!is_expansible(*origin))
-		return (0);
-	str = *origin;
-	len = calculate_expansion_length(str, envp);
+	len = calculate_expansion_length(*origin, envp);
 	if (len < 0)
 		return (1);
-	new_str = ft_calloc(len + 1, sizeof(char));
-	if (new_str == NULL)
+	*new_str = ft_calloc(len + 1, sizeof(char));
+	if (*new_str == NULL)
 	 	return (1);
 	if (garbage->size <= garbage->current)
 	{
 		ft_putstr_fd("Bad count on expandstr", 2);//DEBUGEO
 	 	return(1);
 	}
-	garbage->pointers[garbage->current] = new_str;
+	garbage->pointers[garbage->current] = *new_str;
 	garbage->current++;
-	*origin = new_str;
-	new_str[len] = '\0';
+	*origin = *new_str;
+	(*new_str)[len] = '\0';
+	return (0);
+}
 
+int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recibir el array de strings que hemos creado y sobre el que se reflejan las modificaciones que pueda hacer minishell durante la ejecucion
+{
+	char	*marker;
+	char	*new_str;
+	char	*str;
+
+	if(!is_expansible(*origin))
+		return (0);
+	str = *origin;
+	if (prepare_expansion(origin, &new_str, garbage, envp))
+		return (1);
 	marker = str;
 	while (*marker)
 	{
@@ -172,13 +177,12 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 			if(handle_dollar(&new_str, &str, &marker, envp))
 				return (1);
 		}
-		else if (*marker == 39 && ft_strchr(marker + 1, 39))
+		else 
 		{
-			marker = ft_strchr(marker + 1, 39);
+			if (*marker == 39 && ft_strchr(marker + 1, 39))
+				marker = ft_strchr(marker + 1, 39);
 			marker++;
 		}
-		else
-			marker++;
 	}
 	if (*str)
         ft_strlcpy(new_str, str, marker - str + 1);
