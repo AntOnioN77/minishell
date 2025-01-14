@@ -522,7 +522,7 @@ int command_flow(char **envp) //la gestion de errores de esta funcion es muy pro
 
 */
 
-/*
+
 int main(int argc, char **argv, char **envp)
 {
 	char 	*line;
@@ -550,13 +550,14 @@ int main(int argc, char **argv, char **envp)
 		if(expand_tree(tree, envp))
 			perror("expandtree:");//esta gestion de error es muy mejorable
 //		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores
-		print_tree(tree, 30);
-//		error = execute(tree, envp);
+//		print_tree(tree, 30);
+		error = execute(tree, envp);
 		free(line);
 		free_tree(tree);
 	}
+	return (error);
 }
-*/
+
 /*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 
