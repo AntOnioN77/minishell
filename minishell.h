@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: jperez-r <jperez-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:37:28 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 14:00:05 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/18 15:59:36 by jperez-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,10 +149,10 @@ int strnchr_outquot(char **str, char *end, char c);
 //Location: mooks.c
 char *ft_getenv(const char *name, char *envp[]);
 void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
+int execute(t_tree *tree, char **envp);
 
 /*______________________________Execution_Prototypes_________________________*/
 
 // ...
 
 #endif
-

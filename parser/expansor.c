@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: jperez-r <jperez-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 13:23:53 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/18 15:56:15 by jperez-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	add_pathname(char **cmd,  t_garbage *garbage, char *envp[])
 		//	si la encuentra:
 		//	-libera garbaje (aun no se como va a saber si cmd fue o no fue expandida )
 		//	-costruye path/name
-
+	return(0);
 }
 */
 
