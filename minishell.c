@@ -522,7 +522,7 @@ int command_flow(char **envp) //la gestion de errores de esta funcion es muy pro
 
 */
 
-
+/*
 int main(int argc, char **argv, char **envp)
 {
 	char 	*line;
@@ -557,7 +557,7 @@ int main(int argc, char **argv, char **envp)
 	}
 	return (error);
 }
-
+*/
 /*---------------------------EJECUTANDO_EL_ARBOL-------------------------------------------------------------------------
 ªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªªª*/
 
