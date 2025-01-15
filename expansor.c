@@ -6,12 +6,13 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/12 16:34:15 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/15 23:31:01 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
 int	add_pathname(char **cmd,  t_garbage *garbage, char *envp[])
 {
 	//usa access para verificar cmd como ruta absoluta
@@ -25,6 +26,7 @@ int	add_pathname(char **cmd,  t_garbage *garbage, char *envp[])
 		//	-costruye path/name
 
 }
+*/
 
 //puede que innecesaria
 int	is_expansible(char *str)
@@ -212,13 +214,12 @@ int	expand_task(t_task *node, char *envp[])
 			return (1);
 		i++;
 	}
+	return(0);
 }
 
 //Si retorna 1 imprimir perror(errno)
 int	expand_tree(t_tree *node, char *envp[])
 {
-	int trace;
-
 	if (node->type == PIPE)
 	{
 		if(expand_task(((t_pipe *)node)->left, envp))

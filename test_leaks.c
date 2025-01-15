@@ -31,6 +31,10 @@ int main(int argc, char **argv, char **envp) {
     t_tree *tree;
     int error;
 
+	//Para silenciar warning
+	if (argc != 1 || !argv)
+		return(0);
+
     // Open test file
     test_file = fopen("test_menos.txt", "r");
     if (!test_file) {

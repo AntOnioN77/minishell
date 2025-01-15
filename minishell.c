@@ -6,6 +6,8 @@
 // Mock de ft_getenv para testing
 char *ft_getenv(const char *name, char *envp[])
 {
+	if (!envp)
+		return NULL;
     if (strcmp(name, "VAR") == 0)
 		return "value";
     if (strcmp(name, "EMPTY") == 0)
@@ -41,7 +43,7 @@ void free_tree(t_tree *node)
 	t_task *task_node;
 
     if (!node)
-        return;
+		return;
 
 	if (node->type == PIPE)
 	{
@@ -157,8 +159,6 @@ void	nullify_delimiters(char *str)
 
 void	skipwhitesp(char **segment, char *end)
 {
-	int	i;
-
 	while (*segment != end && ft_strchr(WHITESPACES , **segment))
 	(*segment)++;
 	return ;
