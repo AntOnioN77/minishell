@@ -1,6 +1,6 @@
 
 #include "minishell.h"
-
+/*
 int	 check_tree(t_tree tree)
 {
 	//-Si tree es null, ocurrio un error de reserva de
@@ -18,3 +18,4 @@ int	 check_tree(t_tree tree)
 	
 
 }
+*/

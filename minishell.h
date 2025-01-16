@@ -1,9 +1,31 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/16 12:37:28 by antofern          #+#    #+#             */
+/*   Updated: 2025/01/16 14:00:05 by antofern         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-//FALTAN GUARDAS DE INCLUSION
-#include "libft/headers/libft.h"
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+
+#ifndef MINISHELL_H
+# define MINISHELL_H
+
+# include "libft/headers/libft.h"
+# include <stdio.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+
+# define WHITESPACES " \r\n\v\t"
+# define DELIMITERS "|<> \r\n\v\t"
+
+
+/*****************************************************************************/
+/* 								ENUMS										 */
+/*****************************************************************************/
 
 typedef enum e_nodes
 {
@@ -24,12 +46,20 @@ typedef enum e_symbols
 	append//>>
 } e_symbols;
 
+
+//no implementado
 typedef enum e_errors
 {
 	TREE_OK,
     ERROR_MALLOC,
     INVALID_STATE
 } e_errors;
+
+/*****************************************************************************/
+/* 								STRUCTS										 */
+/*****************************************************************************/
+
+/*_________________________TREE_STRUCTS______________________________________*/
 
 /*Este struct no tiene un caso de uso real, funciona como interface. Los nodos del arbol
 son en realidad t_line t_pipe t_redir t_task.
@@ -40,13 +70,8 @@ typedef struct s_tree
 {
 	e_nodes type;
 }	t_tree;
-/*
-typedef struct s_syntax
-{
-	e_nodes type;
-	e_errors error;
-}	t_syntax;
-*/
+
+
 /*La linea recibida como task se parsea de izquuierda a derecha, sucesivas redirecciones
 se sobreescriben. de manera que hay un solo t_redir por cada t_task.
 si no se encuentra ninguna redireccion los e_symbols pemanecen "none"
@@ -85,30 +110,49 @@ typedef struct s_pipe {
 	t_tree	*rigth;
 }	t_pipe;
 
+/*______________________________Execution_Structs____________________________*/
 
+/* ... */
 
-//FUNCIONES PARA CONSTRUIR ARBOL SINTACTICO
-void free_tree(t_tree *node);
-t_tree *processline(char *line);
-void print_tree(t_tree *node, int depth);
-//void	skip_redir(char **segment, char *end);
-char	*ft_strnchr(const char *s, int c, int n);
-int		skip_quotes(char **strpnt, char *end);
-int strnchr_outquot(char **str, char *end, char c);
+/*****************************************************************************/
+/* 								PROTOTYPES									 */
+/*****************************************************************************/
+
+/*_____________________Parser_Prototypes______________________________________*/
+//Location: parser/constructors.c
 t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);
-void	getpntword(char **segment, char *end, char **dst);
+//Location parser/expansor.c
+int	expandstr(char **origin, t_garbage *garbage, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
+int	expand_tree(t_tree *node, char *envp[]);
+//Location: parser/expansor_utils.c
+int	is_expansible(char *str);
+int	count_expansions(t_task *node);
+int	calculate_expansion_length(char *str, char *envp[]);
+int handle_dollar(char **new_str, char **str, char **marker, char *envp[]);
+//Location: parser/free_tree.c
+void free_tree(t_tree *node);
+//Location: parser/get_redir.c
 void	get_redir(char **segment, char *end, t_redir *redir);
+//Location: parser/processline.c
+void	getpntword(char **segment, char *end, char **dst);
 int count_cmdflags(char *segment, char *end);
 int parse_task(char *segment, char *end, t_task *task);
 int parsepipe(char *line, t_tree **ret);
+t_tree *processline(char *line);
+//Location: parser/str_utils.c
+int isdelimiter(char c);
+void	nullify_delimiters(char *str);
+void	skipwhitesp(char **segment, char *end);
+int skip_quotes(char **strpnt, char *end);
+int strnchr_outquot(char **str, char *end, char c);
+//Location: mooks.c
 char *ft_getenv(const char *name, char *envp[]);
-int	expandstr(char **origin, t_garbage *garbage, char *envp[]);
-int	expand_tree(t_tree *node, char *envp[]);
-char *ft_getenv(const char *name, char *envp[]);
-void cleanup_garbage(t_garbage *garbage);
-char *ft_getenv(const char *name, char *envp[]);
+void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
 
-#define WHITESPACES " \r\n\v\t"
-#define DELIMITERS "|<> \r\n\v\t"
+/*______________________________Execution_Prototypes_________________________*/
+
+// ...
+
+#endif
 
