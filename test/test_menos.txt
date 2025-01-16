@@ -45,6 +45,17 @@ $VAR<NAME
 ls -l| grep .c | wc -l 
 echo 'comillas simples' | cat
 echo \"comillas dobles\" | cat
+
+cat << $VAR
+cat <$VAR
+cat<$VAR
+ls -la <$VAR
+ls -la <$VAR<$VAR2
+\"\"|<"$VAR"
+\"\"|<$VA"R"
+<$VAR
+<$VAR ls| wc -a
+
 ls -l > output.txt | wc -l
 echo 'comillas simples' > archivo.txt | ls
 ls -la < input.txt | grep 'text'
