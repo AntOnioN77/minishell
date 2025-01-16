@@ -16,8 +16,6 @@ debug: fclean libft/libft.a $(OBJECTS) $(HEADERS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -I/trace_tools $(OBJECTS) $(LDFLAGS) -L./trace_tools/ -ltrace_tools -o $(NAME)
 $(NAME): libft/libft.a $(OBJECTS) $(HEADERS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJECTS) $(LDFLAGS) -o $(NAME)
-#nowall: libft/libft.a $(OBJECTS) $(HEADERS)
-#	$(CC) $(CPPFLAGS) $(OBJECTS) $(LDFLAGS) -o $(NAME)
 libft/libft.a:
 	make extra -C libft
 %.o: %.c $(HEADERS)
