@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:35:41 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 11:36:37 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/16 14:04:34 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ static void cleanup_garbage(t_garbage *garbage)
 	i = 0;
     while (i < garbage->current)
     {
-		printf("free garbage->pointers[%d]\n", i);
         free(garbage->pointers[i]);
 		i++;
     }
