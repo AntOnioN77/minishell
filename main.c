@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: jperez-r <jperez-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:20:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 14:02:17 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/18 16:14:18 by jperez-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,8 @@ int main(int argc, char **argv, char **envp)
 		if(expand_tree(tree, envp))
 			perror("expandtree:");//esta gestion de error es muy mejorable
 //		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores
-		print_tree(tree, 30);
-//		error = execute(tree, envp);
+		//print_tree(tree, 30);
+		error = execute(tree, envp);
 		free(line);
 		free_tree(tree);
 	}
