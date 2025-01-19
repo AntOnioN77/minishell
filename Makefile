@@ -6,7 +6,8 @@ DBGFLAGS = -g3
 LDFLAGS = -L ./libft -lft -lreadline
 SOURCES = main.c mooks.c parser/check_tree.c parser/constructors.c\
 parser/expansor_utils.c parser/expansor.c parser/free_tree.c parser/get_redir.c\
-parser/processline.c parser/str_utils.c executor/executor.c executor/error_exe.c
+parser/processline.c parser/str_utils.c executor/executor.c\
+executor/error_exe.c executor/libexe.c executor/process.c
 OBJECTS = $(SOURCES:.c=.o)
 HEADERS = libft/headers/libft.h minishell.h executor.h
 

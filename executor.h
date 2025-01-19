@@ -15,6 +15,9 @@
 
 //Crear estructura para almacenar las variables de ejecución
 
+int	ft_free_double(char **s);
+
+int	create_child(/*t_tree *tree,*/ char **envp, char *path, char **cmd);
 
 int	error_exe(int er, char *cmd);
 

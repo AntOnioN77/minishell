@@ -26,5 +26,5 @@ int	error_exe(int er, char *cmd)
 		ft_putstr_fd(msg, 2);
 		free (msg);
 	}
-	return (0);
+	return (1);
 }
