@@ -76,81 +76,75 @@ int executor(t_tree *node, char **envp)
 		printf("%d\n", pipefd[0]);// imprimiria "5"
 		printf("%d\n", pipefd[1]);// imprimiria "6"
 		*/
-        if (pipe_node->left)
-        {
-			dup2(pipefd[1], STDOUT_FILENO);//Aqui cogemos el extremo de escritura del pipe y lo duplicamos en el fd 1(stdout).
-			/*La tabla de descriptores de archivo queda así:
-				0: stdin
-				1: extremo de escritura del pipe;	(!!! cambio)
-				2: ...
-				3: stdin
-				4: stdout
-				5: extremo de lectura del pipe
-				6: extremo de escritura del pipe
-			*/
-			close(pipefd[1]); // Ya tenemos "1:" para escribir en el pipe. Es MUY importante no dejarse extremos innecesarios abiertos
-			/*
-				0: stdin
-				1: extremo de escritura del pipe;
-				2: ...
-				3: stdin
-				4: stdout
-				5: extremo de lectura del pipe
-				----- recurso liberado--------	(!!! cambio)
-			*/
-			//2.Creamos el proceso hijo. 
-			executor((t_tree *)pipe_node->left, envp);//En esta llamada se cumple if (node->type == TASK) y se hará un fork (linea182)
-			//3.Devolvemos el proceso padre a una configuracion estandard.*/
-			dup2(original_stdout, STDOUT_FILENO);
-			/*
-				0: stdin
-				1: stdout	(!!! cambio)
-				2: ...
-				3: stdin
-				4: stdout
-				5: extremo de lectura del pipe
-			*/
-		}
-		//PROCESANDO LADO DERECHO:
-		//1.Configuramos el padre, a imagen de lo que queremos tener en el siguiente hijo:
-        if (pipe_node->rigth) 
-        {
-				dup2(pipefd[0], STDIN_FILENO);
-				/*
-					0: extremo de lectura del pipe  (!!! cambio)
-					1: stdout			
-					2: ...
-					3: stdin
-					4: stdout
-					5: extremo de lectura del pipe
-				*/
-				close(pipefd[0]); //liberamos fd 5
-				/*
-					0: extremo de lectura del pipe 
-					1: stdout			
-					2: ...
-					3: stdin
-					4: stdout
-					----- recurso liberado--------	(!!! cambio)
-				*/
-				executor(pipe_node->rigth, envp);
-				//-Si rigth es otro pipe, su left (left es t_task por fuerza) encontrará
-				//que "0: extremo de lectura del pipe", justo lo que queremos.
-				//-Conforme avanzamos iterando executor(pipe_node->rigth, envp), previous_stdin pierde el rastro del stdin original.
-				//Pero al finalizar las llamadas recursivas, el flujo original regresa aqui, a la primera llamada a executor(),
-				//donde previous_stdin contiene el stdin original.
-				dup2(previous_stdin, STDIN_FILENO); //Restauramos stdin original en el proceso padre
-				/*
-					0: stdin 
-					1: stdout			
-					2: ...
-					3: stdin
-					4: stdout
-				*/
-		}
-        // Cerramos los descriptores duplicados
-        close(previous_stdin);
-        close(original_stdout);
+		dup2(pipefd[1], STDOUT_FILENO);//Aqui cogemos el extremo de escritura del pipe y lo duplicamos en el fd 1(stdout).
+		/*La tabla de descriptores de archivo queda así:
+			0: stdin
+			1: extremo de escritura del pipe;	(!!! cambio)
+			2: ...
+			3: stdin
+			4: stdout
+			5: extremo de lectura del pipe
+			6: extremo de escritura del pipe
+		*/
+		close(pipefd[1]); // Ya tenemos "1:" para escribir en el pipe. Es MUY importante no dejarse extremos innecesarios abiertos
+		/*
+			0: stdin
+			1: extremo de escritura del pipe;
+			2: ...
+			3: stdin
+			4: stdout
+			5: extremo de lectura del pipe
+			----- recurso liberado--------	(!!! cambio)
+		*/
+		//2.Creamos el proceso hijo. 
+		executor((t_tree *)pipe_node->left, envp);//En esta llamada se cumple if (node->type == TASK) y se hará un fork (linea182)
+		//3.Devolvemos el proceso padre a una configuracion estandard.*/
+		dup2(original_stdout, STDOUT_FILENO);
+		/*
+			0: stdin
+			1: stdout	(!!! cambio)
+			2: ...
+			3: stdin
+			4: stdout
+			5: extremo de lectura del pipe
+		*/
+	//PROCESANDO LADO DERECHO:
+	//1.Configuramos el padre, a imagen de lo que queremos tener en el siguiente hijo:
+		dup2(pipefd[0], STDIN_FILENO);
+		/*
+			0: extremo de lectura del pipe  (!!! cambio)
+			1: stdout			
+			2: ...
+			3: stdin
+			4: stdout
+			5: extremo de lectura del pipe
+		*/
+		close(pipefd[0]); //liberamos fd 5
+		/*
+			0: extremo de lectura del pipe 
+			1: stdout			
+			2: ...
+			3: stdin
+			4: stdout
+			----- recurso liberado--------	(!!! cambio)
+		*/
+		executor(pipe_node->rigth, envp);
+		//-Si rigth es otro pipe, su left (left es t_task por fuerza) encontrará
+		//que "0: extremo de lectura del pipe", justo lo que queremos.
+		//-Conforme avanzamos iterando executor(pipe_node->rigth, envp), previous_stdin pierde el rastro del stdin original.
+		//Pero al finalizar las llamadas recursivas, el flujo original regresa aqui, a la primera llamada a executor(),
+		//donde previous_stdin contiene el stdin original.
+		dup2(previous_stdin, STDIN_FILENO); //Restauramos stdin original en el proceso padre
+		/*
+			0: stdin 
+			1: stdout			
+			2: ...
+			3: stdin
+			4: stdout
+		*/
+		// Cerramos los descriptores duplicados
+		close(previous_stdin);
+		close(original_stdout);
 		/*
 				0: stdin 
 				1: stdout			
