@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:20:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 14:02:17 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/19 10:29:42 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int main(int argc, char **argv, char **envp)
 			return (1);
 		}
 		tree = processline(line);
+
 		if (tree == NULL)
 		{
 			perror("processline:");
@@ -81,6 +82,8 @@ int main(int argc, char **argv, char **envp)
 			perror("expandtree:");//esta gestion de error es muy mejorable
 //		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores
 		print_tree(tree, 30);
+		if(non_pipable_builtin(tree, envp))
+			continue ;
 //		error = execute(tree, envp);
 		free(line);
 		free_tree(tree);
