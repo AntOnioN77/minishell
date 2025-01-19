@@ -62,8 +62,8 @@ int executor(t_tree *node, char **envp)
 			3: stdin		(!!! cambio)
 			4: stdout		(!!! cambio)
 		*/
-		//PROCESANDO LADO IZQUIERDO:
-		//1.Configuramos el padre, a imagen de lo que queremos tener en el primer hijo:
+//PROCESANDO LADO IZQUIERDO:
+//1.Configuramos el padre, a imagen de lo que queremos tener en el primer hijo:
         pipe(pipefd); //creamos pipe, un nuevo pipe añade dos entradas a la tabla de descriptores de archivo (5,6),
         /*La tabla de descriptores de archivo queda así:
 			0: stdin
@@ -96,9 +96,9 @@ int executor(t_tree *node, char **envp)
 			5: extremo de lectura del pipe
 			----- recurso liberado--------	(!!! cambio)
 		*/
-		//2.Creamos el proceso hijo. 
+//2.Creamos el proceso hijo. 
 		executor((t_tree *)pipe_node->left, envp);//En esta llamada se cumple if (node->type == TASK) y se hará un fork (linea182)
-		//3.Devolvemos el proceso padre a una configuracion estandard.*/
+//3.Devolvemos el proceso padre a una configuracion estandard.*/
 		dup2(original_stdout, STDOUT_FILENO);
 		/*
 			0: stdin
@@ -108,8 +108,8 @@ int executor(t_tree *node, char **envp)
 			4: stdout
 			5: extremo de lectura del pipe
 		*/
-	//PROCESANDO LADO DERECHO:
-	//1.Configuramos el padre, a imagen de lo que queremos tener en el siguiente hijo:
+//PROCESANDO LADO DERECHO:
+//1.Configuramos el padre, a imagen de lo que queremos tener en el siguiente hijo:
 		dup2(pipefd[0], STDIN_FILENO);
 		/*
 			0: extremo de lectura del pipe  (!!! cambio)
@@ -128,12 +128,12 @@ int executor(t_tree *node, char **envp)
 			4: stdout
 			----- recurso liberado--------	(!!! cambio)
 		*/
-		executor(pipe_node->rigth, envp);
-		//-Si rigth es otro pipe, su left (left es t_task por fuerza) encontrará
-		//que "0: extremo de lectura del pipe", justo lo que queremos.
+		
+		executor(pipe_node->rigth, envp); //dentro de la (si rigth es t_task), o las siguientes llamadas recursivas, se creará almenos un hijo.
 		//-Conforme avanzamos iterando executor(pipe_node->rigth, envp), previous_stdin pierde el rastro del stdin original.
 		//Pero al finalizar las llamadas recursivas, el flujo original regresa aqui, a la primera llamada a executor(),
 		//donde previous_stdin contiene el stdin original.
+//3.Devolvemos el proceso padre a una configuracion estandard.*/
 		dup2(previous_stdin, STDIN_FILENO); //Restauramos stdin original en el proceso padre
 		/*
 			0: stdin 
