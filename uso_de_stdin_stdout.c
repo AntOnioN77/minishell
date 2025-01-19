@@ -1,8 +1,8 @@
 
 /*
-QUE ES UNA TABLA DE DESCRIPTORES DE ARCHIVO?
+¿QUE ES UNA TABLA DE DESCRIPTORES DE ARCHIVO?
 Es una estructura que gestiona el kernel, nosotros interactuamos
-con ella a través de las funciones dup() y dup2(). 
+con ella a través de las funciones dup(), dup2() y close(). 
 Una tabla de descriptores de archivo contiene pares clave:valor.
 Clave es el numerito al que solemos llamar descriptor de archivo.
 Y valor es el recurso apuntado. Por ejemplo 1:stdout 0:stdin.
@@ -10,9 +10,9 @@ pero es posible asignarle a stdout otro numero, por ejemplo,usando:
 dup2(5, STDOUT_FILENO);
 La tabla de descriptores quedaría así:
 
-		5:stdout	(hemos creado esta nueva entrada)
-		1:stdout
 		0:stdin
+		1:stdout
+		5:stdout	(hemos creado esta nueva entrada)
 
 Ahora cualquier recurso configurado para utilizar el descriptor de
 archivo 5 estara utilizando stdout.
@@ -26,7 +26,7 @@ cual es el verdadero stdin, simplemente accede al descriptor de
 archivo 0 para obtener una lectura. Y en este caso, 0: es el
 extremo de lectura de un pipe.
 
-CUAL ES EL ALCANCE DE UNA TABLA DE DESCRIPTORES DE ARCHIVO
+¿CUAL ES EL ALCANCE DE UNA TABLA DE DESCRIPTORES DE ARCHIVO
 Hay una tabla de descriptores de archivos para cada proceso, inicialmente
 la tabla de descriptores de archivo del proceso hijo es una copia exacta
 de la tabla de descriptores del padre. Podemos aprobechar esta propiedad
@@ -34,7 +34,7 @@ para no tener que pasar los extremos del pipe a funciones dentro del hijo.
 es decir: 
 	1.Configuramos el padre, a imagen de lo que queremos tener en el hijo.
 	2.Creamos el proceso hijo.
-	3.Devolvemos el proceso padre a una configuracion estandard.*/
+	3.Devolvemos el proceso padre a una configuracion anterior.*/
 
 #include "minishell.h"
 
@@ -62,8 +62,8 @@ int executor(t_tree *node, char **envp)
 			3: stdin		(!!! cambio)
 			4: stdout		(!!! cambio)
 		*/
-//PROCESANDO LADO IZQUIERDO:
-//1.Configuramos el padre, a imagen de lo que queremos tener en el primer hijo:
+		//PROCESANDO LADO IZQUIERDO:
+		//1.Configuramos el padre, a imagen de lo que queremos tener en el primer hijo:
         pipe(pipefd); //creamos pipe, un nuevo pipe añade dos entradas a la tabla de descriptores de archivo (5,6),
         /*La tabla de descriptores de archivo queda así:
 			0: stdin
@@ -76,7 +76,6 @@ int executor(t_tree *node, char **envp)
 		printf("%d\n", pipefd[0]);// imprimiria "5"
 		printf("%d\n", pipefd[1]);// imprimiria "6"
 		*/
-
         if (pipe_node->left)
         {
 			dup2(pipefd[1], STDOUT_FILENO);//Aqui cogemos el extremo de escritura del pipe y lo duplicamos en el fd 1(stdout).
@@ -99,9 +98,9 @@ int executor(t_tree *node, char **envp)
 				5: extremo de lectura del pipe
 				----- recurso liberado--------	(!!! cambio)
 			*/
-	//2.Creamos el proceso hijo. 
-			executor((t_tree *)pipe_node->left, envp);//En esta llamada se cumple if (node->type == TASK) y se hará un fork (linea146)
-	//3.Devolvemos el proceso padre a una configuracion estandard.*/
+			//2.Creamos el proceso hijo. 
+			executor((t_tree *)pipe_node->left, envp);//En esta llamada se cumple if (node->type == TASK) y se hará un fork (linea182)
+			//3.Devolvemos el proceso padre a una configuracion estandard.*/
 			dup2(original_stdout, STDOUT_FILENO);
 			/*
 				0: stdin
@@ -112,8 +111,8 @@ int executor(t_tree *node, char **envp)
 				5: extremo de lectura del pipe
 			*/
 		}
-//PROCESANDO LADO DERECHO:
-//1.Configuramos el padre, a imagen de lo que queremos tener en el siguiente hijo:
+		//PROCESANDO LADO DERECHO:
+		//1.Configuramos el padre, a imagen de lo que queremos tener en el siguiente hijo:
         if (pipe_node->rigth) 
         {
 				dup2(pipefd[0], STDIN_FILENO);
@@ -134,9 +133,12 @@ int executor(t_tree *node, char **envp)
 					4: stdout
 					----- recurso liberado--------	(!!! cambio)
 				*/
-				executor(pipe_node->rigth, envp);// Si rigth es otro pipe, su left (left es t_task por fuerza) encontrará que "0: extremo de lectura del pipe", justo lo que queremos.
-				//Conforme avanzamos iterando executor(pipe_node->rigth, envp), previous_stdin piere el rastro del stdin original.
-				//Pero al finalizar las llamadas recursivas, el flujo original regresa aqui, a la primera llamada a executor(), donde previous_stdin contiene el stdin original.
+				executor(pipe_node->rigth, envp);
+				//-Si rigth es otro pipe, su left (left es t_task por fuerza) encontrará
+				//que "0: extremo de lectura del pipe", justo lo que queremos.
+				//-Conforme avanzamos iterando executor(pipe_node->rigth, envp), previous_stdin pierde el rastro del stdin original.
+				//Pero al finalizar las llamadas recursivas, el flujo original regresa aqui, a la primera llamada a executor(),
+				//donde previous_stdin contiene el stdin original.
 				dup2(previous_stdin, STDIN_FILENO); //Restauramos stdin original en el proceso padre
 				/*
 					0: stdin 
@@ -164,8 +166,8 @@ int executor(t_tree *node, char **envp)
 			2: ...
 
 	Si executor fue llamado por linea 237---->> executor((t_tree *)pipe_node->left, envp);
-				0: extremo de lectura del pipe  anterior
-				1: extremo de escritura del ultimo pipe
+				0: extremo de lectura del pipe  anterior (pipe creado dos nodos mas atras).
+				1: extremo de escritura del ultimo pipe (pipe creado en el nodo anterior).
 				2: ...
 				3: extremo de lectura del pipe  anterior
 				4: stdout
@@ -186,11 +188,13 @@ int executor(t_tree *node, char **envp)
             
         if (pid == 0)
         {
+			//Este seria el momento de meter redirecciones si hubiera en task->redir...
+			//puesto que estamos en el proceso hijo, no alteramos la tabla de descriptores del padre, sobre la que trabajan las redirecciones de los pipes.
             execve(task->cmd, task->argv, envp);
             exit(EXIT_FAILURE);
         }
         
-        task->pid = pid;
+        task->pid = pid; //Almacenamos el pid en el propio arbol, para poder hacer wait a cada proceso despues
     }
     return (0);
 }
@@ -227,7 +231,7 @@ int executor(t_tree *node, char **envp)
 			3: extremo de lectura del pipe 	(!!! cambio)
 			4: stdout						(!!! cambio)
 		*/
-//PROCESANDO LADO IZQUIERDO:
+		//PROCESANDO LADO IZQUIERDO:
         pipe(pipefd);
         /*La tabla de descriptores de archivo queda así:
 			0: extremo de lectura del pipe  anterior
@@ -261,7 +265,7 @@ int executor(t_tree *node, char **envp)
 				----- recurso liberado--------	(!!! cambio)
 			*/
 			executor((t_tree *)pipe_node->left, envp);
-	//3.Devolvemos el proceso padre a una configuracion estandard.*/
+			//3.Devolvemos el proceso padre a una configuracion estandard.*/
 			dup2(original_stdout, STDOUT_FILENO);
 			/*
 				0: extremo de lectura del pipe  anterior
@@ -272,7 +276,7 @@ int executor(t_tree *node, char **envp)
 				5: extremo de lectura del pipe actual
 			*/
 		}
-//PROCESANDO LADO DERECHO:
+		//PROCESANDO LADO DERECHO:
         if (pipe_node->rigth)
         {
 				dup2(pipefd[0], STDIN_FILENO);
