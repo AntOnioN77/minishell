@@ -129,7 +129,7 @@ int executor(t_tree *node, char **envp)
 			----- recurso liberado--------	(!!! cambio)
 		*/
 		
-		executor(pipe_node->rigth, envp); //dentro de la (si rigth es t_task), o las siguientes llamadas recursivas, se creará almenos un hijo.
+		executor(pipe_node->rigth, envp); //dentro de las siguientes llamadas recursivas, se creará almenos un hijo.
 		//-Conforme avanzamos iterando executor(pipe_node->rigth, envp), previous_stdin pierde el rastro del stdin original.
 		//Pero al finalizar las llamadas recursivas, el flujo original regresa aqui, a la primera llamada a executor(),
 		//donde previous_stdin contiene el stdin original.

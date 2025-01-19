@@ -15,7 +15,7 @@ int	 check_tree(t_tree tree)
 
 	//si pipe->right.type == task, y esa task es valida pero esta vaćia
 	//hay que solicitar nueva entrada de usuario y seguir construyendo el arbol
-	
+	//si en este punto llega alguna señal como ctrl+c ctrl+d o ctrl+\ hay que gestionarlo
 
 }
 */

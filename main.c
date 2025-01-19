@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:20:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/19 10:29:42 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/19 20:38:49 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		if(expand_tree(tree, envp))
 			perror("expandtree:");//esta gestion de error es muy mejorable
-//		check_tree(*tree); // tal vez implementemos esta funcion para buscar errores
+//		check_tree(*tree); // busca errores y pide nueva entrada de usuario en caso de pipe->rigth con todos los elementos '\0'
 		print_tree(tree, 30);
 		if(non_pipable_builtin(tree, envp))
 			continue ;
