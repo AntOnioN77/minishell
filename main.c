@@ -72,18 +72,24 @@ int main(int argc, char **argv, char **envp)
 		error = get_cmd_tree(&tree, envp);
 		if (error)
 		{
-			printf(" error en main: %d\n", error); //solo para pruebas BORRAR
+			printf(" error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
 			free_tree(tree);
 			return(error);
 		}
-//		print_tree(tree, 30);
-//		if(non_pipable_builtin(tree, envp))
-//			continue ;//to do: liberar lo que sea necesario liberar
-		executor(tree, envp);
-/* si hacemos merge de mi propuesta de executor descomentar:
-		if (executor(tree, envp) == 0)//capturar y gestionar error de executor
+		error = non_pipable_builtin(tree);//, envp);
+		if (error)
+		{
+			printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRAR
+			free_tree(tree);
+			return (error);
+		//to do: liberar lo que sea necesario liberar
+		}
+		print_tree(tree, 30);
+		//error = executor(tree, envp);
+		if (error == 0)//capturar y gestionar error de executor
            		wait_all(tree);
-*/
+		else
+			printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
 		free_tree(tree);
 	}
 	return (error);

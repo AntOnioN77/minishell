@@ -4,19 +4,22 @@
 
 #include "minishell.h"
 
-int non_pipable_builtin(t_tree *tree, char **envp)
+int non_pipable_builtin(t_tree *tree)//, char **envp)
 {
 	if(tree->type == TASK)
 	{
-		if(((t_task *)tree)->cmd = "cd")
+		if(!ft_strcmp(((t_task *)tree)->cmd, "cd"))
 		{
 			//to do:lo que quiera que hagamos para cd
-			return (1);
+			return (ALL_OK);
 		}
-		if(((t_task *)tree)->cmd = exit)
+		if(!ft_strcmp(((t_task *)tree)->cmd, "exit"))
 		{
 			//to do:lo que quiera que hagamos para exit
+			free_tree(tree);
+			exit(ALL_OK);
+
 		}
 	}
-	return (0);
+	return (ALL_OK);
 }

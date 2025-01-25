@@ -39,12 +39,13 @@ typedef enum e_symbols
 //no implementado
 typedef enum e_errors
 {
-	TREE_OK,
+	ALL_OK,
     ERROR_MALLOC,
     INVALID_TYPE,
 	TASK_IS_VOID,
 	SYNTAX_ERROR,
-	REDLINE_FAIL
+	REDLINE_FAIL,
+	UNDEFINED		//cuando aun no esta muy claro, usar solo durante el desaroyo
 } e_errors;
 
 /*****************************************************************************/
@@ -155,8 +156,8 @@ void wait_all(t_tree *node);
 int executor(t_tree *node, char **envp);
 //LOCATION: parser/check_tree.c
 int	 check_tree(t_tree *tree, char **envp);
-/*______________________________Execution_Prototypes_________________________*/
-
+/*______________________________Others_Prototypes_________________________*/
+int non_pipable_builtin(t_tree *tree);//, char **envp);
 // ...
 
 #endif
