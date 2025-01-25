@@ -76,10 +76,10 @@ int main(int argc, char **argv, char **envp)
 			free_tree(tree);
 			return(error);
 		}
-		print_tree(tree, 30);
+//		print_tree(tree, 30);
 //		if(non_pipable_builtin(tree, envp))
 //			continue ;//to do: liberar lo que sea necesario liberar
-//		executor(tree, envp);
+		executor(tree, envp);
 /* si hacemos merge de mi propuesta de executor descomentar:
 		if (executor(tree, envp) == 0)//capturar y gestionar error de executor
            		wait_all(tree);
