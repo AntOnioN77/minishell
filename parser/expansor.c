@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/25 14:30:25 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/25 20:19:44 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,11 @@ static int	expand_task(t_task *node, char *envp[])
 {
 	int	i;
 
-	node->garb.size = count_expansions(((t_task *)node));
-	node->garb.pointers = ft_calloc(node->garb.size + 1, sizeof(void *));
+	node->garb.size = count_expansions(((t_task *)node)) + 1;
+	node->garb.pointers = ft_calloc(node->garb.size, sizeof(void *));
 	if (node->garb.pointers == NULL)
 		return (1);
-	(node->garb.pointers)[node->garb.size] = NULL;
+	(node->garb.pointers)[node->garb.size -1] = NULL;
 	
 	if (expandstr(&(node->cmd), &(node->garb), envp))
 		return (1);
@@ -114,8 +114,9 @@ static int	expand_task(t_task *node, char *envp[])
 
 //TEMPORAL PARA TEST
 
-void unquote(char *str) {
-    if (!str || !*str) return;  // Validación de entrada
+void unquote(char *str)
+{
+    if (!str || !*str) return;
 
     int len = strlen(str);
     char quote_type = 0;  // Para rastrear el tipo de comilla exterior
@@ -123,27 +124,32 @@ void unquote(char *str) {
     int write_pos = 0;    // Posición de escritura
 
     // Detectar si hay comillas exteriores y su tipo
-    if ((str[0] == '"' || str[0] == '\'') && str[len-1] == str[0]) {
+    if ((str[0] == '"' || str[0] == '\'') && str[len-1] == str[0])
+	{
         quote_type = str[0];
         read_pos = 1;
         len--;  // Ignorar la última comilla
     }
 
-    while (read_pos < len) {
+    while (read_pos < len)
+	{
         // Si encontramos una comilla diferente a la exterior, la preservamos
         if ((str[read_pos] == '"' || str[read_pos] == '\'') && 
-            (!quote_type || str[read_pos] != quote_type)) {
+            (!quote_type || str[read_pos] != quote_type))
+		{
             str[write_pos++] = str[read_pos];
         }
         // Si no es una comilla o es una comilla que debemos preservar
-        else if (str[read_pos] != quote_type) {
+        else if (str[read_pos] != quote_type)
+		{
             str[write_pos++] = str[read_pos];
         }
         read_pos++;
     }
 
     // Rellenar el resto con \0
-    while (write_pos <= len) {
+    while (write_pos <= len)
+	{
         str[write_pos++] = '\0';
     }
 }
@@ -152,15 +158,7 @@ static int	unquote_task(t_task *node)
 {
 	int	i;
 
-	node->garb.size = count_expansions(((t_task *)node));
-	node->garb.pointers = ft_calloc(node->garb.size + 1, sizeof(void *));
-	if (node->garb.pointers == NULL)
-		return (1);
-	(node->garb.pointers)[node->garb.size] = NULL;
-	
 	unquote(node->cmd);
-//	if (add_pathname(&(node->cmd), &(node->garb), envp))
-//		return (1);
 	unquote(node->redir.infoo);
 	unquote(node->redir.outfile);
 	i = 0;

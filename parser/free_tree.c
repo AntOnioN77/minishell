@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:35:41 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/25 18:41:01 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/25 20:38:19 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ static void cleanup_garbage(t_garbage *garbage)
 {
 	int i;
 	
+	if (garbage == NULL)
+		return ;
 	i = 0;
     while (i < garbage->current)
     {
@@ -35,6 +37,8 @@ void free_tree(t_tree *node)
 		return;
 	if(node->line)
 		free(node->line);
+	if(node->line_extra)
+		free(node->line_extra);
 	if (node->type == PIPE)
 	{
 		pipe_node = (t_pipe *)node;
@@ -42,8 +46,6 @@ void free_tree(t_tree *node)
 			free_tree((t_tree *)pipe_node->left);
 		if (pipe_node->rigth)
 			free_tree(pipe_node->rigth);
-		if(pipe_node->line_extra)
-			free(pipe_node->line_extra);
 		free(pipe_node);
 	}
     else if (node->type == TASK)

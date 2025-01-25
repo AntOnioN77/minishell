@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:19:13 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/25 14:03:56 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/25 19:36:00 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,10 @@ t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fr
 	t_tree *ret;
 
 	if (!ft_strcmp(line, "exit"))// EXIT PROVISIONAL!!!!!!!!
+	{
+		free(line);
 		return (NULL);
+	}
 	if(0 == parsepipe(line, &ret))
 		ret = (t_tree *)createtask(line, line + ft_strlen(line));
 	if (!ret)
