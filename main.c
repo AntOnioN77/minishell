@@ -25,7 +25,6 @@ e_errors	continue_cmd_tree(t_tree **tree, char **envp)
 	(*tree)->line_extra = line;
 	if(expand_vars_tree(*tree, envp))
 		perror("expandtree:");//esta gestion de error es muy mejorable
-//printf("gt_cmd_tree line25: check_tree return %d\n", check_tree(tree, envp));
 	return (check_tree(*tree, envp)); // gestionar retorno
 }
 
@@ -53,7 +52,6 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		(*tree)->line = line;
 		if(expand_vars_tree(*tree, envp))
 			perror("expandtree:");//esta gestion de error es muy mejorable
-//printf("gt_cmd_tree line25: check_tree return %d\n", check_tree(tree, envp));
 		return (check_tree(*tree, envp)); // gestionar retorno
 }
 
@@ -78,13 +76,15 @@ int main(int argc, char **argv, char **envp)
 			free_tree(tree);
 			return(error);
 		}
-printf("main line 50 t_tree tree apunta a:%p\n",tree);
-		print_tree(tree, 30);
+//		print_tree(tree, 30);
 //		if(non_pipable_builtin(tree, envp))
 //			continue ;//to do: liberar lo que sea necesario liberar
-//		if (executor(tree, envp) == 0)//capturar y gestionar error de executor
-//           		wait_all(tree);
+		executor(tree, envp);
+/* si hacemos merge de mi propuesta de executor descomentar:
+		if (executor(tree, envp) == 0)//capturar y gestionar error de executor
+           		wait_all(tree);
 		free_tree(tree);
+*/
 	}
 	return (error);
 }
