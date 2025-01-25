@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:35:41 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/25 18:08:26 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/25 18:41:01 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ void free_tree(t_tree *node)
 
     if (!node)
 		return;
+	if(node->line)
+		free(node->line);
 	if (node->type == PIPE)
 	{
 		pipe_node = (t_pipe *)node;
@@ -41,6 +43,7 @@ void free_tree(t_tree *node)
 		if (pipe_node->rigth)
 			free_tree(pipe_node->rigth);
 		if(pipe_node->line_extra)
+			free(pipe_node->line_extra);
 		free(pipe_node);
 	}
     else if (node->type == TASK)

@@ -61,6 +61,7 @@ en realidad.*/
 typedef struct s_tree
 {
 	e_nodes type;
+	char	*line;		//solo el primer nodo del arbol contendrá line!=NULL
 }	t_tree;
 
 
@@ -90,6 +91,7 @@ typedef struct s_task
 	char		*cmd;
 	char		**argv;
 	t_garbage	garb;
+	char	*line;		//solo el primer nodo del arbol contendrá line!=NULL
 	int   pid; 
 }	t_task;
 
@@ -101,7 +103,8 @@ typedef struct s_pipe {
 	e_nodes	type;
 	t_task	*left;
 	t_tree	*rigth;
-	char	*line_extra;
+	char	*line;		//solo el primer nodo del arbol contendrá line!=NULL
+	char	*line_extra;//Solo en caso de "ls|(vacio)" line_extra !=NULL
 }	t_pipe;
 
 /*______________________________Execution_Structs____________________________*/

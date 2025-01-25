@@ -2,28 +2,29 @@
 //compilacion  cc -g3 -Wall -Wextra -Werror minishell.c expansor.c -L. -lft -lreadline
 #include "minishell.h"
 
-e_errors	continue_cmd_tree(t_tree **tree, char **envp)
+e_errors	continue_cmd_tree(t_pipe **tree, char **envp)
 {
-		char 		*line;
+	char 		*line;
 
-		line = readline(">");
-		if(!line)
-		{
-			perror("readline:");
-			return (REDLINE_FAIL);
-		}
-		*tree = processline(line);
-		//free(line);
-		if (*tree == NULL)
-		{
-			perror("processline:");
-			rl_clear_history();
-			return (ERROR_MALLOC);
-		}
-		if(expand_vars_tree(*tree, envp))
-			perror("expandtree:");//esta gestion de error es muy mejorable
+	line = readline(">");
+	(*tree)->line_extra = line;
+	if(!line)
+	{
+		perror("readline:");
+		return (REDLINE_FAIL);
+	}
+	*tree = processline(line);
+	//free(line);
+	if (*tree == NULL)
+	{
+		perror("processline:");
+		rl_clear_history();
+		return (ERROR_MALLOC);
+	}
+	if(expand_vars_tree(*tree, envp))
+		perror("expandtree:");//esta gestion de error es muy mejorable
 //printf("gt_cmd_tree line25: check_tree return %d\n", check_tree(tree, envp));
-		return (check_tree(*tree, envp)); // gestionar retorno
+	return (check_tree(*tree, envp)); // gestionar retorno
 }
 
 e_errors	get_cmd_tree(t_tree **tree, char **envp)
@@ -31,6 +32,8 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		char 		*line;
 
 		line = readline("mini$hell>");
+		(*tree)->line = line;
+
 		if(!line)
 		{
 			perror("readline:");
