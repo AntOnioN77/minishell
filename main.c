@@ -1,18 +1,11 @@
 
-
 //compilacion  cc -g3 -Wall -Wextra -Werror minishell.c expansor.c -L. -lft -lreadline
 #include "minishell.h"
-/*
-// Funcion pensada para aligerar lineas del main, no introducida y requiere una revision intensiva
-int command_flow(char **envp) //la gestion de errores de esta funcion es muy provisional
-{
-	char 	*line;
-	t_tree	*tree;
-	int		error;
 
-	error = 0;
-	while(error = 0)
-	{
+e_errors	get_cmd_tree(t_tree *tree, char **envp)
+{
+		char 		*line;
+
 		line = readline("mini$hell>");
 		if(!line)
 		{
@@ -20,63 +13,42 @@ int command_flow(char **envp) //la gestion de errores de esta funcion es muy pro
 			return (1);
 		}
 		tree = processline(line);
+		free(line);
 		if (tree == NULL)
 		{
-			free(line);
+			perror("processline:");
+			rl_clear_history();
 			return (1);
 		}
-		error = execline(tree, envp);
-		if (error) //execline debe liberar los nodos desde las hojas hacia arriba. 
-		{
-			free(line);
-			free_tree(tree);
-		}
-	}
-	return (error);
+		if(expand_vars_tree(tree, envp))
+			perror("expandtree:");//esta gestion de error es muy mejorable
+		return (check_tree(tree, envp)); // gestionar retorno
 }
-
-*/
-
 
 int main(int argc, char **argv, char **envp)
 {
 	t_tree	*tree;
 	int		error;
-	char 	*line;
 	//char	**new_envp;
 	
 	//Para silenciar warning.
 	if (argc != 1 || !argv)
 		return(0);
+	tree=NULL;
 
 	error = 0;
 	while(error == 0)
 	{
-		line = readline("mini$hell>");
-		if(!line)
+		error = get_cmd_tree(tree, envp);
+		if (error)
 		{
-			perror("readline:");
-			return (1);
+			printf(" error en main: %d", error); //solo para pruebas BORRAR
 		}
-		tree = processline(line);
-
-		if (tree == NULL)
-		{
-			perror("processline:");
-			rl_clear_history();
-			free(line);
-			return (1);
-		}
-		if(expand_tree(tree, envp))
-			perror("expandtree:");//esta gestion de error es muy mejorable
-		check_tree(*tree); // busca errores y pide nueva entrada de usuario en caso de pipe->rigth con todos los elementos '\0'
 		print_tree(tree, 30);
 //		if(non_pipable_builtin(tree, envp))
 //			continue ;//to do: liberar lo que sea necesario liberar
-		if (executor(tree, envp) == 0)//capturar y gestionar error de executor
-            		wait_all(tree);
-//		//error = execute(tree, envp);
-		free(line);
+//		if (executor(tree, envp) == 0)//capturar y gestionar error de executor
+//           		wait_all(tree);
 		free_tree(tree);
 	}
 	return (error);

@@ -41,7 +41,7 @@ typedef enum e_errors
 {
 	TREE_OK,
     ERROR_MALLOC,
-    INVALID_STATE,
+    INVALID_TYPE,
 	TASK_IS_VOID,
 	SYNTAX_ERROR
 } e_errors;
@@ -111,12 +111,14 @@ typedef struct s_pipe {
 /*****************************************************************************/
 
 /*_____________________Parser_Prototypes______________________________________*/
+//Location: main.c
+e_errors	get_cmd_tree(t_tree *tree, char **envp);
 //Location: parser/constructors.c
 t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);
 //Location parser/expansor.c
 int	expandstr(char **origin, t_garbage *garbage, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
-int	expand_tree(t_tree *node, char *envp[]);
+int	expand_vars_tree(t_tree *node, char *envp[]);
 //Location: parser/expansor_utils.c
 int	is_expansible(char *str);
 int	count_expansions(t_task *node);
@@ -143,7 +145,8 @@ char *ft_getenv(const char *name, char *envp[]);
 void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
 void wait_all(t_tree *node);
 int executor(t_tree *node, char **envp);
-
+//LOCATION: parser/check_tree.c
+int	 check_tree(t_tree *tree, char **envp);
 /*______________________________Execution_Prototypes_________________________*/
 
 // ...

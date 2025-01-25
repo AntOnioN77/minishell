@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 15:45:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 13:23:53 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/25 14:30:25 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,13 +175,13 @@ static int	unquote_task(t_task *node)
 //FIN TEMPORAL
 
 //Si retorna 1 imprimir perror(errno)
-int	expand_tree(t_tree *node, char *envp[])
+int	expand_vars_tree(t_tree *node, char *envp[])
 {
 	if (node->type == PIPE)
 	{
 		if(expand_task(((t_pipe *)node)->left, envp))
 			return (1);
-		if(expand_tree((t_tree *)((t_pipe *)node)->rigth, envp))
+		if(expand_vars_tree((t_tree *)((t_pipe *)node)->rigth, envp))
 			return (1);
 	}
 	else if (node->type == TASK)

@@ -15,7 +15,14 @@
 
 #include "minishell.h"
 
-int	 check_tree(t_tree *tree)
+int is_void_task(t_task *task)
+{
+	if(task->cmd == NULL && task->redir.insymbol == 0&& task->redir.outsymbol == 0)
+		return (1);
+	return(0);
+}
+
+int	 check_tree(t_tree *tree, char **envp)
 {
 	t_pipe *pipenode;
 	t_task *tasknode;
@@ -30,21 +37,27 @@ int	 check_tree(t_tree *tree)
 		pipenode = (t_pipe *)tree;
 		if (!pipenode->left)
 			return(ERROR_MALLOC);
-		error = check_tree(pipenode->left);
+		error = check_tree((t_tree *)(pipenode->left), envp);
 		if (error == TASK_IS_VOID)
 			return (SYNTAX_ERROR);
 		else if (error)
 			return (error);
-		if (!pipenode->left)
+		if (!pipenode->rigth)
 			return(ERROR_MALLOC);
-		error = check_tree(pipenode->rigth);
+		error = check_tree(pipenode->rigth, envp);
+		if (error == TASK_IS_VOID)
+		{
+			free_tree(pipenode->rigth);//libera solamente el nodo vacío
+			error = get_cmd_tree(pipenode->rigth, envp);//añade un nuevo arbol se construye sobre rama rigth
+		}
 		if (error)
 			return (error);
 	}
 	else if (tree->type == TASK)
 	{
-		return(check_task)
+		tasknode = (t_task *)tree;
+		if (is_void_task(tasknode))
+			return (TASK_IS_VOID);
 	}
-
-
+	return(INVALID_TYPE);
 }

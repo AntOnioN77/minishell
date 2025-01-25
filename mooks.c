@@ -29,6 +29,8 @@
 
 
 #include "minishell.h"
+ #include <sys/wait.h>
+
 int	search_var(char **envp, const char* var)
 {
 	int pos;
