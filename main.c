@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:20:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/19 20:38:49 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/22 00:23:34 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,9 @@ int main(int argc, char **argv, char **envp)
 		print_tree(tree, 30);
 		if(non_pipable_builtin(tree, envp))
 			continue ;
-//		error = execute(tree, envp);
+		if (executor(tree, envp) == 0)//capturar y gestionar error de executor
+            		wait_all(tree);
+//		//error = execute(tree, envp);
 		free(line);
 		free_tree(tree);
 	}

@@ -13,7 +13,7 @@ HEADERS = libft/headers/libft.h minishell.h
 all: $(NAME)
 debug: CFLAGS += $(DBGFLAGS)
 debug: fclean libft/libft.a $(OBJECTS) $(HEADERS)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -I/trace_tools $(OBJECTS) $(LDFLAGS) -L./trace_tools/ -ltrace_tools -o $(NAME)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -I/trace_tools $(OBJECTS) $(LDFLAGS) -o $(NAME)
 $(NAME): libft/libft.a $(OBJECTS) $(HEADERS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJECTS) $(LDFLAGS) -o $(NAME)
 libft/libft.a:

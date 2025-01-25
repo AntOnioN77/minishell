@@ -98,6 +98,7 @@ typedef struct s_task
 	char		*cmd;
 	char		**argv;
 	t_garbage	garb;
+	int   pid; 
 }	t_task;
 
 //si left o rigth fuesen NULL indica error de reserva de memoria, hay que liverar el arbol entero y lanzar error.
@@ -149,6 +150,8 @@ int strnchr_outquot(char **str, char *end, char c);
 //Location: mooks.c
 char *ft_getenv(const char *name, char *envp[]);
 void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
+void wait_all(t_tree *node);
+int executor(t_tree *node, char **envp);
 
 /*______________________________Execution_Prototypes_________________________*/
 

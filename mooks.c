@@ -29,24 +29,32 @@
 
 
 #include "minishell.h"
+int	search_var(char **envp, const char* var)
+{
+	int pos;
+
+	pos = 0;
+	while (envp[pos])
+	{
+		if (ft_strncmp(envp[pos], var, ft_strlen(var)) == 0)
+		{
+			return (pos);
+		}
+		pos++;
+	}
+	return (-1);
+}
 
 char *ft_getenv(const char *name, char *envp[])
 {
-	if (!envp)
-		return NULL;
-    if (strcmp(name, "VAR") == 0)
-		return "value";
-    if (strcmp(name, "VAR2") == 0)
-		return "value2";
-    if (strcmp(name, "EMPTY") == 0)
-		return "";
-    if (strcmp(name, "LONG") == 0)
-		return "_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value";
-    if (strcmp(name, "SPACE") == 0)
-		return "value with spaces";
-    if (strcmp(name, "QUOTES") == 0)
-		return "value'with'quotes";
-    return NULL;
+	int pos;
+	char *word_start;
+
+	pos = search_var(envp, name);
+	if (pos == -1)
+		return(NULL);
+	word_start = ft_strchr(envp[pos], '=') + 1;
+	return(word_start);
 }
 
 //SOLO PARA PRUEBAS no requiere implementacion
@@ -75,4 +83,24 @@ void print_tree(t_tree *node, int depth)
     }
 	else
 		return; //llegar aqui indicaria un error
+}
+
+void wait_all(t_tree *node)
+{
+    int status;
+    
+    if (!node)
+        return;
+        
+    if (node->type == PIPE)
+    {
+        t_pipe *pipe_node = (t_pipe *)node;
+        wait_all((t_tree *)pipe_node->left);
+        wait_all(pipe_node->rigth);
+    }
+    else if (node->type == TASK)
+    {
+        t_task *task = (t_task *)node;
+        waitpid(task->pid, &status, 0);
+    }
 }
