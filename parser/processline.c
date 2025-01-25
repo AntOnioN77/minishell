@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:19:13 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 12:19:33 by antofern         ###   ########.fr       */
+/*   Updated: 2025/01/25 14:03:56 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,10 +105,9 @@ t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fr
 	t_tree *ret;
 
 	if (!ft_strcmp(line, "exit"))// EXIT PROVISIONAL!!!!!!!!
-		return (NULL);//
-	if(0 == parsepipe(line, &ret))//parsepipe retorna 0 si no encontro un |, si lo encontro 1. Si ocurrió un error retorna 1 y pone ret=NULL
-		ret = (t_tree *)createtask(line, line + ft_strlen(line));// parsetask recibe line al completo
-	//si parsetask o parsepipe falló, establecio ret a null.
+		return (NULL);
+	if(0 == parsepipe(line, &ret))
+		ret = (t_tree *)createtask(line, line + ft_strlen(line));
 	if (!ret)
 		printf("Error en reserva de memoria, gestionar");//BORRAESTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 //DESCOMENTAR CUANDO SE HAGA	check_tree(ret);

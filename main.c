@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/16 12:20:35 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/22 00:23:34 by antofern         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 
 //compilacion  cc -g3 -Wall -Wextra -Werror minishell.c expansor.c -L. -lft -lreadline
@@ -51,9 +40,9 @@ int command_flow(char **envp) //la gestion de errores de esta funcion es muy pro
 
 int main(int argc, char **argv, char **envp)
 {
-	char 	*line;
 	t_tree	*tree;
 	int		error;
+	char 	*line;
 	//char	**new_envp;
 	
 	//Para silenciar warning.
@@ -80,10 +69,10 @@ int main(int argc, char **argv, char **envp)
 		}
 		if(expand_tree(tree, envp))
 			perror("expandtree:");//esta gestion de error es muy mejorable
-//		check_tree(*tree); // busca errores y pide nueva entrada de usuario en caso de pipe->rigth con todos los elementos '\0'
+		check_tree(*tree); // busca errores y pide nueva entrada de usuario en caso de pipe->rigth con todos los elementos '\0'
 		print_tree(tree, 30);
-		if(non_pipable_builtin(tree, envp))
-			continue ;
+//		if(non_pipable_builtin(tree, envp))
+//			continue ;//to do: liberar lo que sea necesario liberar
 		if (executor(tree, envp) == 0)//capturar y gestionar error de executor
             		wait_all(tree);
 //		//error = execute(tree, envp);
