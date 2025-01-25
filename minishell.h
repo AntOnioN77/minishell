@@ -43,7 +43,8 @@ typedef enum e_errors
     ERROR_MALLOC,
     INVALID_TYPE,
 	TASK_IS_VOID,
-	SYNTAX_ERROR
+	SYNTAX_ERROR,
+	REDLINE_FAIL
 } e_errors;
 
 /*****************************************************************************/
@@ -112,7 +113,7 @@ typedef struct s_pipe {
 
 /*_____________________Parser_Prototypes______________________________________*/
 //Location: main.c
-e_errors	get_cmd_tree(t_tree *tree, char **envp);
+e_errors	get_cmd_tree(t_tree **tree, char **envp);
 //Location: parser/constructors.c
 t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);

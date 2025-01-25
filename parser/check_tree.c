@@ -48,7 +48,7 @@ int	 check_tree(t_tree *tree, char **envp)
 		if (error == TASK_IS_VOID)
 		{
 			free_tree(pipenode->rigth);//libera solamente el nodo vacío
-			error = get_cmd_tree(pipenode->rigth, envp);//añade un nuevo arbol se construye sobre rama rigth
+			error = get_cmd_tree(&(pipenode->rigth), envp);//añade un nuevo arbol se construye sobre rama rigth
 		}
 		if (error)
 			return (error);
@@ -59,5 +59,7 @@ int	 check_tree(t_tree *tree, char **envp)
 		if (is_void_task(tasknode))
 			return (TASK_IS_VOID);
 	}
-	return(INVALID_TYPE);
+	else
+		return(INVALID_TYPE);
+	return (0);
 }

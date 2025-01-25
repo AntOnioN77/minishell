@@ -2,7 +2,7 @@
 //compilacion  cc -g3 -Wall -Wextra -Werror minishell.c expansor.c -L. -lft -lreadline
 #include "minishell.h"
 
-e_errors	get_cmd_tree(t_tree *tree, char **envp)
+e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
 		char 		*line;
 
@@ -10,19 +10,20 @@ e_errors	get_cmd_tree(t_tree *tree, char **envp)
 		if(!line)
 		{
 			perror("readline:");
-			return (1);
+			return (REDLINE_FAIL);
 		}
-		tree = processline(line);
-		free(line);
-		if (tree == NULL)
+		*tree = processline(line);
+		//free(line);
+		if (*tree == NULL)
 		{
 			perror("processline:");
 			rl_clear_history();
-			return (1);
+			return (ERROR_MALLOC);
 		}
-		if(expand_vars_tree(tree, envp))
+		if(expand_vars_tree(*tree, envp))
 			perror("expandtree:");//esta gestion de error es muy mejorable
-		return (check_tree(tree, envp)); // gestionar retorno
+//printf("gt_cmd_tree line25: check_tree return %d\n", check_tree(tree, envp));
+		return (check_tree(*tree, envp)); // gestionar retorno
 }
 
 int main(int argc, char **argv, char **envp)
@@ -39,11 +40,14 @@ int main(int argc, char **argv, char **envp)
 	error = 0;
 	while(error == 0)
 	{
-		error = get_cmd_tree(tree, envp);
+		error = get_cmd_tree(&tree, envp);
 		if (error)
 		{
-			printf(" error en main: %d", error); //solo para pruebas BORRAR
+			printf(" error en main: %d\n", error); //solo para pruebas BORRAR
+			free_tree(tree);
+			return(error);
 		}
+printf("main line 50 t_tree tree apunta a:%p\n",tree);
 		print_tree(tree, 30);
 //		if(non_pipable_builtin(tree, envp))
 //			continue ;//to do: liberar lo que sea necesario liberar
