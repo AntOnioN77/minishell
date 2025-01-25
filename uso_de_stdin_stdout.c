@@ -159,7 +159,7 @@ int executor(t_tree *node, char **envp)
 			1: stdout			
 			2: ...
 
-	Si executor fue llamado por linea 237---->> executor((t_tree *)pipe_node->left, envp);
+	Si executor fue llamado por linea 261---->> executor((t_tree *)pipe_node->left, envp);
 				0: extremo de lectura del pipe  anterior (pipe creado dos nodos mas atras).
 				1: extremo de escritura del ultimo pipe (pipe creado en el nodo anterior).
 				2: ...
