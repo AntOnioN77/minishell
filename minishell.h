@@ -45,6 +45,7 @@ typedef enum e_errors
 	TASK_IS_VOID,
 	SYNTAX_ERROR,
 	REDLINE_FAIL,
+	FINISH,
 	UNDEFINED		//cuando aun no esta muy claro, usar solo durante el desaroyo
 } e_errors;
 

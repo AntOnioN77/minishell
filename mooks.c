@@ -87,7 +87,7 @@ void print_tree(t_tree *node, int depth)
 		return; //llegar aqui indicaria un error
 }
 
-void wait_all(t_tree *node)
+void wait_all(t_tree *node, char **envp)
 {
     int status;
     
@@ -97,12 +97,13 @@ void wait_all(t_tree *node)
     if (node->type == PIPE)
     {
         t_pipe *pipe_node = (t_pipe *)node;
-        wait_all((t_tree *)pipe_node->left);
-        wait_all(pipe_node->rigth);
+        wait_all((t_tree *)pipe_node->left, envp);
+        wait_all(pipe_node->rigth, envp);
     }
     else if (node->type == TASK)
     {
         t_task *task = (t_task *)node;
         waitpid(task->pid, &status, 0);
+		//Buscar variable de entorno '?' y sustituir su contenido por ft_itoa(status)
     }
 }

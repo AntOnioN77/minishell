@@ -4,21 +4,62 @@
 
 #include "minishell.h"
 
+static int countargs(t_task *task)
+{
+	int i;
+
+	if(!task || !task->argv)
+		return (0);
+	i = 0;
+	while(task->argv[i])
+		i++;
+	return (i);
+}
+static char *getnamevar()
+{
+	//probablemente ya hay una funcion que hace esto
+}
+
 int non_pipable_builtin(t_tree *tree)//, char **envp)
 {
 	if(tree->type == TASK)
 	{
+		//CD NO ESTA TESTEADO, abstraer funcion cd
 		if(!ft_strcmp(((t_task *)tree)->cmd, "cd"))
-		{
-			//to do:lo que quiera que hagamos para cd
+		{	
+			if(countargs((t_task *)tree) != 2)
+				ft_putstr_fd("minishell: cd: too many arguments", 2);
+			else if(chdir(((t_task *)tree)->argv[1]))
+				perror("minishell: cd:");
 			return (ALL_OK);
 		}
-		if(!ft_strcmp(((t_task *)tree)->cmd, "exit"))
+		else if(!ft_strcmp(((t_task *)tree)->cmd, "exit"))
 		{
-			//to do:lo que quiera que hagamos para exit
 			free_tree(tree);
 			exit(ALL_OK);
 
+		}
+		else if(!ft_strcmp(((t_task *)tree)->cmd, "export"))
+		{
+			//TODO:
+			/*
+			if(envp == NULL)
+				//ERROREAR
+			if (ft_getenv(getnamevar((t_task *)tree)->argv[1], envp)
+			{
+				//la variable con ese nombre ya existe, sustituimos
+			}
+			else
+			{
+				//creamos la variable
+			}
+			*/
+			printf("export no esta implementado\n");
+		}
+		else if(!ft_strcmp(((t_task *)tree)->cmd, "unset"))
+		{
+			//TODO
+			printf("unset no esta implementado\n");
 		}
 	}
 	return (ALL_OK);
