@@ -101,6 +101,7 @@ typedef struct s_pipe {
 	e_nodes	type;
 	t_task	*left;
 	t_tree	*rigth;
+	char	*line_extra;
 }	t_pipe;
 
 /*______________________________Execution_Structs____________________________*/

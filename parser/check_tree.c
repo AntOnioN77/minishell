@@ -48,7 +48,7 @@ int	 check_tree(t_tree *tree, char **envp)
 		if (error == TASK_IS_VOID)
 		{
 			free_tree(pipenode->rigth);//libera solamente el nodo vacío
-			error = get_cmd_tree(&(pipenode->rigth), envp);//añade un nuevo arbol se construye sobre rama rigth
+			error = continue_cmd_tree(&(pipenode->rigth), envp);//añade un nuevo arbol se construye sobre rama rigth
 		}
 		if (error)
 			return (error);
