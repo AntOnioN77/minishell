@@ -62,6 +62,7 @@ typedef struct s_tree
 {
 	e_nodes type;
 	char	*line;		//solo el primer nodo del arbol contendrá line!=NULL
+	char	*line_extra;//Solo en caso de "ls|(vacio)" line_extra !=NULL
 }	t_tree;
 
 
@@ -87,11 +88,12 @@ typedef struct s_garbage {
 typedef struct s_task
 {
 	e_nodes		type;
+	char	*line;		//solo el primer nodo del arbol contendrá line!=NULL
+	char	*line_extra;//Solo en caso de "ls|(vacio)" line_extra !=NULL
 	t_redir 	redir;
 	char		*cmd;
 	char		**argv;
 	t_garbage	garb;
-	char	*line;		//solo el primer nodo del arbol contendrá line!=NULL
 	int   pid; 
 }	t_task;
 
@@ -101,10 +103,10 @@ typedef struct s_task
 //rigth puede contener otro elemento pipe o un elemento task
 typedef struct s_pipe {
 	e_nodes	type;
-	t_task	*left;
-	t_tree	*rigth;
 	char	*line;		//solo el primer nodo del arbol contendrá line!=NULL
 	char	*line_extra;//Solo en caso de "ls|(vacio)" line_extra !=NULL
+	t_task	*left;
+	t_tree	*rigth;
 }	t_pipe;
 
 /*______________________________Execution_Structs____________________________*/
@@ -117,6 +119,7 @@ typedef struct s_pipe {
 
 /*_____________________Parser_Prototypes______________________________________*/
 //Location: main.c
+e_errors	continue_cmd_tree(t_tree **tree, char **envp);
 e_errors	get_cmd_tree(t_tree **tree, char **envp);
 //Location: parser/constructors.c
 t_task *createtask(char *segment, char *end);
