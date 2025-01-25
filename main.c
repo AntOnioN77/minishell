@@ -82,10 +82,9 @@ int main(int argc, char **argv, char **envp)
 			printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRAR
 			free_tree(tree);
 			return (error);
-		//to do: liberar lo que sea necesario liberar
 		}
 		print_tree(tree, 30);
-		//error = executor(tree, envp);
+		//error = executor(tree, envp); //executor deberia simplemente ignorar los builtin no pipeables cd, export, unset y exit.
 		if (error == 0)//capturar y gestionar error de executor
            		wait_all(tree);
 		else
