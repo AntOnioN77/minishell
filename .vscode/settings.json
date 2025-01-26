@@ -5,6 +5,8 @@
 		"libft.h": "c",
 		"ios": "c",
 		"__node_handle": "c",
-		"sstream": "c"
+		"sstream": "c",
+		"stat.h": "c",
+		"minishell.h": "c"
 	}
 }

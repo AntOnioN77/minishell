@@ -1,5 +1,6 @@
 #include "minishell.h"
 #include "executor.h"
+#include <limits.h>
 
 /**
  * NO ESTA CONTEMPLANDO ERRORES
