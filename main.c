@@ -1,6 +1,7 @@
 
 //compilacion  cc -g3 -Wall -Wextra -Werror minishell.c expansor.c -L. -lft -lreadline
 #include "minishell.h"
+#include "executor.h"
 
 e_errors	continue_cmd_tree(t_tree **tree, char **envp)
 {
@@ -87,10 +88,10 @@ printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRA
 			
 			return (error);
 		}
-		print_tree(tree, 30);
-		//error = executor(tree, envp); //executor deberia simplemente ignorar los builtin no pipeables cd, export, unset y exit.
+		//print_tree(tree, 30);
+		error = executor(tree, envp); //executor deberia simplemente ignorar los builtin no pipeables cd, export, unset y exit.
 		if (error == 0)//capturar y gestionar error de executor
-           		wait_all(tree, envp);
+           		wait_all(tree);//, envp);
 		else
 			printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
 		free_tree(tree);

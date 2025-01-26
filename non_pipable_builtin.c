@@ -15,10 +15,13 @@ static int countargs(t_task *task)
 		i++;
 	return (i);
 }
+
+/*
 static char *getnamevar()
 {
 	//probablemente ya hay una funcion que hace esto
 }
+*/
 
 int non_pipable_builtin(t_tree *tree)//, char **envp)
 {

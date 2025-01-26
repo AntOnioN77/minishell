@@ -8,6 +8,10 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+///////revisar
+#include <limits.h>
+/////////
+
 # define WHITESPACES " \r\n\v\t"
 # define DELIMITERS "|<> \r\n\v\t"
 
@@ -154,7 +158,6 @@ int strnchr_outquot(char **str, char *end, char c);
 char *ft_getenv(const char *name, char *envp[]);
 void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
 void wait_all(t_tree *node);
-int executor(t_tree *node, char **envp);
 //LOCATION: parser/check_tree.c
 int	 check_tree(t_tree *tree, char **envp);
 /*______________________________Others_Prototypes_________________________*/

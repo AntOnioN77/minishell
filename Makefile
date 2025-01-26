@@ -6,14 +6,15 @@ DBGFLAGS = -g3
 LDFLAGS = -L ./libft -lft -lreadline
 SOURCES = main.c mooks.c parser/check_tree.c parser/constructors.c\
 parser/expansor_utils.c parser/expansor.c parser/free_tree.c parser/get_redir.c\
-parser/processline.c parser/str_utils.c non_pipable_builtin.c
+parser/processline.c parser/str_utils.c executor/executor.c\
+executor/libexe.c executor/process.c non_pipable_builtin.c
 OBJECTS = $(SOURCES:.c=.o)
-HEADERS = libft/headers/libft.h minishell.h
+HEADERS = libft/headers/libft.h minishell.h executor.h
 
 all: $(NAME)
 debug: CFLAGS += $(DBGFLAGS)
 debug: fclean libft/libft.a $(OBJECTS) $(HEADERS)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -I/trace_tools $(OBJECTS) $(LDFLAGS) -o $(NAME)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJECTS) $(LDFLAGS) -o $(NAME)
 $(NAME): libft/libft.a $(OBJECTS) $(HEADERS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJECTS) $(LDFLAGS) -o $(NAME)
 libft/libft.a:
