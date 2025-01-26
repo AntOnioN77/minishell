@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+=======
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/16 12:20:35 by antofern          #+#    #+#             */
+/*   Updated: 2025/01/18 16:14:18 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+>>>>>>> 5c1a5b4 (exe_one_child)
 
 //compilacion  cc -g3 -Wall -Wextra -Werror minishell.c expansor.c -L. -lft -lreadline
 #include "minishell.h"
@@ -94,6 +109,7 @@ printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRA
            		wait_all(tree);//, envp);
 		else
 			printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
+		free(line);
 		free_tree(tree);
 	}
 	return (error);

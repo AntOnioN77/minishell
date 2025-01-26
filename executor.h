@@ -24,4 +24,6 @@ int executor(t_tree *node, char **envp);
 
 void close_fds(int fd_since);
 
+int	error_exe(int er, char *cmd);
+
 #endif
