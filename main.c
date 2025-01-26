@@ -71,6 +71,7 @@ int main(int argc, char **argv, char **envp)
 	error = 0;
 	while(error == 0)
 	{
+<<<<<<< HEAD
 		error = get_cmd_tree(&tree, envp);
 		if (error)
 		{
@@ -80,6 +81,20 @@ printf(" error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
 		}
 		error = non_pipable_builtin(tree);//, envp);
 		if (error)
+=======
+		line = readline("mini$hell>");
+		if(!line || ft_strcmp(line, "exit") == 0)
+		{
+			perror("readline:");
+			if (line)
+				free(line);
+			return (1);
+		}
+		if (*line)
+			add_history(line);
+		tree = processline(line);
+		if (tree == NULL)
+>>>>>>> 1c383a1 (commit for save)
 		{
 			free_tree(tree);
 			if(error == FINISH) //NO es un error como tal, built in funcionó
