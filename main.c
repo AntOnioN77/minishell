@@ -3,18 +3,43 @@
 #include "minishell.h"
 #include "executor.h"
 
+//solo test://///////////////////////////////////
+#include <sys/stat.h>
+void test_fds(char *where)
+{
+	int i = 0;
+	struct stat statbuf;
+
+	printf("___TEST_FD__\n   %s\n", where);
+	while (i < 20)
+	{
+		if(fstat(i, &statbuf) == -1)
+			printf("| fd[%d] 🔴 | ", i);
+		else
+			printf("| fd[%d] 🟢 | ", i);
+		if(i%5==0)
+			printf("\n");
+		i++;
+	}
+}
+////////////////////////////////////////////////
+
+
 e_errors	continue_cmd_tree(t_tree **tree, char **envp)
 {
 	char 		*line;
 
 	//no se si antes o despues de readline, gestionar señales
-	line = readline(">");
+	line = readline(">");// FALTA GESTIONAR CUANDO SE INTRUDUCE LINEA VACIA
 	//(*tree)->line_extra = line;
+	printf("line");
 	if(!line)
 	{
 		perror("readline:");
 		return (REDLINE_FAIL);
 	}
+	if(line[0] == '\0')
+		return(continue_cmd_tree(tree, envp));
 	*tree = processline(line);
 	rl_clear_history();
 	if (*tree == NULL)
@@ -67,14 +92,19 @@ int main(int argc, char **argv, char **envp)
 	if (argc != 1 || !argv)
 		return(0);
 	tree=NULL;
-
 	error = 0;
-	while(error == 0)
+	while(error == 0 || error == TASK_IS_VOID)
 	{
+		error = 0;
 		error = get_cmd_tree(&tree, envp);
-		if (error)
+		if (error == TASK_IS_VOID)
 		{
-printf(" error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
+			free_tree(tree);
+			continue;
+		}
+		else if (error)
+		{
+printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
 			free_tree(tree);
 			return(error);
 		}
@@ -93,7 +123,11 @@ printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRA
 		if (error == 0)//capturar y gestionar error de executor
            		wait_all(tree);//, envp);
 		else
-			printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
+		{
+printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
+		}
+//test_fds("main 118");
+		close_fds(3);
 		free_tree(tree);
 	}
 	return (error);

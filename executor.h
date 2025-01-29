@@ -24,4 +24,9 @@ int executor(t_tree *node, char **envp);
 
 void close_fds(int fd_since);
 
+
+//solo test BORRAR
+void test_fds(char *where);
+
+
 #endif
