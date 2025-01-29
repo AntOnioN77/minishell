@@ -28,7 +28,7 @@ int non_pipable_builtin(t_tree *tree)//, char **envp)
 	if(tree->type == TASK)
 	{
 		//CD NO ESTA TESTEADO, abstraer funcion cd
-		if(((t_task *)tree)->cmd && !ft_strcmp(((t_task *)tree)->cmd, "cd"))
+		if(!ft_strcmp(((t_task *)tree)->cmd, "cd"))
 		{	
 			if(countargs((t_task *)tree) != 2)
 				ft_putstr_fd("minishell: cd: too many arguments", 2);
@@ -36,13 +36,13 @@ int non_pipable_builtin(t_tree *tree)//, char **envp)
 				perror("minishell: cd:");
 			return (ALL_OK);
 		}
-		else if(((t_task *)tree)->cmd && !ft_strcmp(((t_task *)tree)->cmd, "exit"))
+		else if(!ft_strcmp(((t_task *)tree)->cmd, "exit"))
 		{
 			free_tree(tree);
 			exit(ALL_OK);
 
 		}
-		else if(((t_task *)tree)->cmd && !ft_strcmp(((t_task *)tree)->cmd, "export"))
+		else if(!ft_strcmp(((t_task *)tree)->cmd, "export"))
 		{
 			//TODO:
 			/*
@@ -59,7 +59,7 @@ int non_pipable_builtin(t_tree *tree)//, char **envp)
 			*/
 			printf("export no esta implementado\n");
 		}
-		else if(((t_task *)tree)->cmd && !ft_strcmp(((t_task *)tree)->cmd, "unset"))
+		else if(!ft_strcmp(((t_task *)tree)->cmd, "unset"))
 		{
 			//TODO
 			printf("unset no esta implementado\n");
