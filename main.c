@@ -32,7 +32,6 @@ e_errors	continue_cmd_tree(t_tree **tree, char **envp)
 	//no se si antes o despues de readline, gestionar señales
 	line = readline(">");// FALTA GESTIONAR CUANDO SE INTRUDUCE LINEA VACIA
 	//(*tree)->line_extra = line;
-	printf("line");
 	if(!line)
 	{
 		perror("readline:");
