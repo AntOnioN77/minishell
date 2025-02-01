@@ -98,7 +98,6 @@ int main(int argc, char **argv, char **envp)
 	if (argc != 1 || !argv)
 		return(0);
 	tree=NULL;
-
 	error = 0;
 	while(error == 0 || error == TASK_IS_VOID)
 	{
@@ -132,6 +131,8 @@ printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRA
            		wait_all(tree);//, envp);
 		else
 			printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
+		//test_fds("main 118");
+		close_fds(3);
 		//free(line);
 		free_tree(tree);
 	}
