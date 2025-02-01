@@ -3,18 +3,42 @@
 #include "minishell.h"
 #include "executor.h"
 
+//solo test://///////////////////////////////////
+#include <sys/stat.h>
+void test_fds(char *where)
+{
+	int i = 0;
+	struct stat statbuf;
+
+	printf("___TEST_FD__\n   %s\n", where);
+	while (i < 20)
+	{
+		if(fstat(i, &statbuf) == -1)
+			printf("| fd[%d] 🔴 | ", i);
+		else
+			printf("| fd[%d] 🟢 | ", i);
+		if(i%5==0)
+			printf("\n");
+		i++;
+	}
+}
+////////////////////////////////////////////////
+
+
 e_errors	continue_cmd_tree(t_tree **tree, char **envp)
 {
 	char 		*line;
 
 	//no se si antes o despues de readline, gestionar señales
-	line = readline(">");
+	line = readline(">"); // FALTA GESTIONAR CUANDO SE INTRUDUCE LINEA VACIA
 	//(*tree)->line_extra = line;
 	if(!line)
 	{
 		perror("readline:");
 		return (REDLINE_FAIL);
 	}
+	if(line[0] == '\0')
+		return(continue_cmd_tree(tree, envp));
 	*tree = processline(line);
 	rl_clear_history();
 	if (*tree == NULL)
@@ -34,14 +58,21 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
 		char 		*line;
 
-		line = readline("mini$hell>");
+		line = readline("mini$hell> ");
 		//(*tree)->line = line;
-
 		if(!line)
 		{
 			perror("readline:");
 			return (REDLINE_FAIL);
 		}
+		if(ft_strcmp(line, "exit") == 0)
+		{
+			free(line);
+			exit(0);
+			//return(0);
+		}
+		if (*line)
+			add_history(line);
 		*tree = processline(line);
 		//free(line);
 		if (*tree == NULL)
@@ -69,32 +100,24 @@ int main(int argc, char **argv, char **envp)
 	tree=NULL;
 
 	error = 0;
-	while(error == 0)
+	while(error == 0 || error == TASK_IS_VOID)
 	{
-<<<<<<< HEAD
+		signalConf();
+		error = 0;
 		error = get_cmd_tree(&tree, envp);
-		if (error)
+		if (error == TASK_IS_VOID)
 		{
-printf(" error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
+			free_tree(tree);
+			continue;
+		}
+		else if (error)
+		{
+			printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
 			free_tree(tree);
 			return(error);
 		}
 		error = non_pipable_builtin(tree);//, envp);
 		if (error)
-=======
-		line = readline("mini$hell>");
-		if(!line || ft_strcmp(line, "exit") == 0)
-		{
-			perror("readline:");
-			if (line)
-				free(line);
-			return (1);
-		}
-		if (*line)
-			add_history(line);
-		tree = processline(line);
-		if (tree == NULL)
->>>>>>> 1c383a1 (commit for save)
 		{
 			free_tree(tree);
 			if(error == FINISH) //NO es un error como tal, built in funcionó
@@ -109,7 +132,7 @@ printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRA
            		wait_all(tree);//, envp);
 		else
 			printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
-		free(line);
+		//free(line);
 		free_tree(tree);
 	}
 	return (error);

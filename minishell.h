@@ -7,9 +7,11 @@
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <signal.h>
+# include <fcntl.h>
 
 ///////revisar
-#include <limits.h>
+# include <limits.h>
 /////////
 
 # define WHITESPACES " \r\n\v\t"
@@ -160,6 +162,8 @@ void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
 void wait_all(t_tree *node);
 //LOCATION: parser/check_tree.c
 int	 check_tree(t_tree *tree, char **envp);
+void handle_sigint(int signal);
+void	signalConf(void);
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree);//, char **envp);
 // ...

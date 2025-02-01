@@ -1,33 +1,47 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+#include "minishell.h"
 
-int main(void) {
-    char *input;
+void	charge_history()
+{
+	char	*pathname = "./history";
+	int		fd;
+	char	buff[100000];
 
-    while (1) {
-        // Mostrar un prompt personalizado y leer la entrada
-        input = readline("minishell> ");
+	//comprobar si existe el archivo y es accesible
+	if (access (pathname, F_OK | R_OK) != 0)
+		return ;
+	//abrir el archivo si existe 
+	fd = open(pathname, O_RDONLY);
+	//leer el archivo / GNL
+	if (fd)
+	{
+		read (fd, buff, 99999);
+		//cerrar el archivo
+		close (fd);
+	}
+}
 
-        // Salir si la entrada es NULL (Ctrl+D) o si el usuario escribe "exit"
-        if (!input || strcmp(input, "exit") == 0) {
-            free(input);
-            break;
-        }
+int	save_history(char *history)
+{
+	char	*pathname = "./history";
+	int		fd;
+	//int		res;
 
-        // Si la entrada no está vacía, agregarla al historial
-        if (*input)
-            add_history(input);
-
-        // Imprimir lo que el usuario escribió (puedes procesarlo después)
-        printf("Comando: %s\n", input);
-
-        // Liberar la memoria asignada por readline
-        free(input);
-    }
-
-    // Limpiar el historial al salir
-    rl_clear_history();
-    return 0;
+	//comprobar si existe el archivo y es accesible
+	if (access (pathname, F_OK) != 0)
+	//crear el archivo si no existe y abrirlo
+		fd = open(pathname, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+	else
+	{ 
+		if (access (pathname, W_OK) == 0)
+			return (1); //error archivo sin permisos para escribir. VER en BASH
+		fd = open(pathname, O_WRONLY);
+	}
+	if (fd)
+	{
+		//spbrescribir o hacer append en el archivo
+		write (fd, history, ft_strlen(history));
+		//cerrar el archivo
+		close (fd);
+	}
+	return (0);
 }

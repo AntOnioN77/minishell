@@ -26,4 +26,7 @@ void close_fds(int fd_since);
 
 int	error_exe(int er, char *cmd);
 
+//solo test BORRAR
+void test_fds(char *where);
+
 #endif
