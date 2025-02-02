@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 /*
@@ -6,7 +5,6 @@ int	add_pathname(char **cmd,  t_garbage *garbage, char *envp[])
 {
 	//usa access para verificar cmd como ruta absoluta
 	if ((*cmd)[0] == '/' || strncmp((*cmd), "../", 3) == 0 || strncmp((*cmd), "./", 2) == 0)
-
 
 	//busca en PATH una ruta valida para cmd
 		

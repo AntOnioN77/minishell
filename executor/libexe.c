@@ -1,4 +1,6 @@
-#include <stdlib.h>
+#include "minishell.h"
+#include "executor.h"
+
 /**
  * Libera la memoria reservada en matrices (ej: split)
  */

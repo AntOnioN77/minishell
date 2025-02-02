@@ -13,18 +13,11 @@ void handle_sigint(int signal)
 		rl_redisplay();
     }
 }
-/*void handle_sigquit(int signal)
-{
-	(void)signal;
-    rl_on_new_line();
-    rl_replace_line(rl_line_buffer, 0);
-    rl_redisplay();
-}*/
 
 /**
  * Configura las señales para CTRL-C (SIGINT) y CTRL-\ (SIGQUIT)
  */
-void	signalConf(void)
+void	signal_conf(void)
 {
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
