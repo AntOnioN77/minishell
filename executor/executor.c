@@ -75,14 +75,17 @@ int create_child(t_task *task, char **envp)
 		return (2);
 	if (pid == 0)
 	{
-//test_fds("create_child 77");//test
-		close_fds(3);
-		//apply_redirs(task->redir); //descomentar cuando sea creada, debe: cerrar 0 o/y 1, redirigir 0 o/y 1 a outfile/infoo
-		pathcmd = com_path(task->cmd, envp);
-		if (pathcmd == NULL)
-			return (5);//error en reserva de memoria?
-		execve(pathcmd, task->argv, envp);
-		err = errno;
+		err = apply_redirs(&(task->redir)); //descomentar cuando sea creada, debe: cerrar 0 o/y 1, redirigir 0 o/y 1 a outfile/infoo
+		if (err == 0)
+		{
+			close_fds(3);
+			pathcmd = com_path(task->cmd, envp);
+			if (pathcmd == NULL)
+				return (5);//error en reserva de memoria?
+			execve(pathcmd, task->argv, envp);
+			err = errno; //Si execve no a terminado la ejecucion podemos dar por hecho que hubo un error
+		
+		}
 		close_fds(0);
 		free(pathcmd);
 		exit(err);

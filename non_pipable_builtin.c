@@ -40,7 +40,6 @@ int non_pipable_builtin(t_tree *tree)//, char **envp)
 		{
 			free_tree(tree);
 			exit(ALL_OK);
-
 		}
 		else if(!ft_strcmp(((t_task *)tree)->cmd, "export"))
 		{

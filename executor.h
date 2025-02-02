@@ -26,6 +26,8 @@ void close_fds(int fd_since);
 
 int	error_exe(int er, char *cmd);
 
+e_errors apply_redirs(t_redir *redir);
+
 //solo test BORRAR
 void test_fds(char *where);
 
