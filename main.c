@@ -24,52 +24,48 @@ void test_fds(char *where)
 }
 ////////////////////////////////////////////////
 
-
-e_errors	continue_cmd_tree(t_tree **tree, char **envp)
+//Esta funcion es llamada cuando encontramos un pipe con el nodo a su derecha vacío por ejemplo "ls|(vacio)".
+// antes de llamar a esta funcion hay que liberar la t_task vacía.
+//El parametro t_tree **right recibe un puntero al elemento pipe->right
+//Solicita nueva entrada de usuario, y despliega un nuevo arbol, partiendo del nodo vacío, continuacion del arbol original. 
+e_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
 	char 		*line;
 
 	//no se si antes o despues de readline, gestionar señales
-	line = readline(">"); // FALTA GESTIONAR CUANDO SE INTRUDUCE LINEA VACIA
-	//(*tree)->line_extra = line;
+	line = readline(">");
 	if(!line)
 	{
 		perror("readline:");
 		return (REDLINE_FAIL);
 	}
-	if(line[0] == '\0')
-		return(continue_cmd_tree(tree, envp));
-	*tree = processline(line);
+	if(line[0] == '\0')// si la cadena leida esta vacía, vuelve a pedir entrada
+		return(continue_cmd_tree(right, envp));
+	*right = processline(line);
 	rl_clear_history();
-	if (*tree == NULL)
+	if (*right == NULL)
 	{
 		free(line);
 		perror("processline:");
 		rl_clear_history();
 		return (ERROR_MALLOC);
 	}
-	(*tree)->line_extra = line;
-	if(expand_vars_tree(*tree, envp))
+	(*right)->line_extra = line;
+	if(expand_vars_tree(*right, envp))
 		perror("expandtree:");//esta gestion de error es muy mejorable
-	return (check_tree(*tree, envp)); // gestionar retorno
+	return (check_tree(*right, envp)); // gestionar retorno
 }
 
 e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
 		char 		*line;
 
-		line = readline("mini$hell> ");
+		line = readline("mini$hell>");
 		//(*tree)->line = line;
 		if(!line)
 		{
 			perror("readline:");
 			return (REDLINE_FAIL);
-		}
-		if(ft_strcmp(line, "exit") == 0)
-		{
-			free(line);
-			exit(0);
-			//return(0);
 		}
 		if (*line)
 			add_history(line);
@@ -111,7 +107,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		else if (error)
 		{
-			printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
+printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
 			free_tree(tree);
 			return(error);
 		}
@@ -130,10 +126,11 @@ printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRA
 		if (error == 0)//capturar y gestionar error de executor
            		wait_all(tree);//, envp);
 		else
-			printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
-		//test_fds("main 118");
+		{
+printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
+		}
+//test_fds("main 118");
 		close_fds(3);
-		//free(line);
 		free_tree(tree);
 	}
 	return (error);
