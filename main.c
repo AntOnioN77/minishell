@@ -121,13 +121,13 @@ printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRA
 			
 			return (error);
 		}
-		//print_tree(tree, 30);
+//print_tree(tree, 30);
 		error = executor(tree, envp); //executor deberia simplemente ignorar los builtin no pipeables cd, export, unset y exit.
 		if (error == 0)//capturar y gestionar error de executor
            		wait_all(tree);//, envp);
 		else
 		{
-printf(" error en executor: %d\n", error); //solo para pruebas BORRAR
+printf(" error en executor: %d\n", error); //solo para pruebas BORRAR //PERo seria un buen lugar para imprimir con perror 
 		}
 //test_fds("main 118");
 		close_fds(3);

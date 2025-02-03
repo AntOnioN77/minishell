@@ -3,6 +3,8 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+
+# define _GNU_SOURCE//////////ATENCION PUEDE SER PROBLEMATICO
 # include "libft/headers/libft.h"
 # include <stdio.h>
 # include <readline/readline.h>
@@ -85,6 +87,7 @@ typedef struct s_redir
 	char		*infoo;// será un archivo para <, O un separator para <<
 	e_symbols	outsymbol;//>> o >
 	char		*outfile;
+	char		*tmp_file;//Es creado en caso de insymbol << por la funcion heredoc_handler requiere unlink, y despues free
 }	t_redir;
 
 typedef struct s_garbage {
