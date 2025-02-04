@@ -1,9 +1,11 @@
-#include "minishell.h"
+#include "../minishell.h"
+#include "../executor.h"
 #include <errno.h>
 //#include <fcntl.h>
 //#include <unistd.h>
 //#include "get_next_line.h"
 
+//la linea creada, almacenada en redir->tmp_file debe ser liberada (esta sin implementar)
 char *get_tmp_name(e_errors *error)
 {
 	char *str;
@@ -40,6 +42,7 @@ char *get_tmp_name(e_errors *error)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//el archivo creado debe ser eliminiado en free_tree, no implementado aun
 e_errors create_herefile(t_redir *redir)
 {
 	e_errors error;
@@ -56,7 +59,8 @@ e_errors create_herefile(t_redir *redir)
 		return(errno);
 	else
 	{
-		redir->tmp_file = tmp_file;//almacena para poder hacer unlink al final de la ejecucion
+		redir->tmp_file = tmp_file;
+		close(fd);
 	}
 	return(ALL_OK);
 }

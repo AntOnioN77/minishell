@@ -31,28 +31,28 @@ static e_errors heredoc_handler(char *separator, t_redir *redir)//char *separato
 	int seplen;
 	e_errors error;
 
-//NOTA : gestionar este error sintactico desde check_tree!!
-/*
-	if(!(redir->infoo))
-	{
-		ft_putstr_fd(" syntax error: (<<) requires a separator", 2);
-		return(SYNTAX_ERROR);
-	}
-*/
+	fd = open(redir->tmp_file, O_WRONLY);
+
 	//pedir nueva linea mientras linea no sea == separator
 	///////////////ABSTRAER///////////////////////////////////////
 	seplen = ft_strlen(separator);
-	line = get_next_line(0);
-	if(!line)
-		return(errno);	
-	while(ft_strncmp(line, separator, seplen) && line)
+	while(1)
 	{
-		ft_putstr_fd(line, fd);
-		free(line);
 		line = get_next_line(0);
-	}
-	if(line)
+		if (!line)
+		{
+			close(fd);
+			return(errno);
+		}
+		ft_putstr_fd(line, fd);
+		if(!ft_strncmp(line, separator, seplen))
+		{
+			free(line);
+			break ;
+		}
 		free(line);
+
+	}
 	/////////////////////////FIN ABSTRAER/////////////////////////
 	// redirigir STDIN a un fd que apunte al principio del archivo temporal
 	close(fd);
