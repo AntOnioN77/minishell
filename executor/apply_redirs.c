@@ -4,43 +4,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "get_next_line.h"
-#include <assert.h>
 #include "../executor.h"
 
-char *get_tmp_name(e_errors *error)
-{
-	char *str;
-	char *num;
-	int i;
-
-	i = 0;
-
-	num = NULL;
-	str = NULL;
-	while (i < 500)
-	{
-		num = ft_itoa(i);
-		if (num == NULL)
-		{
-			*error = errno;
-			return(NULL);
-		}
-		str = ft_strjoin("/tmp/.minishell.", num);
-		ft_free_null((void **)&num);
-		if(str == NULL)
-		{
-			*error = errno;
-			return(NULL);
-		}
-		if (access(str, F_OK) != 0 && errno == ENOENT)
-			return (str);
-		i++;
-		ft_free_null((void **)&str);
-	}
-	ft_putstr_fd("mini$hell: Could not name temporary file required by heredoc", 2);
-	*error = TMP_FILE_ERROR;
-	return (NULL);
-}
 
 
 /*	Abre el archivo <file>, con las flags <openflag>
@@ -63,7 +28,6 @@ static e_errors heredoc_handler(char *separator, t_redir *redir)//char *separato
 {
 	int fd;
 	char *line;
-	char *tmp_file;
 	int seplen;
 	e_errors error;
 
@@ -75,22 +39,6 @@ static e_errors heredoc_handler(char *separator, t_redir *redir)//char *separato
 		return(SYNTAX_ERROR);
 	}
 */
-
-	//asignar un nombre al archivo temporal, que no pise el nombre de otros archivos temporales creados por heredoc en otros pipes
-	//por ejemplo si hicieramos "<<FIN cat | <<FIN cat"
-	error = 0;
-	tmp_file = get_tmp_name(&error);
-	if (error || !tmp_file)
-		return (error);
-	//crear archivo temporal
-	fd = open(tmp_file, O_CREAT | O_WRONLY | O_APPEND, 00600);
-	if(fd == -1)
-		return(errno);
-	else
-	{
-		redir->tmp_file = tmp_file;//almacena para poder hacer unlink al final de la ejecucion
-	}
-
 	//pedir nueva linea mientras linea no sea == separator
 	///////////////ABSTRAER///////////////////////////////////////
 	seplen = ft_strlen(separator);
@@ -108,7 +56,7 @@ static e_errors heredoc_handler(char *separator, t_redir *redir)//char *separato
 	/////////////////////////FIN ABSTRAER/////////////////////////
 	// redirigir STDIN a un fd que apunte al principio del archivo temporal
 	close(fd);
-	error = file_redirector(STDIN_FILENO, tmp_file, O_RDONLY);
+	error = file_redirector(STDIN_FILENO, redir->tmp_file, O_RDONLY);
 	return(error);
 
 }

@@ -27,6 +27,8 @@ int non_pipable_builtin(t_tree *tree)//, char **envp)
 {
 	if(tree->type == TASK)
 	{
+		if(!((t_task *)tree)->cmd)
+			return (ALL_OK);
 		//CD NO ESTA TESTEADO, abstraer funcion cd
 		if(!ft_strcmp(((t_task *)tree)->cmd, "cd"))
 		{	

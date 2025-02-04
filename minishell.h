@@ -43,7 +43,7 @@ typedef enum e_symbols
 } e_symbols;
 
 
-//no implementado
+
 typedef enum e_errors
 {
 	ALL_OK,
@@ -90,6 +90,7 @@ typedef struct s_redir
 	e_symbols	outsymbol;//>> o >
 	char		*outfile;
 	char		*tmp_file;//Es creado en caso de insymbol << por la funcion heredoc_handler requiere unlink, y despues free
+	e_symbols	error;
 }	t_redir;
 
 typedef struct s_garbage {
@@ -169,6 +170,9 @@ void wait_all(t_tree *node);
 int	 check_tree(t_tree *tree, char **envp);
 void handle_sigint(int signal);
 void	signalConf(void);
+//LOCATION: tmp_file_name.c
+e_errors create_herefile(t_redir *redir);
+char *get_tmp_name(e_errors *error);
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree);//, char **envp);
 // ...

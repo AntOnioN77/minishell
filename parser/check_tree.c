@@ -58,6 +58,7 @@ int	 check_tree(t_tree *tree, char **envp)
 		tasknode = (t_task *)tree;
 		if (is_void_task(tasknode))
 			return (TASK_IS_VOID);
+		
 	}
 	else
 		return(INVALID_TYPE);

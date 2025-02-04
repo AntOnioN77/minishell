@@ -6,22 +6,27 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 13:27:43 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/04 23:56:59 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-static void handle_heredoc(char **segment, char *end, t_redir *redir)
+static e_errors handle_heredoc(char **segment, char *end, t_redir *redir)
 {
 	(*segment) += 2;
  	if (redir)
 	{
 		redir->insymbol = heredoc;
 		getpntword(segment, end, &(redir->infoo));
+		if(!redir->infoo)
+			redir->error = SYNTAX_ERROR;
+		else
+			redir->error = create_herefile(redir);
 	}
 	else
 		getpntword(segment, end, NULL);
+	return (ALL_OK);
 }
 
 static void handle_append(char **segment, char *end, t_redir *redir)
@@ -62,13 +67,20 @@ static void handle_output(char **segment, char *end, t_redir *redir)
 }
 }
 
-void	get_redir(char **segment, char *end, t_redir *redir)
+//si lo primero que encuentra en segment es uno o varios redir los consume, avanzando segment. Si <redir> no es null, rellena las istancias consumidas
+//Si hay un heredoc, crea el archivo temporal necesario.
+e_errors	get_redir(char **segment, char *end, t_redir *redir)
 {
+	e_errors error;
 	while (*segment < end)
 	{
 		skipwhitesp(segment, end);
 		if (*segment == ft_strnstr(*segment, "<<", end - *segment))
-			handle_heredoc(segment, end, redir);
+		{
+			error = handle_heredoc(segment, end, redir);
+			if(error)
+				return (error);
+		}
 		else if (*segment == ft_strnstr(*segment, ">>", end - *segment))
 			handle_append(segment, end, redir);
 		else if (**segment == '<')
@@ -76,7 +88,7 @@ void	get_redir(char **segment, char *end, t_redir *redir)
 		else if (**segment == '>')
 			handle_output(segment, end, redir);
 		else
-			return;
+			return(ALL_OK);
 	}
-	return ;
+	return(ALL_OK) ;
 }
