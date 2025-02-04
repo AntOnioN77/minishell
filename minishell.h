@@ -4,7 +4,6 @@
 # define MINISHELL_H
 
 
-# define _GNU_SOURCE//////////ATENCION PUEDE SER PROBLEMATICO
 # include "libft/headers/libft.h"
 # include <stdio.h>
 # include <readline/readline.h>
@@ -48,11 +47,14 @@ typedef enum e_symbols
 typedef enum e_errors
 {
 	ALL_OK,
-    ERROR_MALLOC,
-    INVALID_TYPE,
-	TASK_IS_VOID,
+    ERROR_MALLOC = 151, // evitamos solapar valores de errno, de esta manera
+//nuestras funciones pueden retornar tanto valores capturados de errno, como
+//nuestros propios casos de error
+    INVALID_TYPE,	//1002
+	TASK_IS_VOID,	//1003
 	SYNTAX_ERROR,
 	REDLINE_FAIL,
+	TMP_FILE_ERROR,
 	FINISH,
 	UNDEFINED		//cuando aun no esta muy claro, usar solo durante el desaroyo
 } e_errors;

@@ -7,6 +7,9 @@
 		"__node_handle": "c",
 		"sstream": "c",
 		"stat.h": "c",
-		"minishell.h": "c"
+		"minishell.h": "c",
+		"fcntl.h": "c",
+		"errno.h": "c",
+		"features.h": "c"
 	}
 }
