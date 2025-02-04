@@ -93,7 +93,7 @@ int main(int argc, char **argv, char **envp)
 	//Para silenciar warning.
 	if (argc != 1 || !argv)
 		return(0);
-	charge_history();
+	load_history();
 	tree=NULL;
 	error = 0;
 	while(error == 0 || error == TASK_IS_VOID)

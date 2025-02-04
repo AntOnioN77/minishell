@@ -168,6 +168,8 @@ int	 check_tree(t_tree *tree, char **envp);
 void handle_sigint(int signal);
 void	signal_conf(void);
 //LOCATION: history.c
+void	load_history(void);
+int	save_history(char *history);
 
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree);//, char **envp);
