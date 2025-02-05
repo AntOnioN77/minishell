@@ -95,7 +95,7 @@ int main(int argc, char **argv, char **envp)
 		return(0);
 	tree=NULL;
 	error = 0;
-	while(error == 0 || error == TASK_IS_VOID)
+	while(error == 0 || error == TASK_IS_VOID || error == SYNTAX_ERROR)
 	{
 		signalConf();
 		error = 0;
@@ -107,7 +107,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		else if(error == SYNTAX_ERROR)
 		{
-			ft_putstr_fd("Syntax error", 2);//bash es mas especifico, quiza hay que darle una vuelta.
+			ft_putstr_fd("Syntax error\n", 2);//bash es mas especifico, quiza hay que darle una vuelta.
 			free_tree(tree);
 			continue;
 		}

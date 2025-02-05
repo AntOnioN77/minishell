@@ -41,10 +41,7 @@ int	 check_tree(t_tree *tree, char **envp)
 		if (error == TASK_IS_VOID)
 			return (SYNTAX_ERROR);
 		else if (error)
-		{
-ft_putstr_fd("marca error en check_tree 45\n", 2);
 			return (error);
-		}
 		if (!pipenode->rigth)
 			return(ERROR_MALLOC);
 		error = check_tree(pipenode->rigth, envp);
@@ -62,10 +59,7 @@ ft_putstr_fd("marca error en check_tree 45\n", 2);
 		if (is_void_task(tasknode))
 			return (TASK_IS_VOID);
 		if(tasknode->redir.error) //se podria retornar sin hacer el if, pero parece mas claro así;
-		{
-ft_putstr_fd("marca error en check_tree 66\n", 2);
 			return(tasknode->redir.error);
-		}
 	}
 	else
 		return(INVALID_TYPE);
