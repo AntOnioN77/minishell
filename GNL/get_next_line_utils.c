@@ -6,24 +6,11 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/03 15:04:38 by antofern          #+#    #+#             */
-/*   Updated: 2024/03/07 09:21:21 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/05 12:36:20 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-size_t	ft_strlen(const char *s)
-{
-	int	i;
-
-	i = 0;
-	while (*s != '\0')
-	{
-		i++;
-		s++;
-	}
-	return (i);
-}
 
 char	*ft_strchr(const char *s, int c)
 {

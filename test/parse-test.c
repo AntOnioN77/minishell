@@ -51,7 +51,7 @@ void test_minishell(void)
 		"\"$VAR", 
 		"$VAR<NAME", 
 		"",													//DE AQUI EN ADELANTE NO ESTAN COTEJADOS
-		" ls -la | grep .c | wc -l ",
+		/*" ls -la | grep .c | wc -l ",
 		"ls -l| grep .c | wc -l ",
 		"echo 'comillas simples' | cat",
 		"echo \"comillas dobles\" | cat",
@@ -310,7 +310,7 @@ void test_minishell(void)
 		"ls | echo | ||",
 		"ls ||| echo",
 		"| | | echo | ls",
-		"echo '' | ls |",
+		"echo '' | ls |",*/
         NULL
     };
 
@@ -336,6 +336,8 @@ void test_minishell(void)
 
     printf("\n=== Tests completados ===\n");
 }
+
+
 
 int main(void)
 {

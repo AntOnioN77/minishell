@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:19:13 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/05 11:10:53 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/05 14:43:53 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ void	getpntword(char **segment, char *end, char **dst)
 
 	while (*segment < end)
 	{
-		if (skip_quotes(segment, end))
-			(*segment)++;
+		skip_quotes(segment, end);
+		//	(*segment)++;
 		if(!isdelimiter(**segment))
 			(*segment)++;
 		else

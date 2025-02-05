@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:03:40 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 12:04:05 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/05 15:02:52 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,9 @@ void	nullify_delimiters(char *str)
 		{
         	if (isdelimiter(*str))
             	*str = '\0';
+			str++;
 		}
-		str++;
+		
     }
 }
 
@@ -53,9 +54,9 @@ int skip_quotes(char **strpnt, char *end)
 		while (**strpnt == '"' || **strpnt == 39)
 		{
 			if(**strpnt == '"' && ft_strnchr((*strpnt) +1, '"', (end - *strpnt))) //sin  +1 strchr encontraría el propio caracter de partida
-				*strpnt = ft_strnchr(*strpnt +1, '"', (end - *strpnt));
+				*strpnt = 1 + ft_strnchr(*strpnt +1, '"', (end - *strpnt));
 			else if(**strpnt == 39 && ft_strnchr(*strpnt +1, 39, (end - *strpnt))) //39 es ' en ascii
-				*strpnt = ft_strnchr(*strpnt +1, 39, (end - *strpnt));
+				*strpnt = 1 + ft_strnchr(*strpnt +1, 39, (end - *strpnt));
 			else
 				break ;
 		}
@@ -80,8 +81,8 @@ int strnchr_outquot(char **str, char *end, char c)
 			*str = strpnt;
 			return (1);
 		}
-		skip_quotes(&strpnt, end);
-		strpnt++;
+		if(!skip_quotes(&strpnt, end))
+			strpnt++;
 
 	}
 	return (0);

@@ -43,7 +43,7 @@ int	search_var(char **envp, const char* var)
 	}
 	return (-1);
 }
-
+/* chapado para test
 char *ft_getenv(const char *name, char *envp[])
 {
 	int pos;
@@ -55,6 +55,27 @@ char *ft_getenv(const char *name, char *envp[])
 	word_start = ft_strchr(envp[pos], '=') + 1;
 	return(word_start);
 }
+*/
+
+char *ft_getenv(const char *name, char *envp[])
+{
+	if (!envp)
+		return NULL;
+    if (strcmp(name, "VAR") == 0)
+		return "value";
+    if (strcmp(name, "VAR2") == 0)
+		return "value2";
+    if (strcmp(name, "EMPTY") == 0)
+		return "";
+    if (strcmp(name, "LONG") == 0)
+		return "_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value";
+    if (strcmp(name, "SPACE") == 0)
+		return "value with spaces";
+    if (strcmp(name, "QUOTES") == 0)
+		return "value'with'quotes";
+    return NULL;
+}
+
 
 //SOLO PARA PRUEBAS no requiere implementacion
 //-Imprime el arbol
