@@ -90,7 +90,7 @@ typedef struct s_redir
 	e_symbols	outsymbol;//>> o >
 	char		*outfile;
 	char		*tmp_file;//Es creado en caso de insymbol << por la funcion heredoc_handler requiere unlink, y despues free
-	e_errors	error;
+	e_errors	error; //Error causado durante la creación de tmp_file
 }	t_redir;
 
 typedef struct s_garbage {

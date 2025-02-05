@@ -105,6 +105,12 @@ int main(int argc, char **argv, char **envp)
 			free_tree(tree);
 			continue;
 		}
+		else if(error == SYNTAX_ERROR)
+		{
+			ft_putstr_fd("Syntax error", 2);//bash es mas especifico, quiza hay que darle una vuelta.
+			free_tree(tree);
+			continue;
+		}
 		else if (error)
 		{
 printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
@@ -121,7 +127,7 @@ printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRA
 			
 			return (error);
 		}
-//print_tree(tree, 30);
+print_tree(tree, 30);
 		error = executor(tree, envp); //executor deberia simplemente ignorar los builtin no pipeables cd, export, unset y exit.
 		if (error == 0)//capturar y gestionar error de executor
            		wait_all(tree);//, envp);
