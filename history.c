@@ -1,6 +1,16 @@
 #include "minishell.h"
 #include "GNL/get_next_line.h"
 
+int	matrixlen(char **matrix)
+{
+	size_t	len;
+
+	len = 0;
+	while (matrix[len])
+		len++;
+	return (len);
+}
+
 int		get_histsize(const char *histsize)
 {
 	const char *histfilesize;
@@ -15,32 +25,61 @@ int		get_histsize(const char *histsize)
 	else
 		return (ft_atol(histsize));
 }
+/**
+ * Se va a crear el límite de comandos que puede tener el historial en el file
+ */
+void	save_limit_history(char *hist, int fd)
+{
+	size_t	limit;
+	size_t	hsize;
+	char	**hists;
+
+	//Hay que jugar con el límite de líneas que puede tener bash en el historial
+    limit = get_histsize(getenv("HISTSIZE"));
+	hists = ft_split(hist, '\n');
+	hsize = matrixlen(hists);
+	//
+	if (hsize >= limit)
+		hsize = 0;
+	else
+		hsize -= limit; 
+	while (hists[limit])
+	{
+		add_history(hists[limit]);
+		write (fd, hists[limit], ft_strlen(hists[limit]));
+		limit++;
+	}
+	close(fd);
+	//return
+		exit(0);
+}
 
 void	load_history(void)
 {
-	unsigned int	size;
+	
 	int		fd;
-	char	*line;
+	int		reader;
+	char	line[1024];
+	char	*hist;
 
-	//Hay que jugar con el límite de líneas que puede tener bash en el historial
-    size = get_histsize(getenv("HISTSIZE"));
-	//comprobar si existe el archivo y es accesible
-	if (access (HISTORY_FILE, F_OK | R_OK) != 0)
+	//Comprobar si existe el archivo y es accesible
+	if (access (HISTORY_FILE, F_OK | R_OK | W_OK) != 0)
 		return ;
-	//abrir el archivo si existe 
-	fd = open(HISTORY_FILE, O_RDONLY);
+	//Abrir el archivo si existe 
+	fd = open(HISTORY_FILE, O_RDWR | O_TRUNC);
 	//GNL
 	if (fd)
 	{
-		line = get_next_line(fd);
+		reader = 1;
 		//Habrá que contar con el límite del historial
-		while (line)
+		while (reader)
 		{
-			add_history(line);
+			reader = read(fd, line, 1024);
+			hist = ft_strjoin(hist, line);
 			free(line);
-			line = get_next_line(fd);
 		}
-		//cerrar el archivo
+		save_limit_history(hist, fd);
+		//Cerrar el archivo
 		close (fd);
 	}
 }
