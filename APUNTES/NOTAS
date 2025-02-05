@@ -4,6 +4,4 @@ https://embeddedartistry.com/fieldatlas/technique-inheritance-and-polymorphism-i
 acceder a valores de errno:
 cat /usr/include/asm-generic/errno.h
 
-test 22 de parseo, falla:
-echo 'comillas'>outfile'dos veces' ----considera que >outfile esta entre comillas
-Test 20: 'echo 'comillas''dos veces'>outfile'
+unquote esta sin implementar, el que hay es un mook y no funciona;

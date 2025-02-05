@@ -1,4 +1,5 @@
 #include "../libft/headers/libft.h"
+#include "../minishell.h"
 //compilar cc skpiqprueba.c ../libft/libft.a -L../libft -lft
 
 int skip_quotes(char **strpnt, char *end)
@@ -23,10 +24,13 @@ int skip_quotes(char **strpnt, char *end)
 #include <stdio.h>
 int main(void)
 {
-	char *str= "echo 'comillas'>outfile'dos veces'";
+	
+	char *str= "|'";
 	//printf("%s\n",str+33);
-	str= str +5;
-	skip_quotes(&str, str+34);
+	str= str +1;
+	skip_quotes(&str, str +1);
 	printf("%s\n",str);
+	//printf("%s\n", DELIMITERS);
+	
 	return(0);
 }
