@@ -19,7 +19,7 @@ static e_errors file_redirector(int newfd, char *file, int openflag)
 		fd = open(file, openflag, 0664);
 	else
 		fd = open(file, openflag);
-	if (fd == -1 || dup2(fd, newfd) || close(fd))
+	if (fd == -1 || dup2(fd, newfd) == -1 || close(fd))
 		return(errno);
 	return(ALL_OK);
 }
@@ -71,11 +71,11 @@ e_errors apply_redirs(t_redir *redir)
 	else if (redir->insymbol == heredoc)
 	{
 ft_putstr_fd("---apply_redirs.c---------------------73\n", 2);
-ft_putnbr_fd(redir->insymbol,2);
 	 	error = heredoc_handler(redir->infoo, redir);
 	}
-ft_putstr_fd("---apply_redirs.c---------------------73\n", 2);
+ft_putstr_fd("---apply_redirs.c---------------------76\n", 2);
 ft_putnbr_fd(error,2);
+ft_putstr_fd("\n", 2);
 	if (error != 0)
 		return (error);
 	
@@ -83,5 +83,8 @@ ft_putnbr_fd(error,2);
 		error = file_redirector(1 , redir->outfile, O_WRONLY | O_CREAT);
 	else if (redir->outsymbol == append)
 		error = file_redirector(1 , redir->outfile, O_WRONLY | O_APPEND | O_CREAT);
+ft_putstr_fd("---apply_redirs.c---------------------86\n", 2);
+ft_putnbr_fd(error,2);
+ft_putstr_fd("\n", 2);
 	return (error);
 }
