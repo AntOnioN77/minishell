@@ -76,7 +76,9 @@ int create_child(t_task *task, char **envp)
 	if (pid == 0)
 	{
 		close_fds(3);
+ft_putstr_fd("--------------------------------81\n", 2);
 		err = apply_redirs(&(task->redir)); //descomentar cuando sea creada, debe: cerrar 0 o/y 1, redirigir 0 o/y 1 a outfile/infoo
+ft_putnbr_fd(err,2);
 		if (err == 0)
 		{
 			//close_fds(3);

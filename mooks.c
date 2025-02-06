@@ -43,7 +43,7 @@ int	search_var(char **envp, const char* var)
 	}
 	return (-1);
 }
-/* chapado para test
+
 char *ft_getenv(const char *name, char *envp[])
 {
 	int pos;
@@ -55,8 +55,9 @@ char *ft_getenv(const char *name, char *envp[])
 	word_start = ft_strchr(envp[pos], '=') + 1;
 	return(word_start);
 }
-*/
 
+/* 
+// parse_test requiere este mook:
 char *ft_getenv(const char *name, char *envp[])
 {
 	if (!envp)
@@ -75,7 +76,7 @@ char *ft_getenv(const char *name, char *envp[])
 		return "value'with'quotes";
     return NULL;
 }
-
+*/
 
 //SOLO PARA PRUEBAS no requiere implementacion
 //-Imprime el arbol

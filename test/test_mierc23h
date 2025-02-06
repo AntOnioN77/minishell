@@ -1,0 +1,520 @@
+
+=== Iniciando tests de Minishell ===
+       compara con: ./a.out | diff - parse-test.check
+
+Test 1: 'ls -la'
+-----------------------------------------------
+TASK->cmd: ls
+	->argv[0]: ls
+	->argv[1]: -la
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 2: 'ls -l |grep .c'
+-----------------------------------------------
+PIPE
+  TASK->cmd: ls
+	->argv[0]: ls
+	->argv[1]: -l
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+  TASK->cmd: grep
+	->argv[0]: grep
+	->argv[1]: .c
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 3: 'ls -l | grep .c | wc -l'
+-----------------------------------------------
+PIPE
+  TASK->cmd: ls
+	->argv[0]: ls
+	->argv[1]: -l
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+  PIPE
+    TASK->cmd: grep
+	->argv[0]: grep
+	->argv[1]: .c
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+    TASK->cmd: wc
+	->argv[0]: wc
+	->argv[1]: -l
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 4: 'cat < input.txt'
+-----------------------------------------------
+TASK->cmd: cat
+	->argv[0]: cat
+	->redir->insymbol: 1
+	->redir->infoo: input.txt
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 5: 'echo hola > output.txt'
+-----------------------------------------------
+TASK->cmd: echo
+	->argv[0]: echo
+	->argv[1]: hola
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 2
+	->redir->outfile: output.txt
+
+
+Test 6: 'echo 'texto con espacios''
+-----------------------------------------------
+TASK->cmd: echo
+	->argv[0]: echo
+	->argv[1]: texto con espacios
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 7: 'echo "texto con espacios"'
+-----------------------------------------------
+TASK->cmd: echo
+	->argv[0]: echo
+	->argv[1]: texto con espacios
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 8: 'ls    -l     -a'
+-----------------------------------------------
+TASK->cmd: ls
+	->argv[0]: ls
+	->argv[1]: -l
+	->argv[2]: -a
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 9: 'ls -l > output.txt | wc -l'
+-----------------------------------------------
+PIPE
+  TASK->cmd: ls
+	->argv[0]: ls
+	->argv[1]: -l
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 2
+	->redir->outfile: output.txt
+  TASK->cmd: wc
+	->argv[0]: wc
+	->argv[1]: -l
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 10: 'cat << EOF'
+-----------------------------------------------
+TASK->cmd: cat
+	->argv[0]: cat
+	->redir->insymbol: 3
+	->redir->infoo: EOF
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 11: 'cat <input.txt'
+-----------------------------------------------
+TASK->cmd: cat
+	->argv[0]: cat
+	->redir->insymbol: 1
+	->redir->infoo: input.txt
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 12: 'cat<input.txt'
+-----------------------------------------------
+TASK->cmd: cat
+	->argv[0]: cat
+	->redir->insymbol: 1
+	->redir->infoo: input.txt
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 13: 'ls -la <infile'
+-----------------------------------------------
+TASK->cmd: ls
+	->argv[0]: ls
+	->argv[1]: -la
+	->redir->insymbol: 1
+	->redir->infoo: infile
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 14: 'ls -la <infile<infile2'
+-----------------------------------------------
+TASK->cmd: ls
+	->argv[0]: ls
+	->argv[1]: -la
+	->redir->insymbol: 1
+	->redir->infoo: infile2
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 15: '""|<input'
+-----------------------------------------------
+PIPE
+  TASK->cmd: ""
+	->argv[0]: ""
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+  TASK->cmd: (null)
+	->redir->insymbol: 1
+	->redir->infoo: input
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 16: '<input'
+-----------------------------------------------
+TASK->cmd: (null)
+	->redir->insymbol: 1
+	->redir->infoo: input
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 17: 'ls'
+-----------------------------------------------
+TASK->cmd: ls
+	->argv[0]: ls
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 18: '<input ls| wc -a'
+-----------------------------------------------
+PIPE
+  TASK->cmd: ls
+	->argv[0]: ls
+	->redir->insymbol: 1
+	->redir->infoo: input
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+  TASK->cmd: wc
+	->argv[0]: wc
+	->argv[1]: -a
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 19: 'echo 'comillas''dos veces''
+-----------------------------------------------
+TASK->cmd: echo
+	->argv[0]: echo
+	->argv[1]: comillasdos veces
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 20: 'echo 'comillas''dos veces'>outfile'
+-----------------------------------------------
+TASK->cmd: echo
+	->argv[0]: echo
+	->argv[1]: comillasdos veces
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 2
+	->redir->outfile: outfile
+
+
+Test 21: 'echo >outfile'comillas''dos veces''
+-----------------------------------------------
+TASK->cmd: echo
+	->argv[0]: echo
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 2
+	->redir->outfile: outfilecomillasdos veces
+
+
+Test 22: 'echo 'comillas'>outfile'dos veces''
+-----------------------------------------------
+TASK->cmd: echo
+	->argv[0]: echo
+	->argv[1]: comillas
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 2
+	->redir->outfile: outfiledos veces
+
+
+Test 23: ''|'
+-----------------------------------------------
+PIPE
+  TASK->cmd: '
+	->argv[0]: '
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+  TASK->cmd: (null)
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 24: '|''
+-----------------------------------------------
+PIPE
+  TASK->cmd: (null)
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+  TASK->cmd: '
+	->argv[0]: '
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 25: '$VAR'
+-----------------------------------------------
+TASK->cmd: value
+	->argv[0]: value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 26: '$VAR$VAR'
+-----------------------------------------------
+TASK->cmd: valuevalue
+	->argv[0]: valuevalue
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 27: 'prefix $VAR suffix'
+-----------------------------------------------
+TASK->cmd: prefix
+	->argv[0]: prefix
+	->argv[1]: value
+	->argv[2]: suffix
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 28: ''$VAR''
+-----------------------------------------------
+TASK->cmd: $VAR
+	->argv[0]: $VAR
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 29: '"$VAR"'
+-----------------------------------------------
+TASK->cmd: value
+	->argv[0]: value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 30: '"$VAR'$VAR'"'
+-----------------------------------------------
+TASK->cmd: value'$VAR'
+	->argv[0]: value'$VAR'
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 31: '$NONEXISTENT'
+-----------------------------------------------
+TASK->cmd: 
+	->argv[0]: 
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 32: '$EMPTY'
+-----------------------------------------------
+TASK->cmd: 
+	->argv[0]: 
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 33: '$SPACE'
+-----------------------------------------------
+TASK->cmd: value with spaces
+	->argv[0]: value with spaces
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 34: '"$VAR'$VAR'$VAR"'$VAR''
+-----------------------------------------------
+TASK->cmd: value'$VAR'value$VAR
+	->argv[0]: value'$VAR'value$VAR
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 35: '$VAR	$VAR
+$VAR'
+-----------------------------------------------
+TASK->cmd: value
+	->argv[0]: value
+	->argv[1]: value
+	->argv[2]: value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 36: '$QUOTES'
+-----------------------------------------------
+TASK->cmd: valuewithquotes
+	->argv[0]: valuewithquotes
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 37: '$LONG'
+-----------------------------------------------
+TASK->cmd: _this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value
+	->argv[0]: _this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 38: '$'
+-----------------------------------------------
+TASK->cmd: $
+	->argv[0]: $
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 39: 'text$'
+-----------------------------------------------
+TASK->cmd: text$
+	->argv[0]: text$
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 40: '$$$$VAR'
+-----------------------------------------------
+TASK->cmd: $$$value
+	->argv[0]: $$$value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 41: '$VAR!@#$VAR'
+-----------------------------------------------
+TASK->cmd: value
+	->argv[0]: value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 42: '"$VAR'
+-----------------------------------------------
+TASK->cmd: "value
+	->argv[0]: "value
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 43: '$VAR<NAME'
+-----------------------------------------------
+TASK->cmd: value
+	->argv[0]: value
+	->redir->insymbol: 1
+	->redir->infoo: NAME
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+Test 44: ''
+-----------------------------------------------
+TASK->cmd: (null)
+	->redir->insymbol: 0
+	->redir->infoo: (null)
+	->redir->outsymbol: 0
+	->redir->outfile: (null)
+
+
+=== Tests completados ===

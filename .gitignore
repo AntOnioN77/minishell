@@ -13,5 +13,5 @@
 
 # Built Visual Studio Code Extensions
 *.vsix
-
 *.o
+minishell_tester

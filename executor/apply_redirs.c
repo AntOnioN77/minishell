@@ -69,8 +69,13 @@ e_errors apply_redirs(t_redir *redir)
 	if (redir->insymbol == infile)
 		error = file_redirector(0, redir->infoo, O_RDONLY);
 	else if (redir->insymbol == heredoc)
+	{
+ft_putstr_fd("---apply_redirs.c---------------------73\n", 2);
+ft_putnbr_fd(redir->insymbol,2);
 	 	error = heredoc_handler(redir->infoo, redir);
-	
+	}
+ft_putstr_fd("---apply_redirs.c---------------------73\n", 2);
+ft_putnbr_fd(error,2);
 	if (error != 0)
 		return (error);
 	
