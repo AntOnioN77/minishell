@@ -18,9 +18,9 @@
 
 int	ft_free_double(char **s);
 
-int create_child(t_task *task, char **envp);
+int create_child(t_task *task, char **envp, int in, int out);
 
-int executor(t_tree *node, char **envp);
+int executor(t_tree *node, char **envp, int in, int out);
 
 void close_fds(int fd_since);
 
