@@ -33,7 +33,7 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	char 		*line;
 
 	//no se si antes o despues de readline, gestionar señales
-	line = readline(">");
+	line = readline("> ");
 	if(!line)
 	{
 		perror("readline:");
@@ -60,7 +60,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
 		char 		*line;
 
-		line = readline("mini$hell>");
+		line = readline("mini$hell> ");
 		//(*tree)->line = line;
 		if(!line)
 		{

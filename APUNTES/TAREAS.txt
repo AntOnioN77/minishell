@@ -9,3 +9,4 @@
 	-hacer git dif con la salida esperada he imprimir ✅ o ❌
 	-compilar test_leaks.c
 	-ejecutar test_leaks
+3. No ejecuta ejecutables, solo comandos en PATH

@@ -173,8 +173,11 @@ void	signalConf(void);
 //LOCATION: tmp_file_name.c
 e_errors create_herefile(t_redir *redir);
 char *get_tmp_name(e_errors *error);
+//LOCATIOS: tmp_filename.c
+e_errors heredoc_writer(char *separator, t_redir *redir);
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree);//, char **envp);
 // ...
+
 
 #endif

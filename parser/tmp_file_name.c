@@ -1,6 +1,8 @@
 #include "../minishell.h"
 #include "../executor.h"
 #include <errno.h>
+#include "../GNL/get_next_line.h"
+
 //#include <fcntl.h>
 //#include <unistd.h>
 //#include "get_next_line.h"
@@ -39,6 +41,46 @@ char *get_tmp_name(e_errors *error)
 	ft_putstr_fd("mini$hell: Could not name temporary file required by heredoc", 2);
 	*error = TMP_FILE_ERROR;
 	return (NULL);
+}
+
+
+e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
+{
+	int fd;
+	char *line;
+	int seplen;
+	e_errors error;
+
+	error = 0;
+	fd = open(redir->tmp_file, O_WRONLY | O_TRUNC);
+
+	//pedir nueva linea mientras linea no sea == separator
+	///////////////ABSTRAER///////////////////////////////////////
+	seplen = ft_strlen(separator);
+	while(1)
+	{
+		get_next_line(0, &line);
+		if (!line)
+		{
+			close(fd);
+			return(errno);
+		}
+		if(!ft_strncmp(line, separator, seplen))
+		{
+			free(line);
+			break ;
+		}
+		else
+			ft_putstr_fd(line, fd);
+		ft_putchar_fd('\n', fd);
+		free(line);
+
+	}
+	/////////////////////////FIN ABSTRAER/////////////////////////
+	// redirigir STDIN a un fd que apunte al principio del archivo temporal
+	close(fd);
+	//error = file_redirector(STDIN_FILENO, redir->tmp_file, O_RDONLY);
+	return(error);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

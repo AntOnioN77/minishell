@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/05 11:46:35 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/07 15:32:28 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ static void handle_heredoc(char **segment, char *end, t_redir *redir)
 		getpntword(segment, end, &(redir->infoo));
 		if(!redir->infoo || *(redir->infoo) == '\0')
 			redir->error = SYNTAX_ERROR;
-		else
-			redir->error = create_herefile(redir); //si hubo error lo anota, sera encontrado por check_tree
 	}
 	else
 		getpntword(segment, end, NULL);

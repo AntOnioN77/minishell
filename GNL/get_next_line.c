@@ -1,120 +1,98 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/02 12:25:37 by antofern          #+#    #+#             */
-/*   Updated: 2024/03/07 09:22:17 by antofern         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line.h"
 
-void	free_null(void **pnt)
+int	gnl_strchr(const char *s, int c)
 {
-	if (*pnt)
+	int		i;
+	char	*aux;
+
+	i = 0;
+	aux = (char *)s;
+	while (aux[i] != '\0')
 	{
-		free(*pnt);
-		*pnt = NULL;
+		if (aux[i] == c)
+			return (i);
+		i++;
 	}
+	if (aux[i] == c)
+		return (i);
+	return (-1);
 }
 
-int	pick_line(char **remind, char **line)
+char	*gnl_strjoin(char *s1, char const *s2)
 {
-	char	*end_ln;
-	char	*tmp;
+	char	*dst;
+	int		i;
+	int		len_s1;
+	int		len_s2;
 
-	tmp = NULL;
-	end_ln = ft_strchr(*remind, '\n');
-	if (!end_ln)
-		*line = *remind;
+	i = -1;
+	if (!s1 || !s2)
+		return (NULL);
+	len_s1 = ft_strlen(s1);
+	len_s2 = ft_strlen(s2);
+	dst = malloc(sizeof(char) * (len_s1 + len_s2 + 1));
+	if (!dst)
+		return (NULL);
+	while (++i < len_s1)
+		dst[i] = s1[i];
+	i = -1;
+	while (++i < len_s2)
+		dst[len_s1 + i] = s2[i];
+	dst[len_s1 + i] = '\0';
+	free(s1);
+	return (dst);
+}
+
+int	put_line(char **line, char **aux, int reader)
+{
+	char	*tmp;
+	int		pos;
+
+	if (reader == -1)
+		return (-1);
+	pos = gnl_strchr(*aux, '\n');
+	if (pos >= 0)
+	{
+		*line = ft_substr(*aux, 0, pos);
+		tmp = ft_substr(*aux, pos + 1, ft_strlen(*aux));
+		free(*aux);
+		*aux = tmp;
+		return (1);
+	}
 	else
 	{
-		if (*(end_ln + 1) != '\0')
-		{
-			tmp = ft_strdup(end_ln + 1);
-		}
-		*(end_ln + 1) = '\0';
-		*line = ft_strdup(*remind);
-		free_null((void **)remind);
-		if (!*line || !tmp)
-		{
-			free_null((void **)&tmp);
-			return (-1);
-		}
-	}
-	*remind = tmp;
-	return (2);
-}
-
-int	get_read(int fd, char **buff, char *remind)
-{
-	ssize_t	n;
-
-	if (!*buff || *buff == remind)
-		*buff = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!*buff)
-		return (-1);
-	n = read(fd, *buff, BUFFER_SIZE);
-	if (n <= 0)
-	{
-		free_null((void **)buff);
-		if (n == 0)
-			return (1);
-		return (-1);
-	}
-	(*buff)[n] = '\0';
-	if (ft_strchr(*buff, '\n') || n < BUFFER_SIZE)
-		return (1);
-	return (0);
-}
-
-int	join_it(char **remind, char **buff, int stat)
-{
-	char	*tmp;
-
-	if (!*remind)
-	{
-		*remind = ft_strdup(*buff);
-		free_null((void **)buff);
+		*line = ft_strdup(*aux);
+		free(*aux);
+		*aux = NULL;
 		return (0);
 	}
-	tmp = ft_strjoin(*remind, *buff);
-	if (stat == 1 || !tmp)
-		free(*buff);
-	if (!tmp)
-		return (-1);
-	free(*remind);
-	*remind = tmp;
-	return (0);
 }
 
-char	*get_next_line(int fd)
+int	get_next_line(int fd, char **line)
 {
+	static char	*aux[4096];
 	char		*buff;
-	static char	*remind;
-	char		*line;
-	int			stat;
+	int			reader;
+	int			ctrl;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	buff = NULL;
-	line = NULL;
-	stat = 0;
-	while (stat == 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || !line)
+		return (-1);
+	buff = malloc(sizeof(char *) * (BUFFER_SIZE + 1));
+	if (!buff)
+		return (-1);
+	if (!aux[fd])
+		aux[fd] = ft_strdup("");
+	reader = 1;
+	while (gnl_strchr(aux[fd], '\n') == -1 && reader > 0)
 	{
-		if (remind && ft_strchr(remind, '\n'))
-			stat = pick_line(&remind, &line);
-		if (stat == 0)
-			stat = get_read(fd, &buff, remind);
-		if ((stat == 0 || stat == 1) && buff && join_it(&remind, &buff, stat))
-			stat = -1;
+		reader = read(fd, buff, BUFFER_SIZE);
+		if (reader > 0)
+		{
+			buff[reader] = '\0';
+			aux[fd] = gnl_strjoin(aux[fd], buff);
+		}
 	}
-	if ((stat == 1) && remind)
-		stat = pick_line(&remind, &line);
-	if (stat == -1)
-		free_null((void **)&remind);
-	return (line);
+	ctrl = put_line(line, &aux[fd], reader);
+	free(buff);
+	return (ctrl);
 }

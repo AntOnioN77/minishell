@@ -72,6 +72,7 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
     return 0;
 }
 
+//
 static int	expand_task(t_task *node, char *envp[])
 {
 	int	i;
@@ -151,8 +152,11 @@ static int	unquote_task(t_task *node)
 //FIN TEMPORAL
 
 //Si retorna 1 imprimir perror(errno)
+//Nueva funcionalidad (requiere cambio de nombre): ahora tambien escribe en archivo temporal para heredocs
 int	expand_vars_tree(t_tree *node, char *envp[])
 {
+	t_task *task;
+
 	if (node->type == PIPE)
 	{
 		if(expand_task(((t_pipe *)node)->left, envp))
@@ -163,9 +167,15 @@ int	expand_vars_tree(t_tree *node, char *envp[])
 	}
 	else if (node->type == TASK)
 	{
-		if(expand_task(((t_task *)node), envp))
+		task = (t_task *)node;
+		if(expand_task(task, envp))
 			return (1);
-		unquote_task(((t_task *)node));
+		unquote_task(task);
+		if (task->redir.insymbol == heredoc)
+		{
+			task->redir.error = create_herefile(&(task->redir)); //si hubo error lo anota, sera encontrado por check_tree
+			heredoc_writer(task->redir.infoo, &(task->redir));//GESTIONAR SI FALLA!!
+		}
 	}
 	return (0);
 }

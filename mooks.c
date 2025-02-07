@@ -99,6 +99,8 @@ void print_tree(t_tree *node, int depth)
 				printf("\t->argv[%d]: %s\n", j, ((t_task *)node)->argv[j]);
 			printf("\t->redir->insymbol: %d\n", ((t_task *)node)->redir.insymbol);
 			printf("\t->redir->infoo: %s\n", ((t_task *)node)->redir.infoo);
+			printf("\t->redir->tmp_file: %s\n", ((t_task *)node)->redir.tmp_file);	
+			printf("\t->redir->error: %d\n", ((t_task *)node)->redir.error);
 			printf("\t->redir->outsymbol: %d\n", ((t_task *)node)->redir.outsymbol);
 			printf("\t->redir->outfile: %s\n", ((t_task *)node)->redir.outfile);
     }

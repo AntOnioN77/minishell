@@ -35,13 +35,7 @@ void wait_all(t_tree *node)//, char **envp)
     else if (node->type == TASK)
     {
         t_task *task = (t_task *)node;
-    fprintf(stderr, "Esperando a %s (pid=%d)\n", task->cmd, task->pid);
-    if (task->cmd && strcmp(task->cmd, "cat") == 0)
-	{
-    	fprintf(stderr, "Esperando 1s antes de cat\n");
-    	//sleep(1);
-	}
-	waitpid(task->pid, &status, 0);
-    fprintf(stderr, "%s (pid=%d) terminó\n", task->cmd, task->pid);
+		waitpid(task->pid, &status, 0);
+	//Buscar variable de entorno '?' y sustituir su contenido por ft_itoa(status)
     }
 }

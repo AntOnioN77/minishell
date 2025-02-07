@@ -3,7 +3,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "get_next_line.h"
 #include "../executor.h"
 
 
@@ -24,43 +23,6 @@ static e_errors file_redirector(int newfd, char *file, int openflag)
 	return(ALL_OK);
 }
 
-static e_errors heredoc_handler(char *separator, t_redir *redir)//char *separator)
-{
-	int fd;
-	char *line;
-	int seplen;
-	e_errors error;
-
-	fd = open(redir->tmp_file, O_WRONLY);
-
-	//pedir nueva linea mientras linea no sea == separator
-	///////////////ABSTRAER///////////////////////////////////////
-	seplen = ft_strlen(separator);
-	while(1)
-	{
-		line = get_next_line(0);
-		if (!line)
-		{
-			close(fd);
-			return(errno);
-		}
-		ft_putstr_fd(line, fd);
-		if(!ft_strncmp(line, separator, seplen))
-		{
-			free(line);
-			break ;
-		}
-		free(line);
-
-	}
-	/////////////////////////FIN ABSTRAER/////////////////////////
-	// redirigir STDIN a un fd que apunte al principio del archivo temporal
-	close(fd);
-	error = file_redirector(STDIN_FILENO, redir->tmp_file, O_RDONLY);
-	return(error);
-
-}
-
 e_errors apply_redirs(t_redir *redir)
 {
 	e_errors error;
@@ -69,7 +31,8 @@ e_errors apply_redirs(t_redir *redir)
 	if (redir->insymbol == infile)
 		error = file_redirector(0, redir->infoo, O_RDONLY);
 	else if (redir->insymbol == heredoc)
-	 	error = heredoc_handler(redir->infoo, redir);
+		error = file_redirector(STDIN_FILENO, redir->tmp_file, O_RDONLY);
+//	 	error = heredoc_handler(redir->infoo, redir);
 	if (error != 0)
 		return (error);
 	

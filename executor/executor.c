@@ -84,12 +84,7 @@ int create_child(t_task *task, char **envp, int in, int out)
                 close_fds(0);
                 exit(5);
             }
-fprintf(stderr,"Ejecutando %s (pid=%d) con stdin=%s, stdout=%s\n", task->cmd, getpid(),
-    isatty(0) ? "terminal" : "pipe/file", 
-    isatty(1) ? "terminal" : "pipe/file");
-fprintf(stderr,"Ejecutando %s con stdin=%s, stdout=%s\n", task->cmd, 
-    isatty(0) ? "terminal" : "pipe/file", 
-    isatty(1) ? "terminal" : "pipe/file");
+
             execve(pathcmd, task->argv, envp);
             err = errno;
             free(pathcmd);
@@ -103,22 +98,21 @@ fprintf(stderr,"Ejecutando %s con stdin=%s, stdout=%s\n", task->cmd,
     return (0);
 }
 
-int exec_pipe(t_pipe *pipe_node, char **envp, int in) {
+int exec_pipe(t_pipe *pipe_node, char **envp, int in)
+{
     int pipefd[2];
     int err;
 
-    printf("Creando pipe\n");
     pipe(pipefd);
-    printf("pipe creado: fd[0]=%d, fd[1]=%d\n", pipefd[0], pipefd[1]);
 
-    if (pipe_node->left) {
-        printf("Ejecutando left con in=%d, out=%d\n", in, pipefd[1]);
+    if (pipe_node->left)
+	{
         err = executor((t_tree *)pipe_node->left, envp, in, pipefd[1]);
         if(err != 0)
             return (err);
     }
-    if (pipe_node->rigth) {
-        printf("Ejecutando right con in=%d, out=1\n", pipefd[0]);
+    if (pipe_node->rigth)
+	{
         err = executor(pipe_node->rigth, envp, pipefd[0], 1);
         if(err != 0)
             return (err);
