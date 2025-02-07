@@ -152,30 +152,36 @@ static int	unquote_task(t_task *node)
 //FIN TEMPORAL
 
 //Si retorna 1 imprimir perror(errno)
+//trabaja en este orden: 1.Expande variables 2.Desenvuelve comillas no anidadas 3.Crea documento temporal para heredoc si fuera necesario
 //Nueva funcionalidad (requiere cambio de nombre): ahora tambien escribe en archivo temporal para heredocs
-int	expand_vars_tree(t_tree *node, char *envp[])
+e_errors	expand_vars_tree(t_tree *node, char *envp[])
 {
 	t_task *task;
+	t_pipe *pipe;
+	e_errors error;
 
 	if (node->type == PIPE)
 	{
-		if(expand_task(((t_pipe *)node)->left, envp))
-			return (1);
-		unquote_task(((t_task *)((t_pipe *)node)->left));
-		if(expand_vars_tree((t_tree *)((t_pipe *)node)->rigth, envp))
-			return (1);
+		pipe = (t_pipe *)node;
+		error=expand_task(pipe->left, envp);
+		if(error)
+			return (error);
+		unquote_task(((t_task *)pipe->left));
+		error=create_herefile(&(pipe->left->redir)); //si hubo error lo anota, sera encontrado por check_tree
+		if (error)
+			return (error);
+		error= expand_vars_tree((t_tree *)pipe->rigth, envp);
+		if(error)
+			return (error);
 	}
 	else if (node->type == TASK)
 	{
 		task = (t_task *)node;
-		if(expand_task(task, envp))
-			return (1);
+		error = expand_task(task, envp);
+		if(error)
+			return (error);
 		unquote_task(task);
-		if (task->redir.insymbol == heredoc)
-		{
-			task->redir.error = create_herefile(&(task->redir)); //si hubo error lo anota, sera encontrado por check_tree
-			heredoc_writer(task->redir.infoo, &(task->redir));//GESTIONAR SI FALLA!!
-		}
+		error = create_herefile(&(task->redir)); //si hubo error lo anota, sera encontrado por check_tree
 	}
-	return (0);
+	return (error);
 }

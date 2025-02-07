@@ -91,6 +91,8 @@ e_errors create_herefile(t_redir *redir)
 	char *tmp_file;
 	int fd;
 
+	if(redir->insymbol != heredoc)
+		return (0);
 	error = 0;
 	tmp_file = get_tmp_name(&error);
 	if (error || !tmp_file)
@@ -104,6 +106,8 @@ e_errors create_herefile(t_redir *redir)
 		redir->tmp_file = tmp_file;
 		close(fd);
 	}
-	return(ALL_OK);
+
+	error = heredoc_writer(redir->infoo, redir);
+	return(error);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
