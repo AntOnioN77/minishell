@@ -157,6 +157,7 @@ int	expand_vars_tree(t_tree *node, char *envp[])
 	{
 		if(expand_task(((t_pipe *)node)->left, envp))
 			return (1);
+		unquote_task(((t_task *)((t_pipe *)node)->left));
 		if(expand_vars_tree((t_tree *)((t_pipe *)node)->rigth, envp))
 			return (1);
 	}

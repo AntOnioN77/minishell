@@ -73,12 +73,11 @@ int create_child(t_task *task, char **envp)
 	pid = fork();
 	if (pid == -1)
 		return (2);
+	task->pid = pid;
 	if (pid == 0)
 	{
 		close_fds(3);
-ft_putstr_fd("--------------------------------81\n", 2);
 		err = apply_redirs(&(task->redir)); //descomentar cuando sea creada, debe: cerrar 0 o/y 1, redirigir 0 o/y 1 a outfile/infoo
-ft_putnbr_fd(err,2);
 		if (err == 0)
 		{
 			//close_fds(3);
@@ -93,7 +92,6 @@ ft_putnbr_fd(err,2);
 		free(pathcmd);
 		exit(err);
 	}
-	task->pid = pid;
 	return(0);
 }
 
@@ -104,6 +102,7 @@ int exec_pipe(t_pipe *pipe_node, char **envp)
 	int pipefd[2];
 	int	err;
 
+//test_fds("executor.c 128 (exec_pipe)");
 	previous_stdin = dup(STDIN_FILENO);
 	original_stdout = dup(STDOUT_FILENO);
 	pipe(pipefd);
@@ -127,6 +126,7 @@ int exec_pipe(t_pipe *pipe_node, char **envp)
 	}
 	close(previous_stdin);
 	close(original_stdout);
+//	test_fds("executor.c 128 (exec_pipe)");
 	return (0);
 }
 
