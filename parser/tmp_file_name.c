@@ -48,7 +48,7 @@ e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
 {
 	int fd;
 	char *line;
-	int seplen;
+	size_t seplen;
 	e_errors error;
 
 	error = 0;
@@ -59,8 +59,8 @@ e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
 	seplen = ft_strlen(separator);
 	while(1)
 	{
-//		get_next_line(0, &line); //ni readline ni get_next_line retornan NULL cuando esperan entrada y pulsas ctrl+c
-			line = readline("");
+		get_next_line(0, &line); //ni readline ni get_next_line retornan NULL cuando esperan entrada y pulsas ctrl+c
+//			line = readline("");
 //fprintf(stderr, "get_next_line:%s\n", line);
 //fprintf(stderr, "get_next_line:%p\n", line);
 		if (!line)
@@ -69,7 +69,7 @@ e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
 fprintf(stderr, "66\n");				//ctrl+c ?????????
 			return(errno);
 		}
-		if(!ft_strncmp(line, separator, seplen))
+		if(ft_strlen(line) == seplen && !ft_strncmp(line, separator, seplen))
 		{
 			free(line);
 			break ;
