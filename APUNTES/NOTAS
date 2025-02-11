@@ -20,4 +20,11 @@ unquote esta sin implementar, el que hay es un mook y no funciona;
 
 5. > exit 123 (debe salir con error 123)
 
+---------------
+
+-Falta hacer unlink a archivos temporales creados por heredoc
+-Falta liberar t_redir->tmp_file
+
+______________
+
 

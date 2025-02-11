@@ -123,9 +123,21 @@ typedef struct s_pipe {
 	t_tree	*rigth;
 }	t_pipe;
 
-/*______________________________Execution_Structs____________________________*/
 
-/* ... */
+
+/*______________________________Other_Structs____________________________*/
+
+typedef struct s_environ {
+	// gestion de variables de netorno:
+	char **envp;
+	int next;//posicion no inicializada (null) donde podemos escribir la siguiente variable global
+	int alloced; //numero total de posiciones allocadas, de manera que si next+1 < alloced, no sera necesario reallocar memoria  
+
+	// gestion de variables locales:
+	char **local;
+	int locnext;
+	int localloced;
+}	t_environ;
 
 /*****************************************************************************/
 /* 								PROTOTYPES									 */

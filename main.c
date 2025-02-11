@@ -88,11 +88,13 @@ int main(int argc, char **argv, char **envp)
 {
 	t_tree	*tree;
 	int		error;
-	//char	**new_envp;
+	char	**new_envp;
 	
 	//Para silenciar warning.
 	if (argc != 1 || !argv)
 		return(0);
+	error = create_envp(envp, new_envp);
+
 	tree=NULL;
 	error = 0;
 	while(error == 0 || error == TASK_IS_VOID || error == SYNTAX_ERROR)
