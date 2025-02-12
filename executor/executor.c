@@ -32,6 +32,8 @@ char	*com_path(char *cmd, char **envp)
 	int		pos;
 	int 	i;
 
+	if (cmd && (access(cmd, X_OK) == 0))
+		return (ft_strdup(cmd)); //Si es una ruta relativa o un ejecutable no hay nada que componer.
 	i = 1;
 	pos = search_path(envp);
 	enpath = ft_split(envp[pos], ':');
