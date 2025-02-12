@@ -142,6 +142,8 @@ e_errors init_envp(t_environ *environ)
 
 	if (ft_getenv("?", environ->envp) == NULL)
 		error = add_var("?", "0", environ);
+	else
+		error = change_var("?", "0", environ);
 	
 	return(error);
 }
@@ -151,14 +153,13 @@ e_errors create_envp(char **original, t_environ *environ)
 	int count;
 	int error;
 
-	
+	ft_bzero((void *)environ, sizeof(t_environ));////??
 	if (original == NULL || *original == NULL)
 	{
 		environ->envp = ft_calloc(12, sizeof(char *));
 		if (environ->envp == NULL)
 			return(errno);
 		environ->alloced = 12;
-		error = init_envp(environ);
 	}
 		else
 	{

@@ -40,8 +40,8 @@ int non_pipable_builtin(t_tree *tree)//, char **envp)
 		}
 		else if(!ft_strcmp(((t_task *)tree)->cmd, "exit"))
 		{
-			free_tree(tree);
-			exit(ALL_OK);
+			//free_tree(tree);
+			return(FINISH);
 		}
 		else if(!ft_strcmp(((t_task *)tree)->cmd, "export"))
 		{

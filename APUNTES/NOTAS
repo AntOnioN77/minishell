@@ -25,6 +25,9 @@ unquote esta sin implementar, el que hay es un mook y no funciona;
 -Falta hacer unlink a archivos temporales creados por heredoc
 -Falta liberar t_redir->tmp_file
 
+-liberar en exit, o si hay error copia environ->envp
+
 ______________
 
-
+valgrind sin readline:
+valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell
