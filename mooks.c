@@ -32,11 +32,13 @@ int	search_var(char **envp, const char* var)
 {
 	int pos;
 
+//fprintf(stderr, "search_var var:%s --- ", var);
 	pos = 0;
 	while (envp[pos])
 	{
 		if (ft_strncmp(envp[pos], var, ft_strlen(var)) == 0)
 		{
+
 			return (pos);
 		}
 		pos++;
@@ -50,6 +52,7 @@ char *ft_getenv(const char *name, char *envp[])
 	char *word_start;
 
 	pos = search_var(envp, name);
+//fprintf(stderr, "search_var ret:%d\n", pos);
 	if (pos == -1)
 		return(NULL);
 	word_start = ft_strchr(envp[pos], '=') + 1;

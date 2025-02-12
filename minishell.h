@@ -190,6 +190,8 @@ e_errors heredoc_writer(char *separator, t_redir *redir);
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree);//, char **envp);
 // ...
-
+//LOCATIONS: create_envp.c
+e_errors create_envp(char **original, t_environ *environ);
+e_errors change_var(char *key, char *newvalue, t_environ *environ);
 
 #endif
