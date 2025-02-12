@@ -69,6 +69,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		}
 		if (*line)
 			add_history(line);
+			//save_history(line);
 		*tree = processline(line);
 		//free(line);
 		if (*tree == NULL)
@@ -93,7 +94,7 @@ int main(int argc, char **argv, char **envp)
 	//Para silenciar warning.
 	if (argc != 1 || !argv)
 		return(0);
-	load_history();
+	//load_history();
 	tree=NULL;
 	error = 0;
 	while(error == 0 || error == TASK_IS_VOID)
