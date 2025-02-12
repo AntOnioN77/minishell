@@ -82,14 +82,15 @@ int create_child(t_task *task, char **envp, int in, int out)
             if (pathcmd == NULL)
             {
                 close_fds(0);
-                exit(5);
+                return(ERROR_MALLOC);
             }
 
             execve(pathcmd, task->argv, envp);
             err = errno;
             free(pathcmd);
         }
-        exit(err);
+		perror("create_child");//revisar
+        return(FINISH);
     }
 	if (out != STDOUT_FILENO)
 		close(out);
