@@ -17,7 +17,9 @@
 
 # define WHITESPACES " \r\n\v\t"
 # define DELIMITERS "|<> \r\n\v\t"
-
+//DEFINES PARA HISTORY
+# define HISTORY_FILE "./.history"
+# define DEFAULT_HISTSIZE 500
 
 /*****************************************************************************/
 /* 								ENUMS										 */
@@ -180,13 +182,17 @@ void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
 int wait_all(t_tree *node);
 //LOCATION: parser/check_tree.c
 int	 check_tree(t_tree *tree, char **envp);
-void handle_sigint(int signal);
-void	signalConf(void);
 //LOCATION: tmp_file_name.c
 e_errors create_herefile(t_redir *redir);
 char *get_tmp_name(e_errors *error);
-//LOCATIOS: tmp_filename.c
 e_errors heredoc_writer(char *separator, t_redir *redir);
+//LOCATION: signal.c
+void handle_sigint(int signal);
+void	signal_conf(void);
+//LOCATION: history.c
+void	load_history(void);
+int	save_history(char *history);
+
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree);//, char **envp);
 // ...

@@ -78,6 +78,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		}
 		if (*line)
 			add_history(line);
+			//save_history(line);
 		*tree = processline(line);
 		//free(line);
 		if (*tree == NULL)
@@ -99,10 +100,12 @@ int main(int argc, char **argv, char **envp)
 	e_errors		error;
 	t_environ environ;
 	int status;
+	char *str_status;
 	
 	//Para silenciar warning.
 	if (argc != 1 || !argv)
 		return(0);
+	//load_history();
 	error = create_envp(envp, &environ);
 	if (error)
 	{
@@ -115,7 +118,7 @@ int main(int argc, char **argv, char **envp)
 	error = 0;
 	while(error == 0 || error == TASK_IS_VOID || error == SYNTAX_ERROR)
 	{
-		signalConf();
+		signal_conf();
 		error = 0;
 		error = get_cmd_tree(&tree, environ.envp);
 		if (error == TASK_IS_VOID)
@@ -154,8 +157,9 @@ fprintf(stderr,"SALIDA 147\n");
 		if (error == 0)//capturar y gestionar error de executor
 		{
            		status = wait_all(tree);//, envp);
-
-				change_var("?", ft_itoa(((status) & 0xff00) >> 8), &environ);//aplicamos mascara (WEXISTATUS)
+				str_status = ft_itoa(((status) & 0xff00) >> 8);
+				change_var("?", str_status , &environ);//aplicamos mascara (WEXISTATUS)
+				free(str_status);
 		}
 		else
 		{
