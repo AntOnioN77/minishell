@@ -12,7 +12,7 @@ int	search_path(char **envp)
 	while (envp[pos])
 	{
 		subpath = ft_substr(envp[pos], 0, 4);
-		if (ft_strcmp(subpath, "PATH") == 0)
+		if (ft_strncmp(subpath, "PATH", ft_strlen(subpath)) == 0)
 		{
 			free(subpath);
 			return (pos);
@@ -20,11 +20,11 @@ int	search_path(char **envp)
 		free(subpath);
 		pos++;
 	}
-	return (0);
+	return (-1);
 }
 
 
-char	*com_path(char *cmd, char **envp)
+char	*com_path(char *cmd, char **envp, e_errors *err)
 {
 	char	*path;
 	char	*slash;
@@ -32,17 +32,44 @@ char	*com_path(char *cmd, char **envp)
 	int		pos;
 	int 	i;
 
-	if (cmd && (access(cmd, X_OK) == 0))
-		return (ft_strdup(cmd)); //Si es una ruta relativa o un ejecutable no hay nada que componer.
+	if (cmd && (access(cmd, F_OK) == 0))
+	{
+		path = ft_strdup(cmd);
+		if (!path)
+			*err = ERROR_MALLOC;
+		return (path); //Si es una ruta relativa o un ejecutable no hay nada que componer.
+	}
 	i = 1;
 	pos = search_path(envp);
-	enpath = ft_split(envp[pos], ':');
+	if (pos == -1)
+	{
+		*err = ERROR_MALLOC;
+		return(NULL);
+	}
+	enpath = ft_split(envp[pos], ':');//asegurarse de que no nos pasan una variable que contenga :
+	if(enpath == NULL)
+	{
+		*err = ERROR_MALLOC;
+		return(NULL);
+	}
 	while (enpath[i])
 	{
 		slash = ft_strjoin(enpath[i], "/");
+		if (slash == NULL)
+		{
+			*err = ERROR_MALLOC;
+			ft_free_double(enpath);
+			return (NULL);
+		}
 		path = ft_strjoin(slash, cmd);
 		free(slash);
-		if (access (path, F_OK | X_OK) == 0)
+		if (path == NULL)
+		{
+			*err = ERROR_MALLOC;
+			ft_free_double(enpath);
+			return (NULL);
+		}
+		if (access (path, F_OK ) == 0)
 		{
 			ft_free_double(enpath);
 			return (path);
@@ -51,14 +78,15 @@ char	*com_path(char *cmd, char **envp)
 		free(path);
 	}
 	ft_free_double(enpath);
+	*err = COM_NOT_FOUND;
 	return (NULL);
 }
 
-int create_child(t_task *task, char **envp, int in, int out)
+e_errors create_child(t_task *task, char **envp, int in, int out)
 {
     int pid;
     char *pathcmd;
-    int err;
+    e_errors err;
 
     pid = fork();
     if (pid == -1)
@@ -78,21 +106,29 @@ int create_child(t_task *task, char **envp, int in, int out)
         }
         close_fds(3);
         err = apply_redirs(&(task->redir));
-        if (err == 0)
+        if (err != 0)
         {
-            pathcmd = com_path(task->cmd, envp);
-            if (pathcmd == NULL)
-            {
-                close_fds(0);
-                return(ERROR_MALLOC);
-            }
-
-            execve(pathcmd, task->argv, envp);
-            err = errno;
-            free(pathcmd);
-        }
-		perror("create_child");//revisar
-        return(FINISH);
+			perror("mini$hell");//revisar
+			return(FINISH);
+		}
+		pathcmd = com_path(task->cmd, envp, &err);
+		if (err != 0)//////////////pasar a un handle error
+		{
+char *msg_error;
+			if (err == COM_NOT_FOUND)
+			{
+				msg_error = ft_strjoin(task->cmd, ":Command not found\n");
+				ft_putstr_fd(msg_error, 2);
+				free(msg_error);
+			}
+			else
+				perror("minishell");
+			close_fds(0);
+			return(err);
+		}
+		execve(pathcmd, task->argv, envp);
+		err = errno;
+		free(pathcmd);
     }
 	if (out != STDOUT_FILENO)
 		close(out);
@@ -101,10 +137,10 @@ int create_child(t_task *task, char **envp, int in, int out)
     return (0);
 }
 
-int exec_pipe(t_pipe *pipe_node, char **envp, int in)
+e_errors exec_pipe(t_pipe *pipe_node, char **envp, int in)
 {
     int pipefd[2];
-    int err;
+    e_errors err;
 
     pipe(pipefd);
 
@@ -123,11 +159,11 @@ int exec_pipe(t_pipe *pipe_node, char **envp, int in)
     return (0);
 }
 
-int executor(t_tree *node, char **envp, int in, int out)
+e_errors executor(t_tree *node, char **envp, int in, int out)
 {
 	t_pipe *pipe_node;
 	t_task *task;
-	int	err;
+	e_errors	err;
 
     if (!node)
         return (0);

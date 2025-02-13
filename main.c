@@ -96,7 +96,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 int main(int argc, char **argv, char **envp)
 {
 	t_tree	*tree;
-	int		error;
+	e_errors		error;
 	t_environ environ;
 	
 	//Para silenciar warning.
@@ -160,7 +160,7 @@ printf(" error en executor: %d\n", error); //solo para pruebas BORRAR //PERo ser
 		close_fds(3);
 		free_tree(tree);
 	}
-fprintf(stderr,"SALIDA NORMAL 163\n");
+fprintf(stderr,"SALIDA 163\n");
 //print_env(&environ);
 	ft_free_double(environ.envp);
 //print_env(&environ);

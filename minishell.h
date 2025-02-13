@@ -56,6 +56,7 @@ typedef enum e_errors
 	REDLINE_FAIL,
 	TMP_FILE_ERROR,
 	FINISH,
+	COM_NOT_FOUND,
 	UNDEFINED		//cuando aun no esta muy claro, usar solo durante el desaroyo
 } e_errors;
 
