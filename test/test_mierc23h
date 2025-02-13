@@ -84,7 +84,7 @@ Test 6: 'echo 'texto con espacios''
 -----------------------------------------------
 TASK->cmd: echo
 	->argv[0]: echo
-	->argv[1]: 'texto con espacios'
+	->argv[1]: texto con espacios
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 0
@@ -95,7 +95,7 @@ Test 7: 'echo "texto con espacios"'
 -----------------------------------------------
 TASK->cmd: echo
 	->argv[0]: echo
-	->argv[1]: "texto con espacios"
+	->argv[1]: texto con espacios
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 0
@@ -242,7 +242,7 @@ Test 19: 'echo 'comillas''dos veces''
 -----------------------------------------------
 TASK->cmd: echo
 	->argv[0]: echo
-	->argv[1]: 'comillas''dos veces'
+	->argv[1]: comillasdos veces
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 0
@@ -253,7 +253,7 @@ Test 20: 'echo 'comillas''dos veces'>outfile'
 -----------------------------------------------
 TASK->cmd: echo
 	->argv[0]: echo
-	->argv[1]: 'comillas''dos veces'
+	->argv[1]: comillasdos veces
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 2
@@ -267,18 +267,18 @@ TASK->cmd: echo
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 2
-	->redir->outfile: outfile'comillas''dos veces'
+	->redir->outfile: outfilecomillasdos veces
 
 
 Test 22: 'echo 'comillas'>outfile'dos veces''
 -----------------------------------------------
 TASK->cmd: echo
 	->argv[0]: echo
-	->argv[1]: 'comillas'>outfile'dos veces'
+	->argv[1]: comillas
 	->redir->insymbol: 0
 	->redir->infoo: (null)
-	->redir->outsymbol: 0
-	->redir->outfile: (null)
+	->redir->outsymbol: 2
+	->redir->outfile: outfiledos veces
 
 
 Test 23: ''|'
@@ -347,8 +347,8 @@ TASK->cmd: prefix
 
 Test 28: ''$VAR''
 -----------------------------------------------
-TASK->cmd: '$VAR'
-	->argv[0]: '$VAR'
+TASK->cmd: $VAR
+	->argv[0]: $VAR
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 0
@@ -357,8 +357,8 @@ TASK->cmd: '$VAR'
 
 Test 29: '"$VAR"'
 -----------------------------------------------
-TASK->cmd: "value"
-	->argv[0]: "value"
+TASK->cmd: value
+	->argv[0]: value
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 0
@@ -367,8 +367,8 @@ TASK->cmd: "value"
 
 Test 30: '"$VAR'$VAR'"'
 -----------------------------------------------
-TASK->cmd: "value'$VAR'"
-	->argv[0]: "value'$VAR'"
+TASK->cmd: value'$VAR'
+	->argv[0]: value'$VAR'
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 0
@@ -407,8 +407,8 @@ TASK->cmd: value with spaces
 
 Test 34: '"$VAR'$VAR'$VAR"'$VAR''
 -----------------------------------------------
-TASK->cmd: "value'$VAR'value"'$VAR'
-	->argv[0]: "value'$VAR'value"'$VAR'
+TASK->cmd: value'$VAR'value$VAR
+	->argv[0]: value'$VAR'value$VAR
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 0
@@ -430,8 +430,8 @@ TASK->cmd: value
 
 Test 36: '$QUOTES'
 -----------------------------------------------
-TASK->cmd: value'with'quotes
-	->argv[0]: value'with'quotes
+TASK->cmd: valuewithquotes
+	->argv[0]: valuewithquotes
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 0
@@ -440,13 +440,12 @@ TASK->cmd: value'with'quotes
 
 Test 37: '$LONG'
 -----------------------------------------------
-TASK->cmd: this_is_a_very_long_value
-	->argv[0]: this_is_a_very_long_value
+TASK->cmd: _this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value
+	->argv[0]: _this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value
 	->redir->insymbol: 0
 	->redir->infoo: (null)
 	->redir->outsymbol: 0
 	->redir->outfile: (null)
-	
 
 
 Test 38: '$'

@@ -1,5 +1,6 @@
 
-#include "minishell.h"
+#include "../minishell.h"
+#include "../libft/headers/libft.h"
 
 /*
 int	add_pathname(char **cmd,  t_garbage *garbage, char *envp[])
@@ -71,6 +72,7 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
     return 0;
 }
 
+//
 static int	expand_task(t_task *node, char *envp[])
 {
 	int	i;
@@ -99,48 +101,36 @@ static int	expand_task(t_task *node, char *envp[])
 	return(0);
 }
 
-
-
-//TEMPORAL PARA TEST
-
 void unquote(char *str)
 {
-    if (!str || !*str) return;
+	char *newstr;
+	char *pntnew;
+	int quotlen;
+	char *pntstr;
 
-    int len = strlen(str);
-    char quote_type = 0;  // Para rastrear el tipo de comilla exterior
-    int read_pos = 0;     // Posición de lectura
-    int write_pos = 0;    // Posición de escritura
-
-    // Detectar si hay comillas exteriores y su tipo
-    if ((str[0] == '"' || str[0] == '\'') && str[len-1] == str[0])
+	pntstr = str;
+    if (!str || !*str)
+		return;
+	newstr = ft_calloc(ft_strlen(pntstr) + 1, sizeof(char));
+	pntnew = newstr;
+	while(*pntstr)
 	{
-        quote_type = str[0];
-        read_pos = 1;
-        len--;  // Ignorar la última comilla
-    }
-
-    while (read_pos < len)
-	{
-        // Si encontramos una comilla diferente a la exterior, la preservamos
-        if ((str[read_pos] == '"' || str[read_pos] == '\'') && 
-            (!quote_type || str[read_pos] != quote_type))
+		if ((*pntstr == 39 || *pntstr == '"') &&  ft_strchr(pntstr +1, *pntstr))
 		{
-            str[write_pos++] = str[read_pos];
-        }
-        // Si no es una comilla o es una comilla que debemos preservar
-        else if (str[read_pos] != quote_type)
+			quotlen = ft_strchr(pntstr +1, *pntstr) - (pntstr +1) ;
+			ft_strlcpy(pntnew, pntstr +1, quotlen +1);
+			pntnew = pntnew + quotlen;
+			pntstr = ft_strchr(pntstr +1, *pntstr);
+		}
+		else
 		{
-            str[write_pos++] = str[read_pos];
-        }
-        read_pos++;
-    }
-
-    // Rellenar el resto con \0
-    while (write_pos <= len)
-	{
-        str[write_pos++] = '\0';
-    }
+			ft_strlcpy(pntnew, pntstr, 2);
+			pntnew++;
+		}
+		pntstr++;
+	}
+	ft_strlcpy(str, newstr, 1 + ft_strlen(str));
+	free(newstr);
 }
 
 static int	unquote_task(t_task *node)
@@ -162,20 +152,36 @@ static int	unquote_task(t_task *node)
 //FIN TEMPORAL
 
 //Si retorna 1 imprimir perror(errno)
-int	expand_vars_tree(t_tree *node, char *envp[])
+//trabaja en este orden: 1.Expande variables 2.Desenvuelve comillas no anidadas 3.Crea documento temporal para heredoc si fuera necesario
+//Nueva funcionalidad (requiere cambio de nombre): ahora tambien escribe en archivo temporal para heredocs
+e_errors	expand_vars_tree(t_tree *node, char *envp[])
 {
+	t_task *task;
+	t_pipe *pipe;
+	e_errors error;
+
 	if (node->type == PIPE)
 	{
-		if(expand_task(((t_pipe *)node)->left, envp))
-			return (1);
-		if(expand_vars_tree((t_tree *)((t_pipe *)node)->rigth, envp))
-			return (1);
+		pipe = (t_pipe *)node;
+		error=expand_task(pipe->left, envp);
+		if(error)
+			return (error);
+		unquote_task(((t_task *)pipe->left));
+		error=create_herefile(&(pipe->left->redir)); //si hubo error lo anota, sera encontrado por check_tree
+		if (error)
+			return (error);
+		error= expand_vars_tree((t_tree *)pipe->rigth, envp);
+		if(error)
+			return (error);
 	}
 	else if (node->type == TASK)
 	{
-		if(expand_task(((t_task *)node), envp))
-			return (1);
-		unquote_task(((t_task *)node));
+		task = (t_task *)node;
+		error = expand_task(task, envp);
+		if(error)
+			return (error);
+		unquote_task(task);
+		error = create_herefile(&(task->redir)); //si hubo error lo anota, sera encontrado por check_tree
 	}
-	return (0);
+	return (error);
 }

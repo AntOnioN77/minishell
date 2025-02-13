@@ -32,11 +32,13 @@ int	search_var(char **envp, const char* var)
 {
 	int pos;
 
+//fprintf(stderr, "search_var var:%s --- ", var);
 	pos = 0;
 	while (envp[pos])
 	{
 		if (ft_strncmp(envp[pos], var, ft_strlen(var)) == 0)
 		{
+
 			return (pos);
 		}
 		pos++;
@@ -50,11 +52,34 @@ char *ft_getenv(const char *name, char *envp[])
 	char *word_start;
 
 	pos = search_var(envp, name);
+//fprintf(stderr, "search_var ret:%d\n", pos);
 	if (pos == -1)
 		return(NULL);
 	word_start = ft_strchr(envp[pos], '=') + 1;
 	return(word_start);
 }
+
+/* 
+// parse_test requiere este mook:
+char *ft_getenv(const char *name, char *envp[])
+{
+	if (!envp)
+		return NULL;
+    if (strcmp(name, "VAR") == 0)
+		return "value";
+    if (strcmp(name, "VAR2") == 0)
+		return "value2";
+    if (strcmp(name, "EMPTY") == 0)
+		return "";
+    if (strcmp(name, "LONG") == 0)
+		return "_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value_this_is_a_very_long_value";
+    if (strcmp(name, "SPACE") == 0)
+		return "value with spaces";
+    if (strcmp(name, "QUOTES") == 0)
+		return "value'with'quotes";
+    return NULL;
+}
+*/
 
 //SOLO PARA PRUEBAS no requiere implementacion
 //-Imprime el arbol
@@ -77,6 +102,8 @@ void print_tree(t_tree *node, int depth)
 				printf("\t->argv[%d]: %s\n", j, ((t_task *)node)->argv[j]);
 			printf("\t->redir->insymbol: %d\n", ((t_task *)node)->redir.insymbol);
 			printf("\t->redir->infoo: %s\n", ((t_task *)node)->redir.infoo);
+			printf("\t->redir->tmp_file: %s\n", ((t_task *)node)->redir.tmp_file);	
+			printf("\t->redir->error: %d\n", ((t_task *)node)->redir.error);
 			printf("\t->redir->outsymbol: %d\n", ((t_task *)node)->redir.outsymbol);
 			printf("\t->redir->outfile: %s\n", ((t_task *)node)->redir.outfile);
     }

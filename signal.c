@@ -24,7 +24,7 @@ void handle_sigint(int signal)
 /**
  * Configura las señales para CTRL-C (SIGINT) y CTRL-\ (SIGQUIT)
  */
-void	signalConf(void)
+void	signal_conf(void)
 {
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);

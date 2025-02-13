@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:35:41 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/25 20:38:19 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/12 14:13:55 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,11 @@ void free_tree(t_tree *node)
     else if (node->type == TASK)
 	{
 		task_node = (t_task *)node;
+		if (task_node->redir.tmp_file)
+		{
+			unlink(task_node->redir.tmp_file);
+			free(task_node->redir.tmp_file);
+		}
 		cleanup_garbage(&(task_node->garb));
 		if (task_node->argv)
 			free(task_node->argv);

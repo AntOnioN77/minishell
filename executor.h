@@ -18,13 +18,17 @@
 
 int	ft_free_double(char **s);
 
-int create_child(t_task *task, char **envp);
+e_errors create_child(t_task *task, char **envp, int in, int out);
 
-int executor(t_tree *node, char **envp);
+e_errors executor(t_tree *node, char **envp, int in, int out);
 
 void close_fds(int fd_since);
 
 int	error_exe(int er, char *cmd);
+
+e_errors apply_redirs(t_redir *redir);
+
+void ft_free_null(void **pnt);
 
 //solo test BORRAR
 void test_fds(char *where);

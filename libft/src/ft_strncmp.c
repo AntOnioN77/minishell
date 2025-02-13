@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 15:03:04 by antofern          #+#    #+#             */
-/*   Updated: 2024/08/26 13:33:19 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/05 00:13:21 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	size_t	i;
 
+	if(s1== NULL || s2 == NULL)
+		return(1);
 	if (n == 0)
 		return (0);
 	i = 0;

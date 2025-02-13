@@ -1,2 +1,30 @@
 Polimorfismo en tiempo de ejecucion:
 https://embeddedartistry.com/fieldatlas/technique-inheritance-and-polymorphism-in-c/#:~:text=While%20C%20is%20not%20an,can%20be%20implemented%20in%20C.
+
+acceder a valores de errno:
+cat /usr/include/asm-generic/errno.h
+
+
+---test que fallan:---
+1. > foo
+	(no lanza error)
+
+2. > cat << fin
+	$USER
+	(no imprime nombre de usuario) tmp_file_name.c linea 62, requiere expandir variables
+
+3. > echo "$"
+
+4. > pwd oi
+
+5. > exit 123 (debe salir con error 123)
+
+
+------------TAREAS:-------
+
+-liberar en exit, o si hay error copia environ->envp
+
+---------------------------
+
+valgrind sin readline:
+valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell

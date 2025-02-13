@@ -6,11 +6,11 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 13:27:43 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/07 15:32:28 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 static void handle_heredoc(char **segment, char *end, t_redir *redir)
 {
@@ -19,9 +19,12 @@ static void handle_heredoc(char **segment, char *end, t_redir *redir)
 	{
 		redir->insymbol = heredoc;
 		getpntword(segment, end, &(redir->infoo));
+		if(!redir->infoo || *(redir->infoo) == '\0')
+			redir->error = SYNTAX_ERROR;
 	}
 	else
 		getpntword(segment, end, NULL);
+	return;
 }
 
 static void handle_append(char **segment, char *end, t_redir *redir)
@@ -62,6 +65,8 @@ static void handle_output(char **segment, char *end, t_redir *redir)
 }
 }
 
+//si lo primero que encuentra en segment es uno o varios redir los consume, avanzando segment. Si <redir> no es null, rellena las istancias consumidas
+//Si hay un heredoc, crea el archivo temporal necesario.
 void	get_redir(char **segment, char *end, t_redir *redir)
 {
 	while (*segment < end)

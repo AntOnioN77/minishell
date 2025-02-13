@@ -58,6 +58,8 @@ int	 check_tree(t_tree *tree, char **envp)
 		tasknode = (t_task *)tree;
 		if (is_void_task(tasknode))
 			return (TASK_IS_VOID);
+		if(tasknode->redir.error) //se podria retornar sin hacer el if, pero parece mas claro así;
+			return(tasknode->redir.error);
 	}
 	else
 		return(INVALID_TYPE);

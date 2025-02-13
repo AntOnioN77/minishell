@@ -9,7 +9,7 @@ void close_fds(int fd_since)
 {
 	struct stat statbuf;
 
-	while(fstat(fd_since, &statbuf)!= -1)
+	while(fstat(fd_since, &statbuf) != -1)
 	{
 //		printf("cerrando fd %d\n", fd_since);
 		close(fd_since);
@@ -18,23 +18,24 @@ void close_fds(int fd_since)
 }
 
 
-void wait_all(t_tree *node)//, char **envp)
+int wait_all(t_tree *node)//, char **envp)
 {
     int status;
     
     if (!node)
-        return;
+        return (0);//????????????
         
     if (node->type == PIPE)
     {
         t_pipe *pipe_node = (t_pipe *)node;
+        status = wait_all(pipe_node->rigth);//, envp);
         wait_all((t_tree *)pipe_node->left);//, envp);
-        wait_all(pipe_node->rigth);//, envp);
     }
     else if (node->type == TASK)
     {
         t_task *task = (t_task *)node;
-        waitpid(task->pid, &status, 0);
-		//Buscar variable de entorno '?' y sustituir su contenido por ft_itoa(status)
+		waitpid(task->pid, &status, 0);
+	//Buscar variable de entorno '?' y sustituir su contenido por ft_itoa(status)
     }
+	return (status);
 }

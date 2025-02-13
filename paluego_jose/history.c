@@ -20,12 +20,11 @@ int		get_histsize(const char *histsize)
 		if (histfilesize)
         	return (ft_atol(histfilesize));
 		else
-			return (DEFAULT_HISTSIZE);
+			return ((size_t)DEFAULT_HISTSIZE);
 	}
 	else
 		return (ft_atol(histsize));
 }
-
 /**
  * Se va a crear el límite de comandos que puede tener el historial en el file
  */
@@ -39,23 +38,31 @@ void	save_limit_history(char *hist, int fd)
     limit = get_histsize(getenv("HISTSIZE"));
 	hists = ft_split(hist, '\n');
 	hsize = matrixlen(hists);
+
+	//rl_clear_history();
 	//
-	if (hsize >= limit)
+	printf("limit: %zu\n", limit);
+	printf("hsize: %zu\n", hsize);
+	
+	if (hsize <= limit)
 		hsize = 0;
 	else
 		hsize -= limit; 
-	while (hists[limit])
+	//if (fd)
+	printf("limit: %zu\n", limit);
+	//printf("hsize: %zu\n", hsize);
+	while (hists[hsize] && fd)
 	{
-		add_history(hists[limit]);
-		write (fd, hists[limit], ft_strlen(hists[limit]));
-		limit++;
+		add_history(hists[hsize]);
+		//write (fd, hists[hsize], ft_strlen(hists[hsize]));
+		hsize++;
 	}
-	close(fd);
+	//printf("hola\n");
+	//close(fd);
 	//return
-		exit(0);
+		//exit(0);
 }
 
-/*
 void	load_history(void)
 {
 	
@@ -68,53 +75,34 @@ void	load_history(void)
 	if (access (HISTORY_FILE, F_OK | R_OK | W_OK) != 0)
 		return ;
 	//Abrir el archivo si existe 
-	fd = open(HISTORY_FILE, O_RDWR | O_TRUNC);
+	fd = open(HISTORY_FILE, O_RDWR);// | O_TRUNC);
+
 	//GNL
 	if (fd)
 	{
 		reader = 1;
+		//hist = NULL;
 		//Habrá que contar con el límite del historial
 		while (reader)
 		{
 			reader = read(fd, line, 1024);
-			hist = ft_strjoin(hist, line);
-			free(line);
+			//if (reader > 0)
+			//printf("%d\n", reader);
+			if (reader > 0)
+				hist = ft_strjoin(hist, line);
+			
+		//printf("hla");
+			//free(line);
 		}
-		save_limit_history(hist, fd);
+		if (hist)
+			save_limit_history(hist, fd);
+			//printf("hla");
+			//printf("%s\n", hist);
 		//Cerrar el archivo
 		close (fd);
 	}
-}*/
+}
 
-/*void	load_history(void)
-{
-	unsigned int	size;
-	//char	*pathname = "./history";
-	int		fd;
-	char	buff[1024];
-	int		reader;
-
-	//Hay que jugar con el límite de líneas que puede tener bash en el historial
-    size = get_histsize(getenv("HISTSIZE"));
-
-	//comprobar si existe el archivo y es accesible
-	if (access (HISTORY_FILE, F_OK | R_OK) != 0)
-		return ;
-	//abrir el archivo si existe 
-	fd = open(HISTORY_FILE, O_RDONLY);
-	//leer el archivo / GNL
-	if (fd)
-	{
-		reader = 1;
-		while (reader > 0)
-		{
-			reader = read (fd, buff, sizeof(buff) - 1);
-
-		}
-		//cerrar el archivo
-		close (fd);
-	}
-}*/
 /**
  * Hay que gestionar el número de comandos que guardará history. Por defecto,
  * en nuestro caso, son 500. Se puede comprobar usando el comando echo $HISTSIZE
@@ -125,10 +113,9 @@ void	load_history(void)
  */
 int	save_history(char *history)
 {
-	//char	*pathname = "./history";
 	int		fd;
-	//int		res;
 
+	add_history(history);
 	//comprobar si existe el archivo y es accesible
 	if (access (HISTORY_FILE, F_OK) != 0)
 	//crear el archivo si no existe y abrirlo
