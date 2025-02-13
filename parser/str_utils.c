@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:03:40 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/05 15:20:48 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/13 13:09:43 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void	nullify_delimiters(char *str)
     while (*str)
     {
 		skip_quotes(&str, str + ft_strlen(str));
+		if(*str == '\0')
+			break;
 		if (isdelimiter(*str))
 			*str = '\0';
 		str++;
