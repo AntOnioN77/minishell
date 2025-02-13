@@ -47,17 +47,16 @@ typedef enum e_symbols
 typedef enum e_errors
 {
 	ALL_OK,
+	COM_NOT_FOUND = 127,
     ERROR_MALLOC = 151, // evitamos solapar valores de errno, de esta manera
 //nuestras funciones pueden retornar tanto valores capturados de errno, como
 //nuestros propios casos de error
-    INVALID_TYPE,	//1002
-	TASK_IS_VOID,	//1003
+    INVALID_TYPE,	
+	TASK_IS_VOID,	
 	SYNTAX_ERROR,
 	REDLINE_FAIL,
 	TMP_FILE_ERROR,
-	FINISH,
-	COM_NOT_FOUND,
-	UNDEFINED		//cuando aun no esta muy claro, usar solo durante el desaroyo
+	FINISH
 } e_errors;
 
 /*****************************************************************************/
@@ -178,7 +177,7 @@ int strnchr_outquot(char **str, char *end, char c);
 //Location: mooks.c
 char *ft_getenv(const char *name, char *envp[]);
 void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
-void wait_all(t_tree *node);
+int wait_all(t_tree *node);
 //LOCATION: parser/check_tree.c
 int	 check_tree(t_tree *tree, char **envp);
 void handle_sigint(int signal);

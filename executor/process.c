@@ -18,19 +18,18 @@ void close_fds(int fd_since)
 }
 
 
-void wait_all(t_tree *node)//, char **envp)
+int wait_all(t_tree *node)//, char **envp)
 {
     int status;
     
     if (!node)
-        return;
+        return (0);//????????????
         
     if (node->type == PIPE)
     {
         t_pipe *pipe_node = (t_pipe *)node;
-        wait_all(pipe_node->rigth);//, envp);
+        status = wait_all(pipe_node->rigth);//, envp);
         wait_all((t_tree *)pipe_node->left);//, envp);
-
     }
     else if (node->type == TASK)
     {
@@ -38,4 +37,5 @@ void wait_all(t_tree *node)//, char **envp)
 		waitpid(task->pid, &status, 0);
 	//Buscar variable de entorno '?' y sustituir su contenido por ft_itoa(status)
     }
+	return (status);
 }

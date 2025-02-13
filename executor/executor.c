@@ -109,7 +109,7 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
         if (err != 0)
         {
 			perror("mini$hell");//revisar
-			return(FINISH);
+			return(err);
 		}
 		pathcmd = com_path(task->cmd, envp, &err);
 		if (err != 0)//////////////pasar a un handle error

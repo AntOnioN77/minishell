@@ -98,6 +98,7 @@ int main(int argc, char **argv, char **envp)
 	t_tree	*tree;
 	e_errors		error;
 	t_environ environ;
+	int status;
 	
 	//Para silenciar warning.
 	if (argc != 1 || !argv)
@@ -151,7 +152,11 @@ fprintf(stderr,"SALIDA 147\n");
 		error = executor(tree, environ.envp, 0, 1); //executor deberia simplemente ignorar los builtin no pipeables cd, export, unset y exit.
 //test_fds("main 132");
 		if (error == 0)//capturar y gestionar error de executor
-           		wait_all(tree);//, envp);
+		{
+           		status = wait_all(tree);//, envp);
+
+				change_var("?", ft_itoa(((status) & 0xff00) >> 8), &environ);//aplicamos mascara (WEXISTATUS)
+		}
 		else
 		{
 printf(" error en executor: %d\n", error); //solo para pruebas BORRAR //PERo seria un buen lugar para imprimir con perror 
