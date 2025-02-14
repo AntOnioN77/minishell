@@ -110,8 +110,8 @@ int main(int argc, char **argv, char **envp)
 	if (error)
 	{
 		if(environ.envp)
-			ft_free_double(environ.envp);
-		return(error);
+			ft_free_double(&environ.envp);
+		return(error);//falta imprimir error
 	}
 
 	tree=NULL;
@@ -136,7 +136,7 @@ int main(int argc, char **argv, char **envp)
 		{
 printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
 			free_tree(tree);
-			ft_free_double(environ.envp);
+			ft_free_double(&environ.envp);
 fprintf(stderr,"SALIDA 136\n");
 			return(error);
 		}
@@ -147,7 +147,7 @@ fprintf(stderr,"SALIDA 136\n");
 			if(error == FINISH) //NO es un error como tal, built in funcionó
 				break ;
 printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRAR
-			ft_free_double(environ.envp);
+			ft_free_double(&environ.envp);
 fprintf(stderr,"SALIDA 147\n");
 			return (error);
 		}
@@ -171,7 +171,7 @@ printf(" error en executor: %d\n", error); //solo para pruebas BORRAR //PERo ser
 	}
 fprintf(stderr,"SALIDA 163\n");
 //print_env(&environ);
-	ft_free_double(environ.envp);
+	ft_free_double(&environ.envp);
 //print_env(&environ);
 	return (error);
 }

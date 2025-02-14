@@ -68,7 +68,7 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 		if (slash == NULL)
 		{
 			*err = ERROR_MALLOC;
-			ft_free_double(enpath);
+			ft_free_double(&enpath);
 			return (NULL);
 		}
 		path = ft_strjoin(slash, cmd);
@@ -76,18 +76,18 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 		if (path == NULL)
 		{
 			*err = ERROR_MALLOC;
-			ft_free_double(enpath);
+			ft_free_double(&enpath);
 			return (NULL);
 		}
 		if (access (path, F_OK ) == 0) //necesitamos distinguir errores "command not found" de "permission denied"
 		{
-			ft_free_double(enpath);
+			ft_free_double(&enpath);
 			return (path);
 		}
 		i++;
 		free(path);
 	}
-	ft_free_double(enpath);
+	ft_free_double(&enpath);
 	*err = COM_NOT_FOUND;
 	return (NULL);
 }
