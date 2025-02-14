@@ -114,35 +114,43 @@ e_errors add_var(char *key, char *value, t_environ *environ)
 e_errors init_envp(t_environ *environ) 
 {
 	e_errors error;
+	char *num;
 
 	error = 0;
 	char path[PATH_MAX];
 
-	if (environ->envp == NULL)
+	if (environ == NULL || environ->envp == NULL)
 		return(errno);
 
 	if (ft_getenv("SHLVL", environ->envp) == NULL)
-		error = add_var("SHLVL", "1", environ);
-	
-	if (ft_getenv("PWD", environ->envp) == NULL)
 	{
-		if (getcwd(path, PATH_MAX) != NULL)
-			error = add_var("PWD", path, environ);
-		else
-			return (errno);
+		error = add_var("SHLVL", "1", environ);
 	}
+	else
+	{
+		num = ft_itoa(ft_atoi(ft_getenv("SHLVL", environ->envp)) + 1); 
+		error = change_var("SHLVL", num, environ);
+		free(num);
+	}
+
+	if (getcwd(path, PATH_MAX) == NULL)
+		return (errno);
+	if (!error && (ft_getenv("PWD", environ->envp) == NULL))
+		error = add_var("PWD", path, environ);
+	else if (!error)
+		error = change_var("PWD", path, environ);
 	
-	if (ft_getenv("HOME", environ->envp) == NULL)
+	if (!error && ft_getenv("HOME", environ->envp) == NULL)
 		error = add_var("HOME", path, environ); //si no tenemos acceso a las variables de entorno, establece la carpeta actual como home (pues es la unica de la que tiene certeza existe y es utilizable)
 	
-	if (ft_getenv("OLDPWD", environ->envp) == NULL)
+	if (!error && ft_getenv("OLDPWD", environ->envp) == NULL)
 		error = add_var("OLDPWD", "", environ); //al ser el principio de la ejecucion no hay una carpeta previa
-	else
+	else if(!error)
 		error = change_var("OLDPWD", "", environ);// si existe, solo la reinicia como cadena vacía
 
-	if (ft_getenv("?", environ->envp) == NULL)
+	if (!error && ft_getenv("?", environ->envp) == NULL)
 		error = add_var("?", "0", environ);
-	else
+	else if (!error)
 		error = change_var("?", "0", environ);
 	
 	return(error);

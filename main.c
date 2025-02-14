@@ -94,12 +94,14 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		return (check_tree(*tree, envp)); // gestionar retorno
 }
 
-print_error(e_errors error)
+/*
+void print_error(e_errors error)
 {
 	//
 }
+*/
 
-e_errors handlerr(t_tree **tree, t_environ *environ, e_errors error)
+e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 {
 	//liberar lo liberable
 	//error fatal causa exit(err).
@@ -108,9 +110,12 @@ e_errors handlerr(t_tree **tree, t_environ *environ, e_errors error)
 		return (0);
 	free_null_arr(&(environ->envp));
 	ft_bzero(&environ, sizeof(t_environ));
-	free_tree(*tree);
-	*tree = NULL;
-	print_error(error);
+	if ( tree && *tree)
+	{
+		free_tree(*tree);
+		*tree = NULL;
+	}
+		//print_error(error);
 	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || LINE_TOO_LONG)
 		return (error);//continue
 	else
@@ -125,26 +130,19 @@ int main(int argc, char **argv, char **envp)
 	int status;
 	char *str_status;
 
+	error = 0;
 	tree = NULL;
 	ft_bzero(&environ, sizeof(t_environ));
 	str_status = NULL;
-	error = 0;
 	//Para silenciar warning.
 	if (argc != 1 || !argv)
 		return(0);
 	//load_history();
-	error = create_envp(envp, &environ);
-	if (error)
-	{
-		if(environ.envp)
-			free_null_arr(&environ.envp);
-		return(error);//falta imprimir error
-	}
+	error = handlerr(create_envp(envp, &environ), NULL, &environ);
 
 	while(error == 0 || error == TASK_IS_VOID || error == SYNTAX_ERROR)
 	{
 		signal_conf();
-		error = 0;
 		error = get_cmd_tree(&tree, environ.envp);
 		if (error == TASK_IS_VOID)
 		{
