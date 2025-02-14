@@ -50,14 +50,17 @@ typedef enum e_errors
 {
 	ALL_OK,
 	COM_NOT_FOUND = 127,
+	E_SIGINT = 130,
+	E_SIGQUIT = 131,
     ERROR_MALLOC = 151, // evitamos solapar valores de errno, de esta manera
 //nuestras funciones pueden retornar tanto valores capturados de errno, como
 //nuestros propios casos de error
-    INVALID_TYPE,	
+    INVALID_TYPE,//solo para debug	
 	TASK_IS_VOID,	
 	SYNTAX_ERROR,
-	REDLINE_FAIL,
+	READLINE_FAIL,//lo he cambiado por retornar errno (14feb)
 	TMP_FILE_ERROR,
+	LINE_TOO_LONG,
 	FINISH
 } e_errors;
 

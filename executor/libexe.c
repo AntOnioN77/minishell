@@ -18,7 +18,7 @@ void ft_free_null(void **pnt)
 /**
  * Libera la memoria reservada en matrices (ej: split)
  */
-int	ft_free_double(char ***s)
+int	free_null_arr(char ***s)
 {
 	int    i;
 	char   **ptr;

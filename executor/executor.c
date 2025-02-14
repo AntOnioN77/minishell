@@ -68,7 +68,7 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 		if (slash == NULL)
 		{
 			*err = ERROR_MALLOC;
-			ft_free_double(&enpath);
+			free_null_arr(&enpath);
 			return (NULL);
 		}
 		path = ft_strjoin(slash, cmd);
@@ -76,18 +76,18 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 		if (path == NULL)
 		{
 			*err = ERROR_MALLOC;
-			ft_free_double(&enpath);
+			free_null_arr(&enpath);
 			return (NULL);
 		}
 		if (access (path, F_OK ) == 0) //necesitamos distinguir errores "command not found" de "permission denied"
 		{
-			ft_free_double(&enpath);
+			free_null_arr(&enpath);
 			return (path);
 		}
 		i++;
 		free(path);
 	}
-	ft_free_double(&enpath);
+	free_null_arr(&enpath);
 	*err = COM_NOT_FOUND;
 	return (NULL);
 }
@@ -122,6 +122,7 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
 			return(err);
 		}
 		pathcmd = com_path(task->cmd, envp, &err);
+///////////////////////////////////
 		if (err != 0)//////////////pasar a un handle error
 		{
 char *msg_error;
@@ -136,9 +137,11 @@ char *msg_error;
 			close_fds(0);
 			return(err);
 		}
+/////////////////////////////////
 		execve(pathcmd, task->argv, envp);
-		err = errno;
+		err = errno; 
 		free(pathcmd);
+		return(err);
     }
 	if (out != STDOUT_FILENO)
 		close(out);

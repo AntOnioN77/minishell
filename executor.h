@@ -16,7 +16,7 @@
 
 //Crear estructura para almacenar las variables de ejecución
 
-int	ft_free_double(char ***s);
+int	free_null_arr(char ***s);
 
 e_errors create_child(t_task *task, char **envp, int in, int out);
 

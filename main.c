@@ -45,8 +45,8 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	line = readline("> ");
 	if(!line)
 	{
-		perror("readline:");
-		return (REDLINE_FAIL);
+//		perror("readline:");
+		return (errno);
 	}
 	if(line[0] == '\0')// si la cadena leida esta vacía, vuelve a pedir entrada
 		return(continue_cmd_tree(right, envp));
@@ -73,8 +73,8 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		//(*tree)->line = line;
 		if(!line)
 		{
-			perror("readline:");
-			return (REDLINE_FAIL);
+//			perror("readline:");
+			return (errno);
 		}
 		if (*line)
 			add_history(line);
@@ -94,6 +94,29 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		return (check_tree(*tree, envp)); // gestionar retorno
 }
 
+print_error(e_errors error)
+{
+	//
+}
+
+e_errors handlerr(t_tree **tree, t_environ *environ, e_errors error)
+{
+	//liberar lo liberable
+	//error fatal causa exit(err).
+	// error de continue, sin error
+	if (error == 0)
+		return (0);
+	free_null_arr(&(environ->envp));
+	ft_bzero(&environ, sizeof(t_environ));
+	free_tree(*tree);
+	*tree = NULL;
+	print_error(error);
+	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || LINE_TOO_LONG)
+		return (error);//continue
+	else
+		exit(error);
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	t_tree	*tree;
@@ -101,7 +124,11 @@ int main(int argc, char **argv, char **envp)
 	t_environ environ;
 	int status;
 	char *str_status;
-	
+
+	tree = NULL;
+	ft_bzero(&environ, sizeof(t_environ));
+	str_status = NULL;
+	error = 0;
 	//Para silenciar warning.
 	if (argc != 1 || !argv)
 		return(0);
@@ -110,12 +137,10 @@ int main(int argc, char **argv, char **envp)
 	if (error)
 	{
 		if(environ.envp)
-			ft_free_double(&environ.envp);
+			free_null_arr(&environ.envp);
 		return(error);//falta imprimir error
 	}
 
-	tree=NULL;
-	error = 0;
 	while(error == 0 || error == TASK_IS_VOID || error == SYNTAX_ERROR)
 	{
 		signal_conf();
@@ -136,7 +161,7 @@ int main(int argc, char **argv, char **envp)
 		{
 printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
 			free_tree(tree);
-			ft_free_double(&environ.envp);
+			free_null_arr(&environ.envp);
 fprintf(stderr,"SALIDA 136\n");
 			return(error);
 		}
@@ -147,7 +172,7 @@ fprintf(stderr,"SALIDA 136\n");
 			if(error == FINISH) //NO es un error como tal, built in funcionó
 				break ;
 printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRAR
-			ft_free_double(&environ.envp);
+			free_null_arr(&environ.envp);
 fprintf(stderr,"SALIDA 147\n");
 			return (error);
 		}
@@ -159,7 +184,7 @@ fprintf(stderr,"SALIDA 147\n");
            		status = wait_all(tree);//, envp);
 				str_status = ft_itoa(((status) & 0xff00) >> 8);
 				change_var("?", str_status , &environ);//aplicamos mascara (WEXISTATUS)
-				free(str_status);
+				free(str_status);//NO GESTIONADO POR HANDLE ERROR
 		}
 		else
 		{
@@ -171,7 +196,7 @@ printf(" error en executor: %d\n", error); //solo para pruebas BORRAR //PERo ser
 	}
 fprintf(stderr,"SALIDA 163\n");
 //print_env(&environ);
-	ft_free_double(&environ.envp);
+	free_null_arr(&environ.envp);
 //print_env(&environ);
 	return (error);
 }

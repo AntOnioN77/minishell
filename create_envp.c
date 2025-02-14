@@ -153,7 +153,7 @@ e_errors create_envp(char **original, t_environ *environ)
 	int count;
 	int error;
 
-	ft_bzero((void *)environ, sizeof(t_environ));////??
+//	ft_bzero((void *)environ, sizeof(t_environ));////??
 	if (original == NULL || *original == NULL)
 	{
 		environ->envp = ft_calloc(12, sizeof(char *));
