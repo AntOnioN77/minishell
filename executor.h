@@ -18,6 +18,8 @@
 
 int	free_null_arr(char ***s);
 
+void	free_arr(char **s);
+
 e_errors create_child(t_task *task, char **envp, int in, int out);
 
 e_errors executor(t_tree *node, char **envp, int in, int out);

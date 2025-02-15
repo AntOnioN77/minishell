@@ -16,7 +16,7 @@ void ft_free_null(void **pnt)
 
 
 /**
- * Libera la memoria reservada en matrices (ej: split)
+ * Libera la memoria reservada en matrices (ej: split) y nullifica
  */
 int	free_null_arr(char ***s)
 {
@@ -35,4 +35,23 @@ int	free_null_arr(char ***s)
 	free(ptr);
 	*s = NULL;  // Nullificamos el puntero original
 	return (1);
+}
+
+/**
+ * Libera la memoria reservada en matrices (ej: split)
+ */
+void	free_arr(char **s)
+{
+	int    i;
+
+	i = 0;
+	if (!s || !*s)
+		return ;
+	while (s[i])
+	{
+		free(s[i]);
+		i++;
+	}
+	free(s);
+	return;
 }

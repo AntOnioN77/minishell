@@ -98,9 +98,10 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
     char *pathcmd;
     e_errors err;
 
+	err = 0;
     pid = fork();
     if (pid == -1)
-        return (2);
+        return (errno);
     task->pid = pid;
     if (pid == 0)
     {
@@ -141,7 +142,7 @@ char *msg_error;
 		execve(pathcmd, task->argv, envp);
 		err = errno; 
 		free(pathcmd);
-		return(err);
+//		return(err);
     }
 	if (out != STDOUT_FILENO)
 		close(out);

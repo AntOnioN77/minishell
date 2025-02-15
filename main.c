@@ -46,7 +46,7 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	if(!line)
 	{
 //		perror("readline:");
-		return (errno);
+		return (READLINE_FAIL);//pasar codigo de señal??
 	}
 	if(line[0] == '\0')// si la cadena leida esta vacía, vuelve a pedir entrada
 		return(continue_cmd_tree(right, envp));
@@ -74,7 +74,8 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		if(!line)
 		{
 //			perror("readline:");
-			return (errno);
+fprintf(stderr,"---------------------linea77 - erno:%d", errno );
+			return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
 		}
 		if (*line)
 			add_history(line);
@@ -106,20 +107,27 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	//liberar lo liberable
 	//error fatal causa exit(err).
 	// error de continue, sin error
+
+//fprintf(stderr, "linea 110 variable error:%d\n", (int)error);
 	if (error == 0)
 		return (0);
-	free_null_arr(&(environ->envp));
-	ft_bzero(&environ, sizeof(t_environ));
+	if(environ)
+	{
+		free_arr(environ->envp);
+		ft_bzero(environ, sizeof(t_environ));
+	}
+
 	if ( tree && *tree)
 	{
 		free_tree(*tree);
 		*tree = NULL;
 	}
 		//print_error(error);
-	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || LINE_TOO_LONG)
+	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG)
+	{
 		return (error);//continue
-	else
-		exit(error);
+	}
+	exit(error);
 }
 
 int main(int argc, char **argv, char **envp)
@@ -132,18 +140,20 @@ int main(int argc, char **argv, char **envp)
 
 	error = 0;
 	tree = NULL;
-	ft_bzero(&environ, sizeof(t_environ));
+	//ft_bzero(&environ, sizeof(t_environ));
 	str_status = NULL;
 	//Para silenciar warning.
 	if (argc != 1 || !argv)
 		return(0);
 	//load_history();
-	error = handlerr(create_envp(envp, &environ), NULL, &environ);
+
+	error = handlerr(create_envp(envp, &environ), &tree, &environ);
+
 
 	while(error == 0 || error == TASK_IS_VOID || error == SYNTAX_ERROR)
 	{
 		signal_conf();
-		error = get_cmd_tree(&tree, environ.envp);
+		error = handlerr(get_cmd_tree(&tree, environ.envp), &tree, &environ);
 		if (error == TASK_IS_VOID)
 		{
 			free_tree(tree);
@@ -160,7 +170,7 @@ int main(int argc, char **argv, char **envp)
 printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
 			free_tree(tree);
 			free_null_arr(&environ.envp);
-fprintf(stderr,"SALIDA 136\n");
+//fprintf(stderr,"SALIDA 136\n");
 			return(error);
 		}
 		error = non_pipable_builtin(tree);//, envp);
@@ -171,7 +181,7 @@ fprintf(stderr,"SALIDA 136\n");
 				break ;
 printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRAR
 			free_null_arr(&environ.envp);
-fprintf(stderr,"SALIDA 147\n");
+//fprintf(stderr,"SALIDA 147\n");
 			return (error);
 		}
 //print_tree(tree, 30);
@@ -192,7 +202,7 @@ printf(" error en executor: %d\n", error); //solo para pruebas BORRAR //PERo ser
 		close_fds(3);
 		free_tree(tree);
 	}
-fprintf(stderr,"SALIDA 163\n");
+//fprintf(stderr,"SALIDA 163\n");
 //print_env(&environ);
 	free_null_arr(&environ.envp);
 //print_env(&environ);

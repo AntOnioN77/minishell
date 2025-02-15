@@ -161,7 +161,14 @@ e_errors create_envp(char **original, t_environ *environ)
 	int count;
 	int error;
 
-//	ft_bzero((void *)environ, sizeof(t_environ));////??
+	//ft_bzero(environ, sizeof(t_environ));////?? rompe ctrl+d (si ha habido un comando antes)
+	environ->alloced = 0;
+	environ->envp = 0;
+	environ->local = 0;
+	environ->localloced = 0;
+	environ->locnext = 0;
+	environ->next = 0;
+	//
 	if (original == NULL || *original == NULL)
 	{
 		environ->envp = ft_calloc(12, sizeof(char *));
