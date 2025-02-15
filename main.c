@@ -127,6 +127,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	{
 		return (error);//continue
 	}
+	close_fds(0);//??????????????????????????????????????
 	exit(error);
 }
 
@@ -154,40 +155,14 @@ int main(int argc, char **argv, char **envp)
 	{
 		signal_conf();
 		error = handlerr(get_cmd_tree(&tree, environ.envp), &tree, &environ);
-		if (error == TASK_IS_VOID)
-		{
-			free_tree(tree);
-			continue;
-		}
-		else if(error == SYNTAX_ERROR)
-		{
-			ft_putstr_fd("Syntax error\n", 2);//bash es mas especifico, quiza hay que darle una vuelta.
-			free_tree(tree);
-			continue;
-		}
-		else if (error)
-		{
-printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
-			free_tree(tree);
-			free_null_arr(&environ.envp);
-//fprintf(stderr,"SALIDA 136\n");
-			return(error);
-		}
-		error = non_pipable_builtin(tree);//, envp);
 		if (error)
-		{
-			free_tree(tree);
-			if(error == FINISH) //NO es un error como tal, built in funcionó
-				break ;
-printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRAR
-			free_null_arr(&environ.envp);
-//fprintf(stderr,"SALIDA 147\n");
-			return (error);
-		}
-//print_tree(tree, 30);
-		error = executor(tree, environ.envp, 0, 1); //executor deberia simplemente ignorar los builtin no pipeables cd, export, unset y exit.
-//test_fds("main 132");
-		if (error == 0)//capturar y gestionar error de executor
+			continue;
+		error = handlerr(non_pipable_builtin(tree), &tree, &environ);
+		if (error)
+			continue ;
+		//print_tree(tree, 30);
+		error = handlerr(executor(tree, environ.envp, 0, 1), &tree, &environ); //executor deberia simplemente ignorar los builtin no pipeables
+		if (!error)
 		{
            		status = wait_all(tree);//, envp);
 				str_status = ft_itoa(((status) & 0xff00) >> 8);
@@ -195,17 +170,11 @@ printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRA
 				free(str_status);//NO GESTIONADO POR HANDLE ERROR
 		}
 		else
-		{
-printf(" error en executor: %d\n", error); //solo para pruebas BORRAR //PERo seria un buen lugar para imprimir con perror 
-		}
-//test_fds("main 118");
+			continue ;
 		close_fds(3);
 		free_tree(tree);
 	}
-//fprintf(stderr,"SALIDA 163\n");
-//print_env(&environ);
 	free_null_arr(&environ.envp);
-//print_env(&environ);
 	return (error);
 }
 
