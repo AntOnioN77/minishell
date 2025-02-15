@@ -22,6 +22,7 @@ int wait_all(t_tree *node)//, char **envp)
 {
     int status;
     
+	status = 0;
     if (!node)
         return (0);//????????????
         

@@ -147,10 +147,7 @@ int main(int argc, char **argv, char **envp)
 	if (argc != 1 || !argv)
 		return(0);
 	//load_history();
-
 	error = handlerr(create_envp(envp, &environ), &tree, &environ);
-
-
 	while(error == 0 || error == TASK_IS_VOID || error == SYNTAX_ERROR)
 	{
 		signal_conf();

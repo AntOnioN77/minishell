@@ -28,3 +28,8 @@ cat /usr/include/asm-generic/errno.h
 
 valgrind sin readline:
 valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell
+
+
+
+15feb TEST ROTOS HOY
+Test 132

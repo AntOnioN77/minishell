@@ -148,7 +148,7 @@ char *msg_error;
 		close(out);
 	if (in != STDIN_FILENO)
 		close(in);
-    return (0);
+    return (err);
 }
 
 e_errors exec_pipe(t_pipe *pipe_node, char **envp, int in)
