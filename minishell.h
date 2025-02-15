@@ -21,6 +21,11 @@
 # define HISTORY_FILE "./.history"
 # define DEFAULT_HISTSIZE 500
 
+
+//VARIABLE GLOBAL
+static int	g_ctrlc;
+//extern int	g_ctrlc;
+
 /*****************************************************************************/
 /* 								ENUMS										 */
 /*****************************************************************************/

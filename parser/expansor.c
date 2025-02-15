@@ -160,6 +160,7 @@ e_errors	expand_vars_tree(t_tree *node, char *envp[])
 	t_pipe *pipe;
 	e_errors error;
 
+	error = 0;
 	if (node->type == PIPE)
 	{
 		pipe = (t_pipe *)node;

@@ -69,6 +69,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
 		char 		*line;
 
+		g_ctrlc = 0;
 		line = readline("mini$hell> ");
 		//(*tree)->line = line;
 		if(!line)
