@@ -87,12 +87,11 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 		free(path);
 	}
 	free_null_arr(&enpath);
-
 	if (cmd && (access(cmd, F_OK) == 0))
 	{
 		struct stat tipe;//abstraer a otra funcion
 		stat(cmd, &tipe);
-		if ((tipe.st_mode & 0170000) == (0040000))///////////////////////S_ISDIR()
+		if ((tipe.st_mode & 0170000) == (0040000))///////////////////////S_ISDIR() man 7 inode
 		{
 			*err = IS_A_DIR;
 			return (cmd);
@@ -100,6 +99,8 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 		path = ft_strdup(cmd);
 		if (!path)
 			*err = ERROR_MALLOC;
+		if (access(path, X_OK ))
+			*err = NO_PERMISSION;
 
 		return (path); //Si es una ruta relativa o un ejecutable no hay nada que componer.
 	}
