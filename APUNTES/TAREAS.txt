@@ -13,3 +13,4 @@
 
 4. Verificar si se gestiona adecuadamente comando es un archivo sin permisos de ejecucion
 5. Verificar si se gestiona adecuadamente outfile es un archivo sin permisos de ejecucion
+6

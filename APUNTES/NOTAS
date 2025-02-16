@@ -18,6 +18,7 @@ cat /usr/include/asm-generic/errno.h
 4. > pwd oi
 
 5. > exit 123 (debe salir con error 123)
+6. > foo$ muestra cosas raras
 
 
 ------------TAREAS:-------

@@ -79,9 +79,11 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 		if (access (path, F_OK ) == 0) //necesitamos distinguir errores "command not found" de "permission denied"
 		{
 			free_null_arr(&enpath);
-			if (access(path, X_OK ))
-				*err = NO_PERMISSION;
-			return (path);
+			if (access(path, X_OK ) == 0)
+				return (path);
+			*err = NO_PERMISSION;
+			free(path);
+			return(NULL);
 		}
 		i++;
 		free(path);
@@ -96,10 +98,7 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 			*err = IS_A_DIR;
 			return (cmd);
 		}
-		path = ft_strdup(cmd);
-		if (!path)
-			*err = ERROR_MALLOC;
-		if (access(path, X_OK ))
+		if (access(cmd, X_OK ))
 			*err = NO_PERMISSION;
 
 		return (path); //Si es una ruta relativa o un ejecutable no hay nada que componer.
@@ -152,7 +151,7 @@ char *msg_error;
 			}
 			else if (err == IS_A_DIR)
 			{
-				msg_error = ft_strjoin(task->cmd, " - Is a directori\n");
+				msg_error = ft_strjoin(task->cmd, " - Is a directory\n");
 				ft_putstr_fd(msg_error, 2);
 				free(msg_error);
 			}
