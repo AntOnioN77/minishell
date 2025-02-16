@@ -49,6 +49,7 @@ typedef enum e_symbols
 typedef enum e_errors
 {
 	ALL_OK,
+	IS_A_DIR = 126,
 	COM_NOT_FOUND = 127,
 	E_SIGINT = 130,
 	E_SIGQUIT = 131,

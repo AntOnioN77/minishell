@@ -1,6 +1,8 @@
 #include "minishell.h"
 #include "executor.h"
 #include <limits.h>
+#include <sys/stat.h>
+#include <stdio.h>
 
 /**
  * Busca el array que comienza con "PATH" (donde se encuentran las rutas de los
@@ -41,12 +43,20 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 	char	**enpath;
 	int		pos;
 	int 	i;
-
+	
 	if (cmd && (access(cmd, F_OK) == 0))
 	{
+		struct stat tipe;//abstraer a otra funcion
+		stat(cmd, &tipe);
+		if ((tipe.st_mode & 0170000) == (0040000))///////////////////////S_ISDIR()
+		{
+			*err = IS_A_DIR;
+			return (cmd);
+		}
 		path = ft_strdup(cmd);
 		if (!path)
 			*err = ERROR_MALLOC;
+
 		return (path); //Si es una ruta relativa o un ejecutable no hay nada que componer.
 	}
 	i = 1;
@@ -129,7 +139,13 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
 char *msg_error;
 			if (err == COM_NOT_FOUND)
 			{
-				msg_error = ft_strjoin(task->cmd, ":Command not found\n");
+				msg_error = ft_strjoin(task->cmd, " - Command not found\n");
+				ft_putstr_fd(msg_error, 2);
+				free(msg_error);
+			}
+			else if (err == IS_A_DIR)
+			{
+				msg_error = ft_strjoin(task->cmd, " - Is a directori\n");
 				ft_putstr_fd(msg_error, 2);
 				free(msg_error);
 			}
