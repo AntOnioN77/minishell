@@ -152,13 +152,16 @@ int main(int argc, char **argv, char **envp)
 	{
 		signal_conf();
 		error = handlerr(get_cmd_tree(&tree, environ.envp), &tree, &environ);
+fprintf(stderr, "155------- environ.envp:%p\n", environ.envp);
 		if (error)
 			continue;
 		error = handlerr(non_pipable_builtin(tree), &tree, &environ);
+fprintf(stderr, "159------- environ.envp:%p\n", environ.envp);
 		if (error)
 			continue ;
 		//print_tree(tree, 30);
 		error = handlerr(executor(tree, environ.envp, 0, 1), &tree, &environ); //executor deberia simplemente ignorar los builtin no pipeables
+fprintf(stderr, "164------- environ.envp:%p\n", environ.envp);
 		if (!error)
 		{
            		status = wait_all(tree);//, envp);

@@ -182,6 +182,7 @@ e_errors	expand_vars_tree(t_tree *node, char *envp[])
 			return (error);
 		unquote_task(task);
 		error = create_herefile(&(task->redir)); //si hubo error lo anota, sera encontrado por check_tree
+		return (error);
 	}
-	return (error);
+	return (INVALID_TYPE);
 }

@@ -1,5 +1,5 @@
 NAME = minishell
-CC = cc
+CC = clang
 CFLAGS = -Wall -Wextra -Werror
 CPPFLAGS = -I. -I/libft/headers 
 DBGFLAGS = -g3

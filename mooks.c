@@ -33,6 +33,8 @@ int	search_var(char **envp, const char* var)
 	int pos;
 
 //fprintf(stderr, "search_var var:%s --- ", var);
+	if(!envp)
+		return (-1);
 	pos = 0;
 	while (envp[pos])
 	{
