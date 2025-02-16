@@ -44,21 +44,8 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 	int		pos;
 	int 	i;
 	
-	if (cmd && (access(cmd, F_OK) == 0))
-	{
-		struct stat tipe;//abstraer a otra funcion
-		stat(cmd, &tipe);
-		if ((tipe.st_mode & 0170000) == (0040000))///////////////////////S_ISDIR()
-		{
-			*err = IS_A_DIR;
-			return (cmd);
-		}
-		path = ft_strdup(cmd);
-		if (!path)
-			*err = ERROR_MALLOC;
 
-		return (path); //Si es una ruta relativa o un ejecutable no hay nada que componer.
-	}
+	*err = 0;
 	i = 1;
 	pos = search_path(envp);
 	if (pos == -1)
@@ -92,12 +79,31 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 		if (access (path, F_OK ) == 0) //necesitamos distinguir errores "command not found" de "permission denied"
 		{
 			free_null_arr(&enpath);
+			if (access(path, X_OK ))
+				*err = NO_PERMISSION;
 			return (path);
 		}
 		i++;
 		free(path);
 	}
 	free_null_arr(&enpath);
+
+	if (cmd && (access(cmd, F_OK) == 0))
+	{
+		struct stat tipe;//abstraer a otra funcion
+		stat(cmd, &tipe);
+		if ((tipe.st_mode & 0170000) == (0040000))///////////////////////S_ISDIR()
+		{
+			*err = IS_A_DIR;
+			return (cmd);
+		}
+		path = ft_strdup(cmd);
+		if (!path)
+			*err = ERROR_MALLOC;
+
+		return (path); //Si es una ruta relativa o un ejecutable no hay nada que componer.
+	}
+
 	*err = COM_NOT_FOUND;
 	return (NULL);
 }
@@ -146,6 +152,13 @@ char *msg_error;
 			else if (err == IS_A_DIR)
 			{
 				msg_error = ft_strjoin(task->cmd, " - Is a directori\n");
+				ft_putstr_fd(msg_error, 2);
+				free(msg_error);
+			}
+			else if (err == NO_PERMISSION)
+			{
+				err = 126; //bash por algun motivo almacena en $? 126 tanto para lanzar permission denied como para command not found 
+				msg_error = ft_strjoin(task->cmd, " - Permission denied\n");
 				ft_putstr_fd(msg_error, 2);
 				free(msg_error);
 			}

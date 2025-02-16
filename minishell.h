@@ -56,6 +56,7 @@ typedef enum e_errors
     ERROR_MALLOC = 151, // evitamos solapar valores de errno, de esta manera
 //nuestras funciones pueden retornar tanto valores capturados de errno, como
 //nuestros propios casos de error
+	NO_PERMISSION,
     INVALID_TYPE,//solo para debug	
 	TASK_IS_VOID,	
 	SYNTAX_ERROR,
