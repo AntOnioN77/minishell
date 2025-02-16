@@ -73,8 +73,6 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		//(*tree)->line = line;
 		if(!line)
 		{
-//			perror("readline:");
-fprintf(stderr,"---------------------linea77 - erno:%d", errno );
 			return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
 		}
 		if (*line)
@@ -111,22 +109,23 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 //fprintf(stderr, "linea 110 variable error:%d\n", (int)error);
 	if (error == 0)
 		return (0);
-	if(environ)
-	{
-		free_arr(environ->envp);
-		ft_bzero(environ, sizeof(t_environ));
-	}
 
 	if ( tree && *tree)
 	{
 		free_tree(*tree);
 		*tree = NULL;
 	}
-		//print_error(error);
 	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG)
 	{
 		return (error);//continue
 	}
+	if(environ)
+	{
+		free_arr(environ->envp);
+		ft_bzero(environ, sizeof(t_environ));
+	}
+
+
 	close_fds(0);//??????????????????????????????????????
 	exit(error);
 }
