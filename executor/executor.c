@@ -47,6 +47,28 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 
 	*err = 0;
 	i = 1;
+
+	if (cmd && ft_strchr(cmd, '/'))
+	{
+		if ( access(cmd, F_OK) == 0)
+		{
+			struct stat tipe;//abstraer a otra funcion
+			stat(cmd, &tipe);
+			if ((tipe.st_mode & 0170000) == (0040000))///////////////////////S_ISDIR() man 7 inode
+			{
+				*err = IS_A_DIR;
+				return (cmd);
+			}
+			if (access(cmd, X_OK ))
+				*err = NO_PERMISSION;
+			return (cmd); //Si es una ruta relativa o un ejecutable no hay nada que componer.
+		}
+		else
+		{
+			*err = NO_EXIST;
+			return(cmd);
+		}
+	}
 	pos = search_path(envp);
 	if (pos == -1)
 	{
@@ -89,20 +111,7 @@ char	*com_path(char *cmd, char **envp, e_errors *err)
 		free(path);
 	}
 	free_null_arr(&enpath);
-	if (cmd && (access(cmd, F_OK) == 0))
-	{
-		struct stat tipe;//abstraer a otra funcion
-		stat(cmd, &tipe);
-		if ((tipe.st_mode & 0170000) == (0040000))///////////////////////S_ISDIR() man 7 inode
-		{
-			*err = IS_A_DIR;
-			return (cmd);
-		}
-		if (access(cmd, X_OK ))
-			*err = NO_PERMISSION;
 
-		return (path); //Si es una ruta relativa o un ejecutable no hay nada que componer.
-	}
 
 	*err = COM_NOT_FOUND;
 	return (NULL);
@@ -139,32 +148,38 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
 			return(err);
 		}
 		pathcmd = com_path(task->cmd, envp, &err);
-///////////////////////////////////
 		if (err != 0)//////////////pasar a un handle error
 		{
 char *msg_error;
 			if (err == COM_NOT_FOUND)
 			{
-				msg_error = ft_strjoin(task->cmd, " - Command not found\n");
+				msg_error = ft_strjoin(task->cmd, ": Command not found\n");
 				ft_putstr_fd(msg_error, 2);
 				free(msg_error);
 			}
 			else if (err == IS_A_DIR)
 			{
-				msg_error = ft_strjoin(task->cmd, " - Is a directory\n");
+				msg_error = ft_strjoin(task->cmd, ": Is a directory\n");
 				ft_putstr_fd(msg_error, 2);
 				free(msg_error);
 			}
-			else if (err == NO_PERMISSION)
+			else if (err == NO_PERMISSION) 
 			{
 				err = 126; //bash por algun motivo almacena en $? 126 tanto para lanzar permission denied como para command not found 
-				msg_error = ft_strjoin(task->cmd, " - Permission denied\n");
+				msg_error = ft_strjoin(task->cmd, ": Permission denied\n");
+				ft_putstr_fd(msg_error, 2);
+				free(msg_error);
+			}
+			else if (err == NO_EXIST) //ejemplo "bash: ./dafgadfg: No such file or directory"
+			{
+				err = 127; //bash por algun motivo almacena en $? 126 tanto para lanzar permission denied como para command not found 
+				msg_error = ft_strjoin(task->cmd, ": No such file or directory\n");
 				ft_putstr_fd(msg_error, 2);
 				free(msg_error);
 			}
 			else
 				perror("minishell");
-			close_fds(0);
+			close_fds(0);/////////////pasar a handlerr
 			return(err);
 		}
 /////////////////////////////////

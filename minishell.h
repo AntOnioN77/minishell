@@ -57,6 +57,7 @@ typedef enum e_errors
 //nuestras funciones pueden retornar tanto valores capturados de errno, como
 //nuestros propios casos de error
 	NO_PERMISSION,
+	NO_EXIST,
     INVALID_TYPE,//solo para debug	
 	TASK_IS_VOID,	
 	SYNTAX_ERROR,
