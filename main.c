@@ -115,6 +115,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	if (error == 0)
 		return (0);
 
+	print_err(error);
 	if ( tree && *tree)
 	{
 		free_tree(*tree);
@@ -124,7 +125,6 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	{
 		if(error == SYNTAX_ERROR)
 			change_var("?", "2", environ);
-		print_err(error);
 		return (error);//continue
 	}
 	if(environ)
@@ -132,8 +132,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		free_arr(environ->envp);
 		ft_bzero(environ, sizeof(t_environ));
 	}
-	print_err(error);
-	close_fds(0);//??????????????????????????????????????
+	close_fds(0);//
 	exit(error);
 }
 
@@ -163,7 +162,7 @@ int main(int argc, char **argv, char **envp)
 		error = handlerr(non_pipable_builtin(tree), &tree, &environ);
 		if (error)
 			continue ;
-		//print_tree(tree, 30);
+print_tree(tree, 30);
 		error = handlerr(executor(tree, environ.envp, 0, 1), &tree, &environ); //executor deberia simplemente ignorar los builtin no pipeables
 		if (!error)
 		{

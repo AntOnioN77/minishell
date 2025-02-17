@@ -148,6 +148,8 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
 			return(err);
 		}
 		pathcmd = com_path(task->cmd, envp, &err);
+
+		///////////////////////////
 		if (err != 0)//////////////pasar a un handle error
 		{
 char *msg_error;
@@ -179,10 +181,11 @@ char *msg_error;
 			}
 			else
 				perror("minishell");
-			close_fds(0);/////////////pasar a handlerr
+			close_fds(0);
 			return(err);
 		}
 /////////////////////////////////
+
 		execve(pathcmd, task->argv, envp);
 		err = errno; 
 		free(pathcmd);
