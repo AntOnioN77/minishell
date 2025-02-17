@@ -104,11 +104,11 @@ void print_error(e_errors error)
 */
 void print_err(int error)
 {
-	char *err_msg;
+	char *err_msg = ft_itoa(error);//SOLUCION TEMPORAL
 
-	err_msg =strerror(error);
 	ft_putstr_fd(err_msg, 2);
 	ft_putchar_fd('\n', 2);//temporal, hacer un solo write
+	free(err_msg);
 }
 
 e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)

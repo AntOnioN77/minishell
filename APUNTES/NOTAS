@@ -19,6 +19,7 @@ cat /usr/include/asm-generic/errno.h
 
 5. > exit 123 (debe salir con error 123)
 6. > foo$ muestra cosas raras
+7. > cat >unpermision <test.txt almacena $?=13 deberia ser 1, por que 13 es solo cuando el comando es el que no tiene permisos. 
 
 
 ------------TAREAS:-------
