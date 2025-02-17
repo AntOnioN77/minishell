@@ -21,7 +21,7 @@ int	add_pathname(char **cmd,  t_garbage *garbage, char *envp[])
 //puede que innecesaria
 
 
-static int	prepare_expansion(char **origin, char **new_str, t_garbage *garbage, char *envp[])
+static int	prepare_expansion(char **origin, char **new_str, char *envp[])
 {
 	int	len;
 
@@ -31,19 +31,14 @@ static int	prepare_expansion(char **origin, char **new_str, t_garbage *garbage, 
 	*new_str = ft_calloc(len + 1, sizeof(char));
 	if (*new_str == NULL)
 	 	return (1);
-	if (garbage->size <= garbage->current)
-	{
-		ft_putstr_fd("Bad count on expandstr", 2);//DEBUGEO
-	 	return(1);
-	}
-	garbage->pointers[garbage->current] = *new_str;
-	garbage->current++;
+//
 	*origin = *new_str;
 	(*new_str)[len] = '\0';
 	return (0);
 }
 
-int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recibir el array de strings que hemos creado y sobre el que se reflejan las modificaciones que pueda hacer minishell durante la ejecucion
+//CODIGO MUERTO??
+int	expandstr(char **origin, char *envp[]) //envp debe recibir el array de strings que hemos creado y sobre el que se reflejan las modificaciones que pueda hacer minishell durante la ejecucion
 {
 	char	*marker;
 	char	*new_str;
@@ -52,7 +47,7 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 	if(!is_expansible(*origin))
 		return (0);
 	str = *origin;
-	if (prepare_expansion(origin, &new_str, garbage, envp))
+	if (prepare_expansion(origin, &new_str, envp))
 		return (1);
 	marker = str;
 	while (*marker)
@@ -73,6 +68,7 @@ int	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe recib
 }
 
 //
+/*
 static int	expand_task(t_task *node, char *envp[])
 {
 	int	i;
@@ -83,24 +79,24 @@ static int	expand_task(t_task *node, char *envp[])
 		return (1);
 	(node->garb.pointers)[node->garb.size -1] = NULL;
 	
-	if (expandstr(&(node->cmd), &(node->garb), envp))
+	if (expandstr(&(node->cmd), envp))
 		return (1);
 //	if (add_pathname(&(node->cmd), &(node->garb), envp))
 //		return (1);
-	if (expandstr(&(node->redir.infoo), &(node->garb), envp))
+	if (expandstr(&(node->redir.infoo), envp))
 		return (1);
-	if (expandstr(&(node->redir.outfile), &(node->garb), envp))
+	if (expandstr(&(node->redir.outfile), envp))
 		return (1);
 	i = 0;
 	while ((node->argv)[i])
 	{
-		if (expandstr((&(node->argv)[i]), &(node->garb), envp))
+		if (expandstr((&(node->argv)[i]), envp))
 			return (1);
 		i++;
 	}
 	return(0);
 }
-
+*/
 void unquote(char *str)
 {
 	char *newstr;
@@ -164,7 +160,7 @@ e_errors	expand_vars_tree(t_tree *node, char *envp[])
 	if (node->type == PIPE)
 	{
 		pipe = (t_pipe *)node;
-		error=expand_task(pipe->left, envp);
+		error=0;// expand_task(pipe->left, envp); //cancelamos expand_task para expandir directamente la linea original
 		if(error)
 			return (error);
 		unquote_task(((t_task *)pipe->left));
@@ -176,7 +172,7 @@ e_errors	expand_vars_tree(t_tree *node, char *envp[])
 	else if (node->type == TASK)
 	{
 		task = (t_task *)node;
-		error = expand_task(task, envp);
+		error = 0; //expand_task(task, envp); //cancelamos expand_task para expandir directamente la linea original
 		if(error)
 			return (error);
 		unquote_task(task);

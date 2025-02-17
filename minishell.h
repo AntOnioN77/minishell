@@ -159,7 +159,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp);
 t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);
 //Location parser/expansor.c
-int	expandstr(char **origin, t_garbage *garbage, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
+int	expandstr(char **origin, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
 e_errors	expand_vars_tree(t_tree *node, char *envp[]);
 //Location: parser/expansor_utils.c
 int	is_expansible(char *str);

@@ -76,8 +76,11 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 			return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
 		}
 		if (*line)
+		{
+			expandstr(&line, envp);
 			add_history(line);
 			//save_history(line);
+		}
 		*tree = processline(line);
 		//free(line);
 		if (*tree == NULL)
@@ -162,7 +165,7 @@ int main(int argc, char **argv, char **envp)
 		error = handlerr(non_pipable_builtin(tree), &tree, &environ);
 		if (error)
 			continue ;
-print_tree(tree, 30);
+// print_tree(tree, 30);
 		error = handlerr(executor(tree, environ.envp, 0, 1), &tree, &environ); //executor deberia simplemente ignorar los builtin no pipeables
 		if (!error)
 		{
