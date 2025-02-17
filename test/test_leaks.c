@@ -59,7 +59,7 @@ int main(int argc, char **argv, char **envp) {
         }
 
         if (expand_vars_tree(tree, envp)) {
-            perror("expandtree:");
+            perror("62->expandtree:");
         }
 		print_tree(tree, 30);
        // error = execute(tree, envp);

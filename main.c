@@ -61,7 +61,7 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	}
 	(*right)->line_extra = line;
 	if(expand_vars_tree(*right, envp))
-		perror("expandtree:");//esta gestion de error es muy mejorable
+		perror("64->expandtree:");//esta gestion de error es muy mejorable
 	return (check_tree(*right, envp)); // gestionar retorno
 }
 
@@ -89,7 +89,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		}
 		(*tree)->line = line;
 		if(expand_vars_tree(*tree, envp))
-			perror("expandtree:");//esta gestion de error es muy mejorable
+			perror("92->expandtree:");//esta gestion de error es muy mejorable
 		return (check_tree(*tree, envp)); // gestionar retorno
 }
 
@@ -99,12 +99,13 @@ void print_error(e_errors error)
 	//
 }
 */
+void print_err(int error)
+{
+	
+}
 
 e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 {
-	//liberar lo liberable
-	//error fatal causa exit(err).
-	// error de continue, sin error
 
 //fprintf(stderr, "linea 110 variable error:%d\n", (int)error);
 	if (error == 0)
@@ -117,6 +118,9 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	}
 	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG)
 	{
+		if(error == SYNTAX_ERROR)
+			change_var("?", "2", environ);
+		print_err(error);
 		return (error);//continue
 	}
 	if(environ)
@@ -124,8 +128,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		free_arr(environ->envp);
 		ft_bzero(environ, sizeof(t_environ));
 	}
-
-
+	print_err(error);
 	close_fds(0);//??????????????????????????????????????
 	exit(error);
 }
@@ -151,21 +154,18 @@ int main(int argc, char **argv, char **envp)
 	{
 		signal_conf();
 		error = handlerr(get_cmd_tree(&tree, environ.envp), &tree, &environ);
-fprintf(stderr, "155------- environ.envp:%p\n", environ.envp);
 		if (error)
 			continue;
 		error = handlerr(non_pipable_builtin(tree), &tree, &environ);
-fprintf(stderr, "159------- environ.envp:%p\n", environ.envp);
 		if (error)
 			continue ;
 		//print_tree(tree, 30);
 		error = handlerr(executor(tree, environ.envp, 0, 1), &tree, &environ); //executor deberia simplemente ignorar los builtin no pipeables
-fprintf(stderr, "164------- environ.envp:%p\n", environ.envp);
 		if (!error)
 		{
            		status = wait_all(tree);//, envp);
-				str_status = ft_itoa(((status) & 0xff00) >> 8);
-				change_var("?", str_status , &environ);//aplicamos mascara (WEXISTATUS)
+				str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
+				change_var("?", str_status , &environ);
 				free(str_status);//NO GESTIONADO POR HANDLE ERROR
 		}
 		else

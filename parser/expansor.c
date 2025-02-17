@@ -160,6 +160,7 @@ e_errors	expand_vars_tree(t_tree *node, char *envp[])
 	t_pipe *pipe;
 	e_errors error;
 
+	error = INVALID_TYPE;
 	if (node->type == PIPE)
 	{
 		pipe = (t_pipe *)node;
@@ -171,8 +172,6 @@ e_errors	expand_vars_tree(t_tree *node, char *envp[])
 		if (error)
 			return (error);
 		error= expand_vars_tree((t_tree *)pipe->rigth, envp);
-		if(error)
-			return (error);
 	}
 	else if (node->type == TASK)
 	{
@@ -182,7 +181,6 @@ e_errors	expand_vars_tree(t_tree *node, char *envp[])
 			return (error);
 		unquote_task(task);
 		error = create_herefile(&(task->redir)); //si hubo error lo anota, sera encontrado por check_tree
-		return (error);
 	}
-	return (INVALID_TYPE);
+	return (error);
 }
