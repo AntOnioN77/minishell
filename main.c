@@ -39,9 +39,10 @@ void print_env(t_environ *environ)
 //Solicita nueva entrada de usuario, y despliega un nuevo arbol, partiendo del nodo vacío, continuacion del arbol original. 
 e_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
-	char 		*line;
+	char	*line;
+	char	*oldline;
 
-	//no se si antes o despues de readline, gestionar señales
+	//GESTIONAR SEÑAL AQUI, si ctrl+C es pulsado, dberiamos liberar el arbol y volver a pedir entrada de usuario "mini$hell>"
 	line = readline("> ");
 	if(!line)
 	{
@@ -50,11 +51,24 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	}
 	if(line[0] == '\0')// si la cadena leida esta vacía, vuelve a pedir entrada
 	{
-		//free(line); //COMPROBARRRR!!!!!!!!!!
+		free(line); //COMPROBARRRR!!!!!!!!!!
 		return(continue_cmd_tree(right, envp));
 	}
+//////////////////
+	
+	add_history(line);
+	if (is_expansible(line))
+	{
+		oldline = line;
+		if (expandstr(&line, envp))
+			return(ERROR_MALLOC);
+		free(oldline);
+	}
+///////////////////////////
+
+
 	*right = processline(line);
-	rl_clear_history();
+//	rl_clear_history();
 	if (*right == NULL)
 	{
 		free(line);
@@ -85,6 +99,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 			add_history(line);
 			if (is_expansible(line))
 			{
+				oldline = line;
 				if (expandstr(&line, envp))
 					return(ERROR_MALLOC);
 				free(oldline);
@@ -145,6 +160,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		free_arr(environ->envp);
 		ft_bzero(environ, sizeof(t_environ));
 	}
+	rl_clear_history();
 	close_fds(0);//
 	exit(error);
 }
