@@ -100,13 +100,13 @@ typedef struct s_redir
 	char		*tmp_file;//Es creado en caso de insymbol << por la funcion heredoc_handler requiere unlink, y despues free
 	e_errors	error; //Error causado durante la creación de tmp_file
 }	t_redir;
-
+/*
 typedef struct s_garbage {
 	void	**pointers;
 	int		size;
 	int		current;
 }	t_garbage;
-
+*/
 typedef struct s_task
 {
 	e_nodes		type;
@@ -115,7 +115,7 @@ typedef struct s_task
 	t_redir 	redir;
 	char		*cmd;
 	char		**argv;
-	t_garbage	garb;
+	//t_garbage	garb;
 	int   pid; 
 }	t_task;
 

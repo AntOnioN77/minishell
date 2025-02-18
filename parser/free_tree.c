@@ -6,12 +6,12 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 11:35:41 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/12 14:13:55 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/18 12:24:23 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+/*
 static void cleanup_garbage(t_garbage *garbage)
 {
 	int i;
@@ -27,7 +27,7 @@ static void cleanup_garbage(t_garbage *garbage)
     free(garbage->pointers);
 	
 }
-
+*/
 void free_tree(t_tree *node)
 {
 	t_pipe *pipe_node;
@@ -56,7 +56,7 @@ void free_tree(t_tree *node)
 			unlink(task_node->redir.tmp_file);
 			free(task_node->redir.tmp_file);
 		}
-		cleanup_garbage(&(task_node->garb));
+		//cleanup_garbage(&(task_node->garb));
 		if (task_node->argv)
 			free(task_node->argv);
 		free(task_node);
