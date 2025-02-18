@@ -49,7 +49,10 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return (READLINE_FAIL);//pasar codigo de señal??
 	}
 	if(line[0] == '\0')// si la cadena leida esta vacía, vuelve a pedir entrada
+	{
+		//free(line); //COMPROBARRRR!!!!!!!!!!
 		return(continue_cmd_tree(right, envp));
+	}
 	*right = processline(line);
 	rl_clear_history();
 	if (*right == NULL)
@@ -60,14 +63,15 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return (ERROR_MALLOC);
 	}
 	(*right)->line_extra = line;
-	if(expand_vars_tree(*right, envp))
+	if(process_tree(*right, envp))
 		perror("64->expandtree:");//esta gestion de error es muy mejorable
 	return (check_tree(*right, envp)); // gestionar retorno
 }
 
 e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
-		char 		*line;
+		char 	*line;
+		char	*oldline;
 
 		line = readline("mini$hell> ");
 		//(*tree)->line = line;
@@ -77,8 +81,14 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		}
 		if (*line)
 		{
-			expandstr(&line, envp);
+			oldline = line;
 			add_history(line);
+			if (is_expansible(line))
+			{
+				if (expandstr(&line, envp))
+					return(ERROR_MALLOC);
+				free(oldline);
+			}
 			//save_history(line);
 		}
 		*tree = processline(line);
@@ -91,7 +101,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 			return (ERROR_MALLOC);
 		}
 		(*tree)->line = line;
-		if(expand_vars_tree(*tree, envp))
+		if(process_tree(*tree, envp))
 			perror("92->expandtree:");//esta gestion de error es muy mejorable
 		return (check_tree(*tree, envp)); // gestionar retorno
 }
