@@ -155,13 +155,15 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 			change_var("?", "2", environ);
 		return (error);//continue
 	}
+	if (error == FINISH)
+		error = 0;
 	if(environ)
 	{
 		free_arr(environ->envp);
 		ft_bzero(environ, sizeof(t_environ));
 	}
 	rl_clear_history();
-	close_fds(0);//
+	close_fds(0);
 	exit(error);
 }
 
