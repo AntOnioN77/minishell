@@ -170,12 +170,10 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 int main(int argc, char **argv, char **envp)
 {
 	t_tree	*tree;
-	e_errors		error;
 	t_environ environ;
 	int status;
 	char *str_status;
 
-	error = 0;
 	tree = NULL;
 	//ft_bzero(&environ, sizeof(t_environ));
 	str_status = NULL;
@@ -183,19 +181,16 @@ int main(int argc, char **argv, char **envp)
 	if (argc != 1 || !argv)
 		return(0);
 	//load_history();
-	error = handlerr(create_envp(envp, &environ), &tree, &environ);
-	while(error == 0 || error == TASK_IS_VOID || error == SYNTAX_ERROR)
+	handlerr(create_envp(envp, &environ), &tree, &environ);
+	while(1) //creo que se puede simplificar a while(1), pero requeriria test intensivos. en caso de error salimos por el exit de hendlerr, creo que nunca se sale de este main a traves del return(0) del final
 	{
 		signal_conf();
-		error = handlerr(get_cmd_tree(&tree, environ.envp), &tree, &environ);
-		if (error)
+		if(handlerr(get_cmd_tree(&tree, environ.envp), &tree, &environ))
 			continue;
-		error = handlerr(non_pipable_builtin(tree), &tree, &environ);
-		if (error)
+		if(handlerr(non_pipable_builtin(tree), &tree, &environ))
 			continue ;
 // print_tree(tree, 30);
-		error = handlerr(executor(tree, environ.envp, 0, 1), &tree, &environ); //executor deberia simplemente ignorar los builtin no pipeables
-		if (!error)
+		if(0 == handlerr(executor(tree, environ.envp, 0, 1), &tree, &environ)) //executor deberia simplemente ignorar los builtin no pipeables
 		{
            		status = wait_all(tree);//, envp);
 				str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
@@ -207,7 +202,7 @@ int main(int argc, char **argv, char **envp)
 		close_fds(3);
 		free_tree(tree);
 	}
-	free_null_arr(&environ.envp);
-	return (error);
+//	free_null_arr(&environ.envp); //anular esta linea podria dar leaks, testear seriemente antes de borrar esta linea. 
+	return (0);
 }
 
