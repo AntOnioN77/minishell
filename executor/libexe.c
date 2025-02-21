@@ -53,5 +53,11 @@ void	free_arr(char **s)
 		i++;
 	}
 	free(s);
+<<<<<<< HEAD
 	return;
 }
+=======
+	return (1);
+}
+
+>>>>>>> main
