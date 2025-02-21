@@ -1,9 +1,7 @@
 
-
-
-//compilacion  cc -g3 -Wall -Wextra -Werror minishell.c expansor.c -L. -lft -lreadline
 #include "minishell.h"
 #include "executor.h"
+
 
 //solo test://///////////////////////////////////
 #include <sys/stat.h>
@@ -121,13 +119,16 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		return (check_tree(*tree, envp)); // gestionar retorno
 }
 
-/*
-void print_error(e_errors error)
+void print_error(char *cmd, char *error_msg) //USADA EN IMPRIMIR ERRORES DE PROCESO HIJO
 {
-	//
+	char *msg_error;
+
+	msg_error = ft_strjoin(cmd, error_msg);
+	ft_putstr_fd(msg_error, 2);
+	free(msg_error);
 }
-*/
-void print_err(int error) //IMPORTANTE: impresion debe ser atomica, un solo write, estoa implementacion es para salir del paso
+
+void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo write, estoa implementacion es para salir del paso
 {
 	ft_putstr_fd("minishell: ", 2);
 	if(error == SYNTAX_ERROR)
@@ -147,7 +148,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	if (error == FINISH)
 		error = 0;
 		else
-			print_err(error);
+			ft_perror(error);
 	if ( tree && *tree)
 	{
 		free_tree(*tree);
@@ -166,6 +167,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	}
 	rl_clear_history();
 	close_fds(0);
+//fprintf(stderr,"linea 170   %d\n", (int)error);
 	exit(error);
 }
 
@@ -197,12 +199,16 @@ int main(int argc, char **argv, char **envp)
 	t_tree	*tree;
 	t_environ environ;
 
+//char *str_bug;
+
 	tree = NULL;
 	if (argc != 1 || !argv)
 		return(0);
 	handlerr(create_envp(envp, &environ), &tree, &environ);
 	while(1)
 	{
+//str_bug=ft_strdup("BUG LEAK INTENCIONAL");
+//printf("%s\n", str_bug);
 		shell_cycle(tree, &environ);
 	}
 	return (0);

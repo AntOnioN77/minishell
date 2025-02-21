@@ -64,6 +64,7 @@ typedef enum e_errors
 	READLINE_FAIL,//lo he cambiado por retornar errno (14feb)
 	TMP_FILE_ERROR,
 	LINE_TOO_LONG,
+	child_error_handler_fail,   //SOL ODEBUG BORRAR!!!!!!!!!!!!!!!!!
 	FINISH
 } e_errors;
 
@@ -155,6 +156,7 @@ typedef struct s_environ {
 //Location: main.c
 e_errors	continue_cmd_tree(t_tree **tree, char **envp);
 e_errors	get_cmd_tree(t_tree **tree, char **envp);
+void print_error(char *cmd, char *error_msg);
 //Location: parser/constructors.c
 t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);

@@ -4,11 +4,53 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
+
+static char *match_pathcmd(char *cmd, char **enpath, e_errors *err)
+{
+	char *pathcmd;
+	char *slash;
+	int i;
+	
+	i= 1;
+	while (enpath[i])
+	{
+		slash = ft_strjoin(enpath[i], "/");
+		if (slash == NULL)
+		{
+			*err = ERROR_MALLOC;
+			free_null_arr(&enpath);
+			return (NULL);
+		}
+		pathcmd = ft_strjoin(slash, cmd);
+		free(slash);
+		if (pathcmd == NULL)
+		{
+			*err = ERROR_MALLOC;
+			free_null_arr(&enpath);
+			return (NULL);
+		}
+		if (access(pathcmd, F_OK) == 0)
+		{
+			free_null_arr(&enpath);
+			if (access(pathcmd, X_OK) == 0)
+				return (pathcmd);
+			*err = NO_PERMISSION;
+			free(pathcmd);
+			return (NULL);
+		}
+		i++;
+		free(pathcmd);
+	}
+	free_null_arr(&enpath);
+	*err = COM_NOT_FOUND;
+	return (NULL);
+}
+
 /**
  * Busca el array que comienza con "PATH" (donde se encuentran las rutas de los
  * ejecutables) y devuelve su posición.
  */
-int	search_path(char **envp)
+int	get_index_path(char **envp)
 {
 	int pos;
 	char *subpath;
@@ -16,8 +58,8 @@ int	search_path(char **envp)
 	pos = 0;
 	while (envp[pos])
 	{
-		subpath = ft_substr(envp[pos], 0, 4);
-		if (ft_strncmp(subpath, "PATH", ft_strlen(subpath)) == 0)
+		subpath = ft_substr(envp[pos], 0, 5);
+		if (ft_strncmp(subpath, "PATH=", ft_strlen(subpath)) == 0)
 		{
 			free(subpath);
 			return (pos);
@@ -28,174 +70,142 @@ int	search_path(char **envp)
 	return (-1);
 }
 
-/* 
-* Se encarga de comprobar todas las posibles rutas, indicadas en envp, en las
- * que se puede encontrar el comando ejecutable al que se está haciendo
- * referencia.
- * El modo de comprobar si existe e utilizando la función access con los modos
- * F_OK y X_OK que evalúan si el archivo existe y si es ejecutable, 
- * respectivamente.
- */
-char	*com_path(char *cmd, char **envp, e_errors *err)
+static int is_absolutepath(char *cmd, e_errors *err)
 {
-	char	*path;
-	char	*slash;
-	char	**enpath;
-	int		pos;
-	int 	i;
-	
+	struct stat tipe;
+	if (access(cmd, F_OK) == 0)
+	{
+		stat(cmd, &tipe);
+		if ((tipe.st_mode & 0170000) == (0040000))
+		{
+			*err = IS_A_DIR;
+			return (0);
+		}
+		if (access(cmd, X_OK))
+		{
+			*err = NO_PERMISSION;
+			return (0);
+		}
+		return (1);
+	}
+	else
+	{
+		*err = NO_EXIST;
+		return (0);
+	}
+}
+
+
+char *com_path(char *cmd, char **envp, e_errors *err)
+{
+	char **enpath;
+	int pos;
 
 	*err = 0;
-	i = 1;
-
 	if (cmd && ft_strchr(cmd, '/'))
 	{
-		if ( access(cmd, F_OK) == 0)
-		{
-			struct stat tipe;//abstraer a otra funcion
-			stat(cmd, &tipe);
-			if ((tipe.st_mode & 0170000) == (0040000))///////////////////////S_ISDIR() man 7 inode
-			{
-				*err = IS_A_DIR;
-				return (cmd);
-			}
-			if (access(cmd, X_OK ))
-				*err = NO_PERMISSION;
-			return (cmd); //Si es una ruta relativa o un ejecutable no hay nada que componer.
-		}
-		else
-		{
-			*err = NO_EXIST;
-			return(cmd);
-		}
+		if (is_absolutepath(cmd, err))
+			return (cmd);
+		return (NULL);
 	}
-	pos = search_path(envp);
+	pos = get_index_path(envp);
 	if (pos == -1)
 	{
 		*err = ERROR_MALLOC;
-		return(NULL);
+		return (NULL);
 	}
-	enpath = ft_split(envp[pos], ':');//asegurarse de que no nos pasan una variable que contenga :
-	if(enpath == NULL)
+	enpath = ft_split(envp[pos], ':');
+	if (enpath == NULL)
 	{
 		*err = ERROR_MALLOC;
-		return(NULL);
+		return (NULL);
 	}
-	while (enpath[i])
+	return (match_pathcmd(cmd, enpath, err));
+}
+
+static e_errors child_error_handler(e_errors err, char *cmd)
+{
+
+	if (err != 0)
 	{
-		slash = ft_strjoin(enpath[i], "/");
-		if (slash == NULL)
+		if (cmd == NULL)
+			return(child_error_handler_fail);
+		if (err == COM_NOT_FOUND)
+			print_error(cmd, ": Command not found\n");
+		else if (err == IS_A_DIR)
+			print_error(cmd, ": Is a directory\n");
+		else if (err == NO_PERMISSION)
 		{
-			*err = ERROR_MALLOC;
-			free_null_arr(&enpath);
-			return (NULL);
+			err = 126;
+			print_error(cmd, ": Permission denied\n");
 		}
-		path = ft_strjoin(slash, cmd);
-		free(slash);
-		if (path == NULL)
+		else if (err == NO_EXIST)
 		{
-			*err = ERROR_MALLOC;
-			free_null_arr(&enpath);
-			return (NULL);
+			err = 127;
+			print_error(cmd, ": No such file or directory\n");
 		}
-		if (access (path, F_OK ) == 0) //necesitamos distinguir errores "command not found" de "permission denied"
-		{
-			free_null_arr(&enpath);
-			if (access(path, X_OK ) == 0)
-				return (path);
-			*err = NO_PERMISSION;
-			free(path);
-			return(NULL);
-		}
-		i++;
-		free(path);
+		else
+			perror("minishell");
+		close_fds(0);
+		return (err);
 	}
-	free_null_arr(&enpath);
+	return (0);
+}
 
+static e_errors repipe_child(t_task *task, int in, int out, char **word_fail)
+{
+	e_errors err;
 
-	*err = COM_NOT_FOUND;
-	return (NULL);
+	if (out != STDOUT_FILENO)
+	{
+		dup2(out, STDOUT_FILENO);
+		close(out);
+	}
+	if (in != STDIN_FILENO)
+	{
+		dup2(in, STDIN_FILENO);
+		close(in);
+	}
+	close_fds(3);
+	err = apply_redirs(&(task->redir), word_fail);
+//fprintf(stderr, "!!!!!!!!!!!!!!!! executor.c 168¬ err:%d\n", (int)err);
+	if (err != 0)
+	{
+		return (err);
+	}
+	return (0);
 }
 
 e_errors create_child(t_task *task, char **envp, int in, int out)
 {
-    int pid;
-    char *pathcmd;
-    e_errors err;
+	int pid;
+	char *pathcmd;
+	e_errors err;
+	char *word_fail;
 
+	word_fail = NULL;
 	err = 0;
-    pid = fork();
-    if (pid == -1)
-        return (errno);
-    task->pid = pid;
-    if (pid == 0)
-    {
-        if (out != STDOUT_FILENO)
-        {
-            dup2(out, STDOUT_FILENO);
-            close(out);
-        }
-        if (in != STDIN_FILENO)
-        {
-            dup2(in, STDIN_FILENO); 
-            close(in);
-        }
-        close_fds(3);
-        err = apply_redirs(&(task->redir));
-        if (err != 0)
-        {
-			perror("mini$hell");//revisar
-			return(1);
-		}
+	pid = fork();
+	if (pid == -1)
+		return (errno);
+	task->pid = pid;
+	if (pid == 0)
+	{
+		err = repipe_child(task, in, out, &word_fail);
+		if(child_error_handler(err, word_fail))
+			return (1);
 		pathcmd = com_path(task->cmd, envp, &err);
-
-		///////////////////////////
-		if (err != 0)//////////////pasar a un handle error
-		{
-char *msg_error;
-			if (err == COM_NOT_FOUND)
-			{
-				msg_error = ft_strjoin(task->cmd, ": Command not found\n");
-				ft_putstr_fd(msg_error, 2);
-				free(msg_error);
-			}
-			else if (err == IS_A_DIR)
-			{
-				msg_error = ft_strjoin(task->cmd, ": Is a directory\n");
-				ft_putstr_fd(msg_error, 2);
-				free(msg_error);
-			}
-			else if (err == NO_PERMISSION) 
-			{
-				err = 126; //bash por algun motivo almacena en $? 126 tanto para lanzar permission denied como para command not found 
-				msg_error = ft_strjoin(task->cmd, ": Permission denied\n");
-				ft_putstr_fd(msg_error, 2);
-				free(msg_error);
-			}
-			else if (err == NO_EXIST) //ejemplo "bash: ./dafgadfg: No such file or directory"
-			{
-				err = 127; //bash por algun motivo almacena en $? 126 tanto para lanzar permission denied como para command not found 
-				msg_error = ft_strjoin(task->cmd, ": No such file or directory\n");
-				ft_putstr_fd(msg_error, 2);
-				free(msg_error);
-			}
-			else
-				perror("minishell");
-			close_fds(0);
-			return(err);
-		}
-/////////////////////////////////
-
+		if (err)
+			return (child_error_handler(err, task->cmd));
 		execve(pathcmd, task->argv, envp);
-		err = errno; 
+		err = errno;
 		free(pathcmd);
-//		return(err);
-    }
+	}
 	if (out != STDOUT_FILENO)
 		close(out);
 	if (in != STDIN_FILENO)
 		close(in);
-    return (err);
+	return (err);
 }
 
 e_errors exec_pipe(t_pipe *pipe_node, char **envp, int in)
@@ -240,6 +250,7 @@ e_errors executor(t_tree *node, char **envp, int in, int out)
     {
         task = (t_task *)node;
 		err = create_child(task, envp, in, out);
+//fprintf(stderr, "executor.c 247¬ variable error:%d\n", (int)err);
 		if (err != 0)
 			return (err);
     }

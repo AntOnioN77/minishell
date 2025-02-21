@@ -28,7 +28,7 @@ void close_fds(int fd_since);
 
 int	error_exe(int er, char *cmd);
 
-e_errors apply_redirs(t_redir *redir);
+e_errors apply_redirs(t_redir *redir, char **word_fail);
 
 void ft_free_null(void **pnt);
 
