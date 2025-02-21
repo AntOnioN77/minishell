@@ -18,13 +18,21 @@ cat /usr/include/asm-generic/errno.h
 4. > pwd oi
 
 5. > exit 123 (debe salir con error 123)
+6. > foo$ muestra cosas raras
+7. > cat >unpermision <test.txt almacena $?=13 deberia ser 1, por que 13 es solo cuando el comando es el que no tiene permisos. 
 
 
 ------------TAREAS:-------
 
 -liberar en exit, o si hay error copia environ->envp
+-proteger $PWD y $OLDPVD de ser modificadas ( por unset, o change_var)
 
 ---------------------------
 
 valgrind sin readline:
 valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell
+
+
+
+15feb TEST ROTOS HOY
+Test 132

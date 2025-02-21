@@ -10,6 +10,7 @@
 		"minishell.h": "c",
 		"fcntl.h": "c",
 		"errno.h": "c",
-		"features.h": "c"
+		"features.h": "c",
+		"stdio.h": "c"
 	}
 }

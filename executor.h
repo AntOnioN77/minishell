@@ -16,7 +16,9 @@
 
 //Crear estructura para almacenar las variables de ejecución
 
-int	ft_free_double(char **s);
+int	free_null_arr(char ***s);
+
+void	free_arr(char **s);
 
 e_errors create_child(t_task *task, char **envp, int in, int out);
 
@@ -26,7 +28,7 @@ void close_fds(int fd_since);
 
 int	error_exe(int er, char *cmd);
 
-e_errors apply_redirs(t_redir *redir);
+e_errors apply_redirs(t_redir *redir, char **word_fail);
 
 void ft_free_null(void **pnt);
 

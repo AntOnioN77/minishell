@@ -1,9 +1,7 @@
 
-
-
-//compilacion  cc -g3 -Wall -Wextra -Werror minishell.c expansor.c -L. -lft -lreadline
 #include "minishell.h"
 #include "executor.h"
+
 
 //solo test://///////////////////////////////////
 #include <sys/stat.h>
@@ -39,19 +37,36 @@ void print_env(t_environ *environ)
 //Solicita nueva entrada de usuario, y despliega un nuevo arbol, partiendo del nodo vacío, continuacion del arbol original. 
 e_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
-	char 		*line;
+	char	*line;
+	char	*oldline;
 
-	//no se si antes o despues de readline, gestionar señales
+	//GESTIONAR SEÑAL AQUI, si ctrl+C es pulsado, dberiamos liberar el arbol y volver a pedir entrada de usuario "mini$hell>"
 	line = readline("> ");
 	if(!line)
 	{
-		perror("readline:");
-		return (REDLINE_FAIL);
+//		perror("readline:");
+		return (READLINE_FAIL);//pasar codigo de señal??
 	}
 	if(line[0] == '\0')// si la cadena leida esta vacía, vuelve a pedir entrada
+	{
+		free(line); //COMPROBARRRR!!!!!!!!!!
 		return(continue_cmd_tree(right, envp));
+	}
+//////////////////
+	
+	add_history(line);
+	if (is_expansible(line))
+	{
+		oldline = line;
+		if (expandstr(&line, envp))
+			return(ERROR_MALLOC);
+		free(oldline);
+	}
+///////////////////////////
+
+
 	*right = processline(line);
-	rl_clear_history();
+//	rl_clear_history();
 	if (*right == NULL)
 	{
 		free(line);
@@ -60,25 +75,35 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return (ERROR_MALLOC);
 	}
 	(*right)->line_extra = line;
-	if(expand_vars_tree(*right, envp))
-		perror("expandtree:");//esta gestion de error es muy mejorable
+	if(process_tree(*right, envp))
+		perror("64->expandtree:");//esta gestion de error es muy mejorable
 	return (check_tree(*right, envp)); // gestionar retorno
 }
 
 e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
-		char 		*line;
+		char 	*line;
+		char	*oldline;
 
 		line = readline("mini$hell> ");
 		//(*tree)->line = line;
 		if(!line)
 		{
-			perror("readline:");
-			return (REDLINE_FAIL);
+			return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
 		}
 		if (*line)
+		{
+			oldline = line;
 			add_history(line);
+			if (is_expansible(line))
+			{
+				oldline = line;
+				if (expandstr(&line, envp))
+					return(ERROR_MALLOC);
+				free(oldline);
+			}
 			//save_history(line);
+		}
 		*tree = processline(line);
 		//free(line);
 		if (*tree == NULL)
@@ -89,90 +114,103 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 			return (ERROR_MALLOC);
 		}
 		(*tree)->line = line;
-		if(expand_vars_tree(*tree, envp))
-			perror("expandtree:");//esta gestion de error es muy mejorable
+		if(process_tree(*tree, envp))
+			perror("92->expandtree:");//esta gestion de error es muy mejorable
 		return (check_tree(*tree, envp)); // gestionar retorno
+}
+
+void print_error(char *cmd, char *error_msg) //USADA EN IMPRIMIR ERRORES DE PROCESO HIJO
+{
+	char *msg_error;
+
+	msg_error = ft_strjoin(cmd, error_msg);
+	ft_putstr_fd(msg_error, 2);
+	free(msg_error);
+}
+
+void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo write, estoa implementacion es para salir del paso
+{
+	ft_putstr_fd("minishell: ", 2);
+	if(error == SYNTAX_ERROR)
+		ft_putstr_fd("syntax error", 2);
+	else
+		ft_putnbr_fd(error, 2);
+	ft_putchar_fd('\n', 2);//temporal, hacer un solo write
+}
+
+e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
+{
+
+//fprintf(stderr, "linea 110 variable error:%d\n", (int)error);
+	if (error == 0)
+		return (0);
+
+	if (error == FINISH)
+		error = 0;
+		else
+			ft_perror(error);
+	if ( tree && *tree)
+	{
+		free_tree(*tree);
+		*tree = NULL;
+	}
+	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG)
+	{
+		if(error == SYNTAX_ERROR)
+			change_var("?", "2", environ);
+		return (error);//continue
+	}
+	if(environ)
+	{
+		free_arr(environ->envp);
+		ft_bzero(environ, sizeof(t_environ));
+	}
+	rl_clear_history();
+	close_fds(0);
+//fprintf(stderr,"linea 170   %d\n", (int)error);
+	exit(error);
+}
+
+void shell_cycle(t_tree *tree, t_environ *environ)
+{
+	int status;
+	char *str_status;
+
+	str_status = NULL;
+	signal_conf();
+	if(handlerr(get_cmd_tree(&tree, environ->envp), &tree, environ))
+		return;
+	if(handlerr(non_pipable_builtin(tree), &tree, environ))
+		return;
+// print_tree(tree, 30);
+	if(0 == handlerr(executor(tree, environ->envp, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
+	{
+			status = wait_all(tree);//, envp);
+			str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
+			change_var("?", str_status , environ);
+			free(str_status);//NO GESTIONADO POR HANDLE ERROR
+			close_fds(3);
+			free_tree(tree);
+	}
 }
 
 int main(int argc, char **argv, char **envp)
 {
 	t_tree	*tree;
-	e_errors		error;
 	t_environ environ;
-	int status;
-	char *str_status;
-	
-	//Para silenciar warning.
+
+//char *str_bug;
+
+	tree = NULL;
 	if (argc != 1 || !argv)
 		return(0);
-	//load_history();
-	error = create_envp(envp, &environ);
-	if (error)
+	handlerr(create_envp(envp, &environ), &tree, &environ);
+	while(1)
 	{
-		if(environ.envp)
-			ft_free_double(environ.envp);
-		return(error);
+//str_bug=ft_strdup("BUG LEAK INTENCIONAL");
+//printf("%s\n", str_bug);
+		shell_cycle(tree, &environ);
 	}
-
-	tree=NULL;
-	error = 0;
-	while(error == 0 || error == TASK_IS_VOID || error == SYNTAX_ERROR)
-	{
-		signal_conf();
-		error = 0;
-		error = get_cmd_tree(&tree, environ.envp);
-		if (error == TASK_IS_VOID)
-		{
-			free_tree(tree);
-			continue;
-		}
-		else if(error == SYNTAX_ERROR)
-		{
-			ft_putstr_fd("Syntax error\n", 2);//bash es mas especifico, quiza hay que darle una vuelta.
-			free_tree(tree);
-			continue;
-		}
-		else if (error)
-		{
-printf("MAIN: error en get_cmd_tree: %d\n", error); //solo para pruebas BORRAR
-			free_tree(tree);
-			ft_free_double(environ.envp);
-fprintf(stderr,"SALIDA 136\n");
-			return(error);
-		}
-		error = non_pipable_builtin(tree);//, envp);
-		if (error)
-		{
-			free_tree(tree);
-			if(error == FINISH) //NO es un error como tal, built in funcionó
-				break ;
-printf(" error en non_pipable_built_in: %d\n", error); //solo para pruebas BORRAR
-			ft_free_double(environ.envp);
-fprintf(stderr,"SALIDA 147\n");
-			return (error);
-		}
-//print_tree(tree, 30);
-		error = executor(tree, environ.envp, 0, 1); //executor deberia simplemente ignorar los builtin no pipeables cd, export, unset y exit.
-//test_fds("main 132");
-		if (error == 0)//capturar y gestionar error de executor
-		{
-           		status = wait_all(tree);//, envp);
-				str_status = ft_itoa(((status) & 0xff00) >> 8);
-				change_var("?", str_status , &environ);//aplicamos mascara (WEXISTATUS)
-				free(str_status);
-		}
-		else
-		{
-printf(" error en executor: %d\n", error); //solo para pruebas BORRAR //PERo seria un buen lugar para imprimir con perror 
-		}
-//test_fds("main 118");
-		close_fds(3);
-		free_tree(tree);
-	}
-fprintf(stderr,"SALIDA 163\n");
-//print_env(&environ);
-	ft_free_double(environ.envp);
-//print_env(&environ);
-	return (error);
+	return (0);
 }
 

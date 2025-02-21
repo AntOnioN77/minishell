@@ -49,15 +49,22 @@ typedef enum e_symbols
 typedef enum e_errors
 {
 	ALL_OK,
+	IS_A_DIR = 126,
 	COM_NOT_FOUND = 127,
+	E_SIGINT = 130,
+	E_SIGQUIT = 131,
     ERROR_MALLOC = 151, // evitamos solapar valores de errno, de esta manera
 //nuestras funciones pueden retornar tanto valores capturados de errno, como
 //nuestros propios casos de error
-    INVALID_TYPE,	
+	NO_PERMISSION,
+	NO_EXIST,
+    INVALID_TYPE,//solo para debug	
 	TASK_IS_VOID,	
 	SYNTAX_ERROR,
-	REDLINE_FAIL,
+	READLINE_FAIL,//lo he cambiado por retornar errno (14feb)
 	TMP_FILE_ERROR,
+	LINE_TOO_LONG,
+	child_error_handler_fail,   //SOL ODEBUG BORRAR!!!!!!!!!!!!!!!!!
 	FINISH
 } e_errors;
 
@@ -94,13 +101,13 @@ typedef struct s_redir
 	char		*tmp_file;//Es creado en caso de insymbol << por la funcion heredoc_handler requiere unlink, y despues free
 	e_errors	error; //Error causado durante la creación de tmp_file
 }	t_redir;
-
+/*
 typedef struct s_garbage {
 	void	**pointers;
 	int		size;
 	int		current;
 }	t_garbage;
-
+*/
 typedef struct s_task
 {
 	e_nodes		type;
@@ -109,7 +116,7 @@ typedef struct s_task
 	t_redir 	redir;
 	char		*cmd;
 	char		**argv;
-	t_garbage	garb;
+	//t_garbage	garb;
 	int   pid; 
 }	t_task;
 
@@ -149,12 +156,13 @@ typedef struct s_environ {
 //Location: main.c
 e_errors	continue_cmd_tree(t_tree **tree, char **envp);
 e_errors	get_cmd_tree(t_tree **tree, char **envp);
+void print_error(char *cmd, char *error_msg);
 //Location: parser/constructors.c
 t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);
 //Location parser/expansor.c
-int	expandstr(char **origin, t_garbage *garbage, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
-e_errors	expand_vars_tree(t_tree *node, char *envp[]);
+e_errors	expandstr(char **origin, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
+e_errors	process_tree(t_tree *node, char *envp[]);
 //Location: parser/expansor_utils.c
 int	is_expansible(char *str);
 int	count_expansions(t_task *node);

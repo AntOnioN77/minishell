@@ -326,8 +326,8 @@ void test_minishell(void)
             continue;
         }
 		char *envp[] = {NULL};  // No necesitamos envp real porque mockeamos ft_getenv
-		if(expand_vars_tree(tree, envp))
-			perror("expandtree:");//esta gestion de error es muy mejorable
+		if(process_tree(tree, envp))
+			perror("330->expandtree:");//esta gestion de error es muy mejorable
         
         print_tree(tree, 0);
         free_tree(tree);

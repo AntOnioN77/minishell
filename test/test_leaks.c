@@ -58,8 +58,8 @@ int main(int argc, char **argv, char **envp) {
             return 1;
         }
 
-        if (expand_vars_tree(tree, envp)) {
-            perror("expandtree:");
+        if (process_tree(tree, envp)) {
+            perror("62->expandtree:");
         }
 		print_tree(tree, 30);
        // error = execute(tree, envp);

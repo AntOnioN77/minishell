@@ -1,5 +1,5 @@
 NAME = libft.a
-CC = cc
+CC = clang
 FLAGS = -Wall -Wextra -Werror
 HEADERS = headers/libft.h
 SOURCES = src/ft_atoi.c src/ft_bzero.c src/ft_calloc.c\
