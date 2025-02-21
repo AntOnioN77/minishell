@@ -25,6 +25,7 @@ cat /usr/include/asm-generic/errno.h
 ------------TAREAS:-------
 
 -liberar en exit, o si hay error copia environ->envp
+-proteger $PWD y $OLDPVD de ser modificadas ( por unset, o change_var)
 
 ---------------------------
 

@@ -14,6 +14,8 @@ static e_errors file_redirector(int newfd, char *file, int openflag)
 {
 	int fd;
 
+//	if(!file || *file == '\0')
+//		return(SYNTAX_ERROR);
 	if ((openflag & O_CREAT) == O_CREAT)
 		fd = open(file, openflag, 0664);
 	else

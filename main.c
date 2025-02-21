@@ -127,13 +127,14 @@ void print_error(e_errors error)
 	//
 }
 */
-void print_err(int error)
+void print_err(int error) //IMPORTANTE: impresion debe ser atomica, un solo write, estoa implementacion es para salir del paso
 {
-	char *err_msg = ft_itoa(error);//SOLUCION TEMPORAL
-
-	ft_putstr_fd(err_msg, 2);
+	ft_putstr_fd("minishell: ", 2);
+	if(error == SYNTAX_ERROR)
+		ft_putstr_fd("syntax error", 2);
+	else
+		ft_putnbr_fd(error, 2);
 	ft_putchar_fd('\n', 2);//temporal, hacer un solo write
-	free(err_msg);
 }
 
 e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
@@ -143,7 +144,10 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	if (error == 0)
 		return (0);
 
-	print_err(error);
+	if (error == FINISH)
+		error = 0;
+		else
+			print_err(error);
 	if ( tree && *tree)
 	{
 		free_tree(*tree);
@@ -155,8 +159,6 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 			change_var("?", "2", environ);
 		return (error);//continue
 	}
-	if (error == FINISH)
-		error = 0;
 	if(environ)
 	{
 		free_arr(environ->envp);
@@ -167,7 +169,6 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	exit(error);
 }
 
-///////////////
 void shell_cycle(t_tree *tree, t_environ *environ)
 {
 	int status;
@@ -179,7 +180,7 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 		return;
 	if(handlerr(non_pipable_builtin(tree), &tree, environ))
 		return;
-	// print_tree(tree, 30);
+// print_tree(tree, 30);
 	if(0 == handlerr(executor(tree, environ->envp, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
 	{
 			status = wait_all(tree);//, envp);
@@ -190,7 +191,6 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 			free_tree(tree);
 	}
 }
-///////////7//
 
 int main(int argc, char **argv, char **envp)
 {
