@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include "../executor.h"
 
 
@@ -12,18 +13,22 @@
 	cierra el fd original de <file> */
 static e_errors file_redirector(int newfd, char *file, int openflag, char **word_fail)
 {
+	struct stat tipe;
 	int fd;
+
+	*word_fail = file;//en caso de que falle ya esta seteado
+	stat(file, &tipe);
+	if ((tipe.st_mode & 0170000) == (0040000))
+		return (IS_A_DIR);
 
 	if ((openflag & 0b11) == O_RDONLY)  // "openflag & 0b11" Es una mascara para obtener los 2 bits que corresponden al modo de apertura, sin flags O_RDONLY, O_WRONLY y O_RDWR
 	{									// si el flag de apertura era O_RDONLY, el archivo no será creado, y por tanto debe existir y ser eccesible
 		if(access(file, F_OK) == -1)
 		{
-			*word_fail = file;
 			return (NO_EXIST);
 		}
 		if (access(file, W_OK == -1))
 		{
-			*word_fail = file;
 			return (NO_PERMISSION);
 		}
 	}
@@ -31,25 +36,11 @@ static e_errors file_redirector(int newfd, char *file, int openflag, char **word
 	{
 		if(access(file, F_OK) == 0 && access(file, R_OK == -1))
 		{
-			*word_fail = file;
 			return (NO_PERMISSION);
 		}
 	}
 
-/*
-	if (openflag == O_RDONLY &&access(file, F_OK) == -1)
-	{
-		*word_fail = file;
-		return (NO_EXIST);
-		if (access(file, W_OK == -1))
-		{
-			*word_fail = file;
-			return (NO_PERMISSION);
-		}
-	}
-*/
-//	if(!file || *file == '\0')
-//		return(SYNTAX_ERROR);
+
 	if ((openflag & O_CREAT) == O_CREAT)
 		fd = open(file, openflag, 0664);
 	else
