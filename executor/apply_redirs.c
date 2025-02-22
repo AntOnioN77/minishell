@@ -17,9 +17,6 @@ static e_errors file_redirector(int newfd, char *file, int openflag, char **word
 	int fd;
 
 	*word_fail = file;//en caso de que falle ya esta seteado
-	stat(file, &tipe);
-	if ((tipe.st_mode & 0170000) == (0040000))
-		return (IS_A_DIR);
 
 	if ((openflag & 0b11) == O_RDONLY)  // "openflag & 0b11" Es una mascara para obtener los 2 bits que corresponden al modo de apertura, sin flags O_RDONLY, O_WRONLY y O_RDWR
 	{									// si el flag de apertura era O_RDONLY, el archivo no será creado, y por tanto debe existir y ser eccesible
@@ -34,9 +31,19 @@ static e_errors file_redirector(int newfd, char *file, int openflag, char **word
 	}
 	else //si el flag de apertura es O_RDONLY y ademas el archivo ya existe, hay que verificar que se tienen permisos de lectura. Si el archivo no existe sera creado por open mas adelante .O_RDWR queda sin gestionar pero no se usa.
 	{
-		if(access(file, F_OK) == 0 && access(file, R_OK == -1))
+		if(stat(file, &tipe)==0)
 		{
-			return (NO_PERMISSION);
+//fprintf(stderr,"Valor st_mode: %o\n", tipe.st_mode);
+//fprintf(stderr,"Resultado de máscara: %o\n", (tipe.st_mode & 0170000));
+//fprintf(stderr,"Comparación: %d\n", ((tipe.st_mode & 0170000) == 0040000));
+			if ((tipe.st_mode & 0170000) == (0040000))
+			{
+				return (IS_A_DIR);
+			}
+			if(access(file, F_OK) == 0 && access(file, R_OK == -1))
+			{
+				return (NO_PERMISSION);
+			}
 		}
 	}
 
@@ -62,6 +69,7 @@ e_errors apply_redirs(t_redir *redir, char **word_fail)
 //	 	error = heredoc_handler(redir->infoo, redir);
 	if (error != 0)
 		return (error);
+	
 	
 	if (redir->outsymbol == outfile)
 		error = file_redirector(1 , redir->outfile, O_WRONLY | O_CREAT | O_TRUNC, word_fail);

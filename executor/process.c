@@ -2,6 +2,7 @@
 #include "../executor.h"
 #include <sys/stat.h>
 
+
 //Empezando en fd_since, cierra tosos los fd abiertos,
 //hasta encontrar uno cerrado o inexistente. Antes de cerrar consulta
 //si existe y esta abierto con fstat.
@@ -36,7 +37,8 @@ int wait_all(t_tree *node)//, char **envp)
     {
         t_task *task = (t_task *)node;
 		waitpid(task->pid, &status, 0);
-	//Buscar variable de entorno '?' y sustituir su contenido por ft_itoa(status)
-    }
+//test_fds("60 process.c");
+		close_fds(3);
+	}
 	return (status);
 }

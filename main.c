@@ -3,26 +3,7 @@
 #include "executor.h"
 
 
-//solo test://///////////////////////////////////
-#include <sys/stat.h>
-void test_fds(char *where)
-{
-	int i = 0;
-	struct stat statbuf;
 
-	printf("___TEST_FD__\n   %s\n", where);
-	while (i < 20)
-	{
-		if(fstat(i, &statbuf) == -1)
-			printf("| fd[%d] 🔴 | ", i);
-		else
-			printf("| fd[%d] 🟢 | ", i);
-		if(i%5==0)
-			printf("\n");
-		i++;
-	}
-}
-////////////////////////////////////////////////
 
 void print_env(t_environ *environ)
 {
@@ -133,6 +114,8 @@ void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo writ
 	ft_putstr_fd("minishell: ", 2);
 	if(error == SYNTAX_ERROR)
 		ft_putstr_fd("syntax error", 2);
+	else if(READLINE_FAIL) //Solo deberia llegar aqui por un ctrl+d
+	ft_putstr_fd("exit", 2);
 	else
 		ft_putnbr_fd(error, 2);
 	ft_putchar_fd('\n', 2);//temporal, hacer un solo write
@@ -147,7 +130,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 
 	if (error == FINISH)
 		error = 0;
-		else
+	else if(error != TASK_IS_VOID)
 			ft_perror(error);
 	if ( tree && *tree)
 	{
@@ -189,7 +172,7 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 			str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
 			change_var("?", str_status , environ);
 			free(str_status);//NO GESTIONADO POR HANDLE ERROR
-			close_fds(3);
+			close_fds(3);//SOBRA?????????
 			free_tree(tree);
 	}
 }

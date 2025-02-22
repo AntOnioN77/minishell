@@ -207,5 +207,6 @@ int non_pipable_builtin(t_tree *tree);//, char **envp);
 //LOCATIONS: create_envp.c
 e_errors create_envp(char **original, t_environ *environ);
 e_errors change_var(char *key, char *newvalue, t_environ *environ);
+void test_fds(char *where);
 
 #endif

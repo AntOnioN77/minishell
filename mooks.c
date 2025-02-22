@@ -27,6 +27,37 @@
 ╚══════╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝                    */
 
 #include "minishell.h"
+#include <sys/stat.h>
+
+void test_fds(char *where)
+{
+    char buffer[1024] = {0};  // Buffer para almacenar todo el output
+    unsigned long offset = 0;           // Para trackear la posición en el buffer
+    int i = 0;
+    struct stat statbuf;
+
+    // Construir el encabezado
+    offset += snprintf(buffer + offset, sizeof(buffer) - offset, 
+        "___TEST_FD__\n   %s proceso:%d\n", where, getpid());
+
+    // Construir la información de los file descriptors
+    while (i < 20 && offset < sizeof(buffer))
+    {
+        if (fstat(i, &statbuf) == -1)
+            offset += snprintf(buffer + offset, sizeof(buffer) - offset, 
+                "| fd[%d] 🔴 | ", i);
+        else
+            offset += snprintf(buffer + offset, sizeof(buffer) - offset, 
+                "| fd[%d] 🟢 | ", i);
+        
+        if (i % 5 == 0)
+            offset += snprintf(buffer + offset, sizeof(buffer) - offset, "\n");
+        i++;
+    }
+	offset += snprintf(buffer + offset, sizeof(buffer) - offset, "\n");
+    // Imprimir todo de una vez
+    write(STDERR_FILENO, buffer, offset);
+}
 
 int	search_var(char **envp, const char* var)
 {
