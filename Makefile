@@ -7,17 +7,17 @@ LDFLAGS = -L ./libft -lft -lreadline
 SOURCES = main.c mooks.c parser/check_tree.c parser/constructors.c\
 parser/expansor_utils.c parser/expansor.c parser/free_tree.c parser/get_redir.c\
 parser/processline.c parser/str_utils.c executor/executor.c\
-executor/libexe.c executor/process.c non_pipable_builtin.c signal.c history.c\
+executor/libexe.c executor/process.c non_pipable_builtin.c signal.c\
 executor/apply_redirs.c GNL/get_next_line.c\
-parser/tmp_file_name.c create_envp.c
+parser/tmp_file_name.c create_envp.c  #history.c\#
 OBJECTS = $(SOURCES:.c=.o)
 HEADERS = libft/headers/libft.h minishell.h executor.h
 SRC_PARS_TEST = mooks.c parser/constructors.c\
 parser/expansor_utils.c parser/expansor.c parser/free_tree.c parser/get_redir.c\
 parser/processline.c parser/str_utils.c executor/executor.c\
-executor/libexe.c executor/process.c non_pipable_builtin.c signal.c history.c\
+executor/libexe.c executor/process.c non_pipable_builtin.c signal.c\
 executor/apply_redirs.c GNL/get_next_line_utils.c GNL/get_next_line.c\
-parser/tmp_file_name.c
+parser/tmp_file_name.c  #history.c\#
 OBJ_PARS_TEST = $(SRC_PARS_TEST:.c=.o)
 
 

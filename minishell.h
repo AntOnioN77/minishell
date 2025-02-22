@@ -200,7 +200,8 @@ e_errors create_herefile(t_redir *redir);
 char *get_tmp_name(e_errors *error);
 e_errors heredoc_writer(char *separator, t_redir *redir);
 //LOCATION: signal.c
-void handle_sigint(int signal);
+void	handle_sigint(int signal);
+void	handle_sigint_heredoc(int signal);
 void	signal_conf(void);
 //LOCATION: history.c
 void	load_history(void);

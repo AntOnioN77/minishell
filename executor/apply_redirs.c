@@ -67,7 +67,10 @@ e_errors apply_redirs(t_redir *redir, char **word_fail)
 	if (redir->insymbol == infile)
 		error = file_redirector(0, redir->infoo, O_RDONLY, word_fail);
 	else if (redir->insymbol == heredoc)
+	{
+		//signal(SIGINT, handle_sigint_heredoc);
 		error = file_redirector(STDIN_FILENO, redir->tmp_file, O_RDONLY, word_fail);
+	}
 //	 	error = heredoc_handler(redir->infoo, redir);
 	if (error != 0)
 		return (error);

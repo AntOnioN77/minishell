@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   processline.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: jperez-r <jperez-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:19:13 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/05 14:43:53 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/22 23:20:57 by jperez-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void	getpntword(char **segment, char *end, char **dst)
 	{
 		skip_quotes(segment, end);
 		//	(*segment)++;
+		if(g_ctrlc == 2)
+			return ;
 		if(!isdelimiter(**segment))
 			(*segment)++;
 		else
