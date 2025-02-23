@@ -1,3 +1,4 @@
+#Este archivo configura valgrind. Evitando mostrar stillreachables producidos por readline. Esto tambien incluye errores con add_histori, que mas a delante deben ser solucionados
 {
    readline_keymap
    Memcheck:Leak

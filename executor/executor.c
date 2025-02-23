@@ -155,7 +155,7 @@ static e_errors child_error_handler(e_errors err, char *cmd)
 static e_errors repipe_child(t_task *task, int in, int out, char **word_fail)
 {
 	e_errors err;
-fprintf(stderr,"process:%d line:158 executor.c repipechild in:%d  out%d\n", getpid(),in, out);
+//fprintf(stderr,"process:%d line:158 executor.c repipechild in:%d  out%d\n", getpid(),in, out);
 	if (out != STDOUT_FILENO)
 	{
 		dup2(out, STDOUT_FILENO);
@@ -167,7 +167,7 @@ fprintf(stderr,"process:%d line:158 executor.c repipechild in:%d  out%d\n", getp
 		close(in);
 	}
 	close(3);
-	close_fds(4);//soluciona lo de el cat|cat|ls pero no es pretty
+	close(4);//soluciona lo de el cat|cat|ls pero no es pretty
 	err = apply_redirs(&(task->redir), word_fail);
 //fprintf(stderr, "!!!!!!!!!!!!!!!! executor.c 168¬ err:%d\n", (int)err);
 	if (err != 0)

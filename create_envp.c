@@ -115,12 +115,14 @@ e_errors init_envp(t_environ *environ)
 {
 	e_errors error;
 	char *num;
+	char *pathshell;
 
 	error = 0;
 	char path[PATH_MAX];
 
 	if (environ == NULL || environ->envp == NULL)
 		return(errno);
+
 
 	if (ft_getenv("SHLVL", environ->envp) == NULL)
 	{
@@ -135,6 +137,16 @@ e_errors init_envp(t_environ *environ)
 
 	if (getcwd(path, PATH_MAX) == NULL)
 		return (errno);
+	pathshell =	ft_strjoin(path,"/minishell");
+	if (!error && ft_getenv("SHELL", environ->envp) == NULL)
+	{
+		error = add_var("SHELL", pathshell, environ);
+	}
+	else if(!error)
+	{
+		error = change_var("SHELL", pathshell, environ);
+	}
+	free(pathshell);
 	if (!error && (ft_getenv("PWD", environ->envp) == NULL))
 		error = add_var("PWD", path, environ);
 	else if (!error)
@@ -176,7 +188,7 @@ e_errors create_envp(char **original, t_environ *environ)
 			return(errno);
 		environ->alloced = 12;
 	}
-		else
+	else
 	{
 		count = count_to_null((void **)original);
 //fprintf(stderr, "count:%d", count);
