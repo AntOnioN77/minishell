@@ -192,6 +192,7 @@ int main(int argc, char **argv, char **envp)
 	{
 //str_bug=ft_strdup("BUG LEAK INTENCIONAL");
 //printf("%s\n", str_bug);
+//str_bug=NULL;
 		shell_cycle(tree, &environ);
 //test_fds("196 main.c main");
 	}
