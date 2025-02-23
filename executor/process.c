@@ -2,7 +2,7 @@
 #include "../executor.h"
 #include <sys/stat.h>
 
-//Empezando en fd_since, cierra tosos los fd abiertos,
+//Empezando en fd_since, cierra todos los fd abiertos,
 //hasta encontrar uno cerrado o inexistente. Antes de cerrar consulta
 //si existe y esta abierto con fstat.
 void close_fds(int fd_since)

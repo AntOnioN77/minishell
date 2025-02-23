@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_redir.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/22 23:24:07 by jperez-r         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "../minishell.h"
 
@@ -18,24 +7,19 @@ static void handle_heredoc(char **segment, char *end, t_redir *redir)
  	if (redir)
 	{
 		redir->insymbol = heredoc;
-		signal(SIGINT, handle_sigint_heredoc);
 		getpntword(segment, end, &(redir->infoo));
 		if(!redir->infoo || *(redir->infoo) == '\0')
 			redir->error = SYNTAX_ERROR;
-		char *line;
+		// if (g_ctrlc == 2)
+		// {
+		// 	//g_ctrlc = 0;
+		// 	return;
+		// }
+		/*char *line;
         while ((line = readline("")) != NULL)
         {
-            if (g_ctrlc == SIGINT)
-            {
-                free(line);
-                //g_ctrlc = 0; // Restablecer la variable
-                return; // Salir del heredoc
-            }
-            // Procesar la línea de entrada
-            // Aquí puedes escribir la línea a un archivo temporal o manejarla como necesites
-            // por ejemplo: write_to_tmp_file(line);
             free(line);
-		}
+		}*/
 		/*if (line == NULL && g_ctrlc == SIGINT)
         {
             redir->error = E_SIGINT; // Marcar el error de interrupción
@@ -94,12 +78,14 @@ void	get_redir(char **segment, char *end, t_redir *redir)
 		skipwhitesp(segment, end);
 		if (*segment == ft_strnstr(*segment, "<<", end - *segment))
 		{
+			// signal(SIGINT, handle_sigint_heredoc);
 			handle_heredoc(segment, end, redir);
-			if(g_ctrlc == 2)
-			{
-				g_ctrlc = 0;
-				return ;
-			}
+			// if(g_ctrlc == 2)
+			// {
+			// 	g_ctrlc = 0;
+			// 	return ;
+			// }
+			//signal(SIGINT, handle_sigint); para restaurar el ctrl+c?
 		}
 		else if (*segment == ft_strnstr(*segment, ">>", end - *segment))
 			handle_append(segment, end, redir);

@@ -149,7 +149,7 @@ e_errors	process_tree(t_tree *node, char *envp[])
 		//	return (error);
 		unquote_task(((t_task *)pipe->left));
 		error=create_herefile(&(pipe->left->redir)); //si hubo error lo anota, sera encontrado por check_tree
-		if (error)
+		if (error) //Esto lo cambiaría a if (!error) error = process_tree(); en lugar del return
 			return (error);
 		error= process_tree((t_tree *)pipe->rigth, envp);
 	}

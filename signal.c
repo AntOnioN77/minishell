@@ -7,13 +7,10 @@
 void	handle_sigint(int signal)
 {
 	g_ctrlc = signal;
-	if (signal == SIGINT)
-	{
-		write(1, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-    }
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 /**
@@ -22,15 +19,10 @@ void	handle_sigint(int signal)
 void	handle_sigint_heredoc(int signal)
 {
 	g_ctrlc = signal;
-	//(void) signal; 
-	if (signal == SIGINT)
-	{
-
-		write(1, "\n", 1);
-		//rl_on_new_line();
-		/*rl_replace_line("", 0);
-		rl_redisplay();*/
-    }
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+	rl_done = 1;
 }
 
 /**

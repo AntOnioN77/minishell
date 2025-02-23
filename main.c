@@ -2,7 +2,8 @@
 #include "minishell.h"
 #include "executor.h"
 
-
+int g_ctrlc = 0;
+extern int rl_done;
 //solo test://///////////////////////////////////
 #include <sys/stat.h>
 void test_fds(char *where)
@@ -85,8 +86,10 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		char 	*line;
 		char	*oldline;
 
-		g_ctrlc = 0;
+		//g_ctrlc = 0;
 		line = readline("mini$hell> ");
+
+		//fprintf(stdout, "%d\n", g_ctrlc);
 		//(*tree)->line = line;
 		if(!line)
 		{

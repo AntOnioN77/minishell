@@ -59,6 +59,13 @@ e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
 	seplen = ft_strlen(separator);
 	while(1)
 	{
+		if (g_ctrlc == SIGINT)
+		{
+		// fprintf(stdout, "%d\n", g_ctrlc);
+			close(fd);
+			g_ctrlc = 0;
+			return (E_SIGINT);
+		}
 		//get_next_line(0, &line); //ni readline ni get_next_line retornan NULL cuando esperan entrada y pulsas ctrl+c
 			line = readline(""); //dejo readline por que su still reachable esta justificado por subject
 //fprintf(stderr, "get_next_line:%s\n", line);
@@ -74,7 +81,7 @@ fprintf(stderr, "66\n");				//ctrl+c ?????????
 			free(line);
 			break ;
 		}
-		else
+		else // No se necesita si se hace un break
 			ft_putstr_fd(line, fd);
 		ft_putchar_fd('\n', fd);
 		free(line);
@@ -111,7 +118,9 @@ e_errors create_herefile(t_redir *redir)
 		close(fd);
 	}
 
+	signal(SIGINT, handle_sigint_heredoc);
 	error = heredoc_writer(redir->infoo, redir);
+	//signal(SIGINT, handle_sigint);
 	return(error);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -23,8 +23,8 @@
 
 
 //VARIABLE GLOBAL
-static int	g_ctrlc;
-//extern int	g_ctrlc;
+//static int	g_ctrlc;
+extern int	g_ctrlc;
 
 /*****************************************************************************/
 /* 								ENUMS										 */
