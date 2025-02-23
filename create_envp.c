@@ -93,11 +93,11 @@ e_errors add_var(char *key, char *value, t_environ *environ)
 	if (key == NULL || value == NULL || key[0] == '\0')
 		return(1);//asignar un valor más significativo para este error
 
-fprintf(stderr,"--------environ->alloced:%d\n", environ->alloced);
-fprintf(stderr,"--------environ->next:%d\n",environ->next);
+//fprintf(stderr,"--------environ->alloced:%d\n", environ->alloced);
+//fprintf(stderr,"--------environ->next:%d\n",environ->next);
 	if (environ->next >= (environ->alloced - 1))
 	{
-fprintf(stderr,"---------------------------------------------------------entra en realloc\n");
+//fprintf(stderr,"---------------------------------------------------------entra en realloc\n");
 		if(!custom_realloc((void **)&(environ->envp), environ->alloced * sizeof(char *), environ->alloced * 2 * sizeof(char *)))
 			return(errno);
 		environ->alloced = environ->alloced * 2;

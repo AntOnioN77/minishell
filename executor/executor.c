@@ -59,6 +59,8 @@ int	get_index_path(char **envp)
 	while (envp[pos])
 	{
 		subpath = ft_substr(envp[pos], 0, 5);
+		if (!subpath)
+			return (-1);
 		if (ft_strncmp(subpath, "PATH=", ft_strlen(subpath)) == 0)
 		{
 			free(subpath);
@@ -111,7 +113,7 @@ char *com_path(char *cmd, char **envp, e_errors *err)
 	pos = get_index_path(envp);
 	if (pos == -1)
 	{
-		*err = ERROR_MALLOC;
+		*err = NO_EXIST;
 		return (NULL);
 	}
 	enpath = ft_split(envp[pos], ':');
@@ -174,7 +176,7 @@ static e_errors repipe_child(t_task *task, int in, int out, char **word_fail)
 	{
 		return (err);
 	}
-test_fds("176 executor.c repipechild");
+//test_fds("176 executor.c repipechild");
 	return (0);
 }
 
@@ -197,6 +199,7 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
 		if(child_error_handler(err, word_fail))
 			return (1);
 		pathcmd = com_path(task->cmd, envp, &err);
+fprintf(stderr, "200------err:%d\n", err);
 		if (err)
 			return (child_error_handler(err, task->cmd));
 		execve(pathcmd, task->argv, envp);
