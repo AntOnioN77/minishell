@@ -53,8 +53,14 @@ e_errors add_var(char *key, char *value, t_environ *environ)
 // Función para imprimir el entorno
 void print_env(t_environ *environ)
 {
-	for (int i = 0; i < environ->next; i++)
+	int i;
+	
+	i = 0;
+	while(i < environ->next)
+	{
 		printf("%s\n", environ->envp[i]);
+		i++;
+	}
 }
 
 // Test Suite
