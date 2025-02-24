@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   processline.c                                      :+:      :+:    :+:   */
+/*   build_tree.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:19:13 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/05 14:43:53 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/24 12:55:02 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../../minishell.h"
 
 
 //almacena un puntero a la primera letra de esa palabra, consume la siguiente palabra en segment. Si dst es NULL solamente consume un redir en segment
@@ -106,7 +106,8 @@ int parsepipe(char *line, t_tree **ret)// desde aqui gestionar solo errores de e
 	return (1);
 }
 
-t_tree *processline(char *line)//debe retornar un arbol con un nodo para cada fraccion del comando introducido
+//no me gusta el nombre proccessline. deberia ser algo como build_tree o line_to_tree
+t_tree *build_tree(char *line)//debe retornar un arbol con un nodo para cada fraccion del comando introducido
 {
 	t_tree *ret;
 

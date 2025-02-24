@@ -46,17 +46,17 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 ///////////////////////////
 
 
-	*right = processline(line);
+	*right = build_tree(line);
 //	rl_clear_history();
 	if (*right == NULL)
 	{
 		free(line);
-		perror("processline:");
+		perror("build_tree:");
 		rl_clear_history();
 		return (ERROR_MALLOC);
 	}
 	(*right)->line_extra = line;
-	if(process_tree(*right, envp))
+	if(touch_up_tree(*right, envp))
 		perror("64->expandtree:");//esta gestion de error es muy mejorable
 	return (check_tree(*right, envp)); // gestionar retorno
 }
@@ -76,6 +76,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		{
 			oldline = line;
 			add_history(line);
+//////////////////////////////////////////// quiza deberiamos cambiar esta caja por una funcion "expansor"
 			if (is_expansible(line))
 			{
 				oldline = line;
@@ -83,19 +84,20 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 					return(ERROR_MALLOC);
 				free(oldline);
 			}
+//////////////////////////////////////////////
 			//save_history(line);
 		}
-		*tree = processline(line);
+		*tree = build_tree(line);
 		//free(line);
 		if (*tree == NULL)
 		{
 //			free(line);
-			perror("processline:");
+			perror("build_tree:");
 			rl_clear_history();
 			return (ERROR_MALLOC);
 		}
 		(*tree)->line = line;
-		if(process_tree(*tree, envp))
+		if(touch_up_tree(*tree, envp))
 			perror("92->expandtree:");//esta gestion de error es muy mejorable
 		return (check_tree(*tree, envp)); // gestionar retorno
 }

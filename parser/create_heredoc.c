@@ -89,7 +89,7 @@ fprintf(stderr, "66\n");				//ctrl+c ?????????
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //el archivo creado debe ser eliminiado en free_tree, no implementado aun
-e_errors create_herefile(t_redir *redir)
+e_errors create_heredoc(t_redir *redir)
 {
 	e_errors error;
 	char *tmp_file;

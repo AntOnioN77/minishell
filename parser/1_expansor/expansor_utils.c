@@ -6,11 +6,11 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/01/16 13:57:46 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/24 13:37:35 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../../minishell.h"
 
 int	is_expansible(char *str)
 {
@@ -26,7 +26,7 @@ int	is_expansible(char *str)
 	}
 	return (0);
 }
-
+/*
 int	count_expansions(t_task *node)
 {
 	int	count;
@@ -45,7 +45,7 @@ int	count_expansions(t_task *node)
 	}
 	return (count);
 }
-
+*/
 
 static int	calculate_variable_length(char **str, char *envp[])
 {

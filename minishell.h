@@ -162,7 +162,7 @@ t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);
 //Location parser/expansor.c
 e_errors	expandstr(char **origin, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
-e_errors	process_tree(t_tree *node, char *envp[]);
+e_errors	touch_up_tree(t_tree *node, char *envp[]);
 //Location: parser/expansor_utils.c
 int	is_expansible(char *str);
 int	count_expansions(t_task *node);
@@ -172,12 +172,12 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[]);
 void free_tree(t_tree *node);
 //Location: parser/get_redir.c
 void	get_redir(char **segment, char *end, t_redir *redir);
-//Location: parser/processline.c
+//Location: parser/build_tree.c
 void	getpntword(char **segment, char *end, char **dst);
 int count_cmdflags(char *segment, char *end);
 int parse_task(char *segment, char *end, t_task *task);
 int parsepipe(char *line, t_tree **ret);
-t_tree *processline(char *line);
+t_tree *build_tree(char *line);
 //Location: parser/str_utils.c
 int isdelimiter(char c);
 void	nullify_delimiters(char *str);
@@ -191,7 +191,7 @@ int wait_all(t_tree *node);
 //LOCATION: parser/check_tree.c
 int	 check_tree(t_tree *tree, char **envp);
 //LOCATION: tmp_file_name.c
-e_errors create_herefile(t_redir *redir);
+e_errors create_heredoc(t_redir *redir);
 char *get_tmp_name(e_errors *error);
 e_errors heredoc_writer(char *separator, t_redir *redir);
 //LOCATION: signal.c

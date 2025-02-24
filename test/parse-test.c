@@ -320,13 +320,13 @@ void test_minishell(void)
         printf("\nTest %d: '%s'\n", i + 1, tests[i]);
         printf("-----------------------------------------------\n");
         
-        tree = processline(strdup(tests[i]));  // Usamos strdup porque processline modifica la string
+        tree = build_tree(strdup(tests[i]));  // Usamos strdup porque build_tree modifica la string
         if (tree == NULL) {
-            printf("Error: processline devolvió NULL\n");
+            printf("Error: build_tree devolvió NULL\n");
             continue;
         }
 		char *envp[] = {NULL};  // No necesitamos envp real porque mockeamos ft_getenv
-		if(process_tree(tree, envp))
+		if(touch_up_tree(tree, envp))
 			perror("330->expandtree:");//esta gestion de error es muy mejorable
         
         print_tree(tree, 0);

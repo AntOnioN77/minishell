@@ -11,6 +11,7 @@
 		"fcntl.h": "c",
 		"errno.h": "c",
 		"features.h": "c",
-		"stdio.h": "c"
+		"stdio.h": "c",
+		"3_": "cpp"
 	}
 }
