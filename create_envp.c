@@ -210,6 +210,6 @@ fprintf(stderr, "original[5]%s\n", original[5]);*/
 		error = copy_prev_envp(original, environ);
 	}
 	error = init_envp(environ);
-print_env(environ);
+//print_env(environ);
 	return (error);
 }

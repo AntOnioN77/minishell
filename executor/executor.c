@@ -199,7 +199,7 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
 		if(child_error_handler(err, word_fail))
 			return (1);
 		pathcmd = com_path(task->cmd, envp, &err);
-fprintf(stderr, "200------err:%d\n", err);
+//fprintf(stderr, "200------err:%d\n", err);
 		if (err)
 			return (child_error_handler(err, task->cmd));
 		execve(pathcmd, task->argv, envp);
