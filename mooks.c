@@ -27,39 +27,38 @@
 ╚══════╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝                    */
 
 #include "minishell.h"
+#include <sys/stat.h>
 
-int	search_var(char **envp, const char* var)
+void test_fds(char *where)
 {
-	int pos;
+    char buffer[1024] = {0};  // Buffer para almacenar todo el output
+    unsigned long offset = 0;           // Para trackear la posición en el buffer
+    int i = 0;
+    struct stat statbuf;
 
-//fprintf(stderr, "search_var var:%s --- ", var);
-	if(!envp)
-		return (-1);
-	pos = 0;
-	while (envp[pos])
-	{
-		if (ft_strncmp(envp[pos], var, ft_strlen(var)) == 0)
-		{
+    // Construir el encabezado
+    offset += snprintf(buffer + offset, sizeof(buffer) - offset, 
+        "___TEST_FD__\n   %s proceso:%d\n", where, getpid());
 
-			return (pos);
-		}
-		pos++;
-	}
-	return (-1);
+    // Construir la información de los file descriptors
+    while (i < 20 && offset < sizeof(buffer))
+    {
+        if (fstat(i, &statbuf) == -1)
+            offset += snprintf(buffer + offset, sizeof(buffer) - offset, 
+                "| fd[%d] 🔴 | ", i);
+        else
+            offset += snprintf(buffer + offset, sizeof(buffer) - offset, 
+                "| fd[%d] 🟢 | ", i);
+        
+        if (i % 5 == 0)
+            offset += snprintf(buffer + offset, sizeof(buffer) - offset, "\n");
+        i++;
+    }
+	offset += snprintf(buffer + offset, sizeof(buffer) - offset, "\n");
+    // Imprimir todo de una vez
+    write(STDERR_FILENO, buffer, offset);
 }
 
-char *ft_getenv(const char *name, char *envp[])
-{
-	int pos;
-	char *word_start;
-
-	pos = search_var(envp, name);
-//fprintf(stderr, "search_var ret:%d\n", pos);
-	if (pos == -1)
-		return(NULL);
-	word_start = ft_strchr(envp[pos], '=') + 1;
-	return(word_start);
-}
 
 /* 
 // parse_test requiere este mook:

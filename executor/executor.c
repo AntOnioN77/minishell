@@ -59,6 +59,8 @@ int	get_index_path(char **envp)
 	while (envp[pos])
 	{
 		subpath = ft_substr(envp[pos], 0, 5);
+		if (!subpath)
+			return (-1);
 		if (ft_strncmp(subpath, "PATH=", ft_strlen(subpath)) == 0)
 		{
 			free(subpath);
@@ -111,7 +113,7 @@ char *com_path(char *cmd, char **envp, e_errors *err)
 	pos = get_index_path(envp);
 	if (pos == -1)
 	{
-		*err = ERROR_MALLOC;
+		*err = NO_EXIST;
 		return (NULL);
 	}
 	enpath = ft_split(envp[pos], ':');
@@ -155,7 +157,7 @@ static e_errors child_error_handler(e_errors err, char *cmd)
 static e_errors repipe_child(t_task *task, int in, int out, char **word_fail)
 {
 	e_errors err;
-
+//fprintf(stderr,"process:%d line:158 executor.c repipechild in:%d  out%d\n", getpid(),in, out);
 	if (out != STDOUT_FILENO)
 	{
 		dup2(out, STDOUT_FILENO);
@@ -166,13 +168,15 @@ static e_errors repipe_child(t_task *task, int in, int out, char **word_fail)
 		dup2(in, STDIN_FILENO);
 		close(in);
 	}
-	close_fds(3);
+	close(3);
+	close(4);//soluciona lo de el cat|cat|ls pero no es pretty
 	err = apply_redirs(&(task->redir), word_fail);
 //fprintf(stderr, "!!!!!!!!!!!!!!!! executor.c 168¬ err:%d\n", (int)err);
 	if (err != 0)
 	{
 		return (err);
 	}
+//test_fds("176 executor.c repipechild");
 	return (0);
 }
 
@@ -195,6 +199,7 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
 		if(child_error_handler(err, word_fail))
 			return (1);
 		pathcmd = com_path(task->cmd, envp, &err);
+//fprintf(stderr, "200------err:%d\n", err);
 		if (err)
 			return (child_error_handler(err, task->cmd));
 		execve(pathcmd, task->argv, envp);
@@ -223,7 +228,7 @@ e_errors exec_pipe(t_pipe *pipe_node, char **envp, int in)
     }
     if (pipe_node->rigth)
 	{
-        err = executor(pipe_node->rigth, envp, pipefd[0], 1);
+        err = executor(pipe_node->rigth, envp, pipefd[0], STDOUT_FILENO);
         if(err != 0)
             return (err);
     }

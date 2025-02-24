@@ -66,7 +66,7 @@ e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
 		if (!line)
 		{
 			close(fd);
-fprintf(stderr, "66\n");				//ctrl+c ?????????
+//fprintf(stderr, "66\n");				//ctrl+c ?????????
 			return(errno);
 		}
 		if(ft_strlen(line) == seplen && !ft_strncmp(line, separator, seplen))
@@ -89,7 +89,7 @@ fprintf(stderr, "66\n");				//ctrl+c ?????????
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //el archivo creado debe ser eliminiado en free_tree, no implementado aun
-e_errors create_herefile(t_redir *redir)
+e_errors create_heredoc(t_redir *redir)
 {
 	e_errors error;
 	char *tmp_file;

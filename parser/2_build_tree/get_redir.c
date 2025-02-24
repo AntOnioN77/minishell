@@ -6,11 +6,11 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/07 15:32:28 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/24 12:50:14 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 static void handle_heredoc(char **segment, char *end, t_redir *redir)
 {

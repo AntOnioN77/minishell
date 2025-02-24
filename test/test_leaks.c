@@ -50,15 +50,15 @@ int main(int argc, char **argv, char **envp) {
             break;
         }
 
-        tree = processline(line);
+        tree = build_tree(line);
         if (tree == NULL) {
-            perror("processline:");
+            perror("build_tree:");
             free(line);
             fclose(test_file);
             return 1;
         }
 
-        if (process_tree(tree, envp)) {
+        if (touch_up_tree(tree, envp)) {
             perror("62->expandtree:");
         }
 		print_tree(tree, 30);

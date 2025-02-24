@@ -3,6 +3,42 @@
 #include <errno.h>
 #include <linux/limits.h>
 
+//mas adelante, descomponer este archivo en varios, en la carpeta environment
+
+int	search_var(char **envp, const char* var)
+{
+	int pos;
+
+//fprintf(stderr, "search_var var:%s --- ", var);
+	if(!envp)
+		return (-1);
+	pos = 0;
+	while (envp[pos])
+	{
+		if (ft_strncmp(envp[pos], var, ft_strlen(var)) == 0)
+		{
+
+			return (pos);
+		}
+		pos++;
+	}
+	return (-1);
+}
+
+char *ft_getenv(const char *name, char *envp[])
+{
+	int pos;
+	char *word_start;
+
+	pos = search_var(envp, name);
+//fprintf(stderr, "search_var ret:%d\n", pos);
+	if (pos == -1)
+		return(NULL);
+	word_start = ft_strchr(envp[pos], '=') + 1;
+	return(word_start);
+}
+
+//a la libft?
 int count_to_null(void **pnt)
 {
     int i = 0;
@@ -32,6 +68,7 @@ e_errors copy_prev_envp(char **original, t_environ *environ)
 	return (0);
 }
 
+//a la libft?
 //newsize debe ser siempre superior a oldsize
 void *custom_realloc(void **pnt, size_t oldsize, size_t newsize)
 {
@@ -91,9 +128,13 @@ e_errors add_var(char *key, char *value, t_environ *environ)
 	char *newvar;
 
 	if (key == NULL || value == NULL || key[0] == '\0')
-		return(1);//asignar un valor mas significativo para este error
-	if (environ->next >= environ->alloced)
+		return(1);//asignar un valor más significativo para este error
+
+//fprintf(stderr,"--------environ->alloced:%d\n", environ->alloced);
+//fprintf(stderr,"--------environ->next:%d\n",environ->next);
+	if (environ->next >= (environ->alloced - 1))
 	{
+//fprintf(stderr,"---------------------------------------------------------entra en realloc\n");
 		if(!custom_realloc((void **)&(environ->envp), environ->alloced * sizeof(char *), environ->alloced * 2 * sizeof(char *)))
 			return(errno);
 		environ->alloced = environ->alloced * 2;
@@ -107,6 +148,7 @@ e_errors add_var(char *key, char *value, t_environ *environ)
 	ft_strlcat(newvar, value, len);
 	environ->envp[environ->next] = newvar;
 	environ->next=environ->next + 1;
+	environ->envp[environ->next] = NULL;
 	return(0);
 }
 
@@ -115,12 +157,14 @@ e_errors init_envp(t_environ *environ)
 {
 	e_errors error;
 	char *num;
+	char *pathshell;
 
 	error = 0;
 	char path[PATH_MAX];
 
 	if (environ == NULL || environ->envp == NULL)
 		return(errno);
+
 
 	if (ft_getenv("SHLVL", environ->envp) == NULL)
 	{
@@ -135,6 +179,16 @@ e_errors init_envp(t_environ *environ)
 
 	if (getcwd(path, PATH_MAX) == NULL)
 		return (errno);
+	pathshell =	ft_strjoin(path,"/minishell");
+	if (!error && ft_getenv("SHELL", environ->envp) == NULL)
+	{
+		error = add_var("SHELL", pathshell, environ);
+	}
+	else if(!error)
+	{
+		error = change_var("SHELL", pathshell, environ);
+	}
+	free(pathshell);
 	if (!error && (ft_getenv("PWD", environ->envp) == NULL))
 		error = add_var("PWD", path, environ);
 	else if (!error)
@@ -152,7 +206,7 @@ e_errors init_envp(t_environ *environ)
 		error = add_var("?", "0", environ);
 	else if (!error)
 		error = change_var("?", "0", environ);
-	
+//fprintf(stderr, "error=%d/n", error);
 	return(error);
 }
 
@@ -176,10 +230,16 @@ e_errors create_envp(char **original, t_environ *environ)
 			return(errno);
 		environ->alloced = 12;
 	}
-		else
+	else
 	{
 		count = count_to_null((void **)original);
-//fprintf(stderr, "count:%d", count);
+/*fprintf(stderr, "count:%d\n", count);
+fprintf(stderr, "original[0]%s\n", original[0]);
+fprintf(stderr, "original[1]%s\n", original[1]);
+fprintf(stderr, "original[2]%s\n", original[2]);
+fprintf(stderr, "original[3]%s\n", original[3]);
+fprintf(stderr, "original[4]%s\n", original[4]);
+fprintf(stderr, "original[5]%s\n", original[5]);*/
 		environ->envp = ft_calloc(count * 2, sizeof(char *));// alocamos el doble de memoria necesaria, para no tener que realocar todo cada vez que creemos una nueva variable
 		if (environ->envp == NULL)
 			return(errno);
@@ -187,5 +247,6 @@ e_errors create_envp(char **original, t_environ *environ)
 		error = copy_prev_envp(original, environ);
 	}
 	error = init_envp(environ);
+//print_env(environ);
 	return (error);
 }
