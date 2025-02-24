@@ -3,6 +3,42 @@
 #include <errno.h>
 #include <linux/limits.h>
 
+//mas adelante, descomponer este archivo en varios, en la carpeta environment
+
+int	search_var(char **envp, const char* var)
+{
+	int pos;
+
+//fprintf(stderr, "search_var var:%s --- ", var);
+	if(!envp)
+		return (-1);
+	pos = 0;
+	while (envp[pos])
+	{
+		if (ft_strncmp(envp[pos], var, ft_strlen(var)) == 0)
+		{
+
+			return (pos);
+		}
+		pos++;
+	}
+	return (-1);
+}
+
+char *ft_getenv(const char *name, char *envp[])
+{
+	int pos;
+	char *word_start;
+
+	pos = search_var(envp, name);
+//fprintf(stderr, "search_var ret:%d\n", pos);
+	if (pos == -1)
+		return(NULL);
+	word_start = ft_strchr(envp[pos], '=') + 1;
+	return(word_start);
+}
+
+//a la libft?
 int count_to_null(void **pnt)
 {
     int i = 0;
@@ -32,6 +68,7 @@ e_errors copy_prev_envp(char **original, t_environ *environ)
 	return (0);
 }
 
+//a la libft?
 //newsize debe ser siempre superior a oldsize
 void *custom_realloc(void **pnt, size_t oldsize, size_t newsize)
 {
