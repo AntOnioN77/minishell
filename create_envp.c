@@ -87,39 +87,48 @@ void *custom_realloc(void **pnt, size_t oldsize, size_t newsize)
 	return (newpnt);
 }
 
-e_errors change_var(char *key, char *newvalue, t_environ *environ)
+char *cat_key_value(const char *key, const char *value)
 {
 	size_t len;
+	char *newvar;
+
+	len = ft_strlen(key) + ft_strlen(value) + 2; // +1 null terminator, +1 "=" sign key=value
+	newvar = ft_calloc(len, sizeof(char));
+	if (newvar == NULL)
+		return (NULL);
+	ft_strlcpy(newvar, key, len);
+	ft_strlcat(newvar, "=", len);
+	ft_strlcat(newvar, value, len);
+	return (newvar);
+}
+
+e_errors change_var(char *key, char *newvalue, t_environ *environ)
+{
 	size_t keylen;
 	char *newvar;
 	int i;
 	char **envp;
 
 	if (!key || !newvalue || !environ)
-		return (1);//poco expresivo
+		return (1); // poco expresivo
 	envp = environ->envp;
-	keylen= ft_strlen(key);
-	len = keylen + ft_strlen(newvalue) + 2;// +1 caracter nulo final, +1 signo "=" clave=valor
-	newvar = ft_calloc(len, sizeof(char));
+	keylen = ft_strlen(key);
+	newvar = cat_key_value(key, newvalue);
 	if (newvar == NULL)
 		return (errno);
-	ft_strlcpy(newvar, key, len);
-	ft_strlcat(newvar, "=", len);
-	ft_strlcat(newvar, newvalue, len);
 	i = 0;
-	while(i < environ->next)
+	while (i < environ->next)
 	{
 		if (ft_strncmp(envp[i], key, keylen) == 0)
 		{
 			free(envp[i]);
 			envp[i] = newvar;
-			return(0);
+			return (0);
 		}
 		i++;
 	}
 	free(newvar);
-	return(1);
-
+	return (1);
 }
 
 e_errors add_var(char *key, char *value, t_environ *environ)
@@ -152,63 +161,61 @@ e_errors add_var(char *key, char *value, t_environ *environ)
 	return(0);
 }
 
-static e_errors add_or_change_var(char *key, char *newvalue, t_environ *environ)
-{
-	e_errors error;
-
-	error = 0;
-	if (ft_getenv(key, environ->envp) == NULL)
-		error = add_var(key, newvalue, environ);
-	else
-		change_var(key, newvalue, environ);
-	return (error);
-
-}
-
-e_errors init_shlvl(t_environ *environ)
+//SHLVL PWD HOME OLDPWD $?
+e_errors init_envp(t_environ *environ) 
 {
 	e_errors error;
 	char *num;
+	char *pathshell;
+
+	error = 0;
+	char path[PATH_MAX];
+
+	if (environ == NULL || environ->envp == NULL)
+		return(errno);
 
 
 	if (ft_getenv("SHLVL", environ->envp) == NULL)
+	{
 		error = add_var("SHLVL", "1", environ);
+	}
 	else
 	{
 		num = ft_itoa(ft_atoi(ft_getenv("SHLVL", environ->envp)) + 1); 
 		error = change_var("SHLVL", num, environ);
 		free(num);
 	}
-	return(error);
-}
-
-//SHLVL PWD HOME OLDPWD $?
-e_errors init_envp(t_environ *environ) 
-{
-	e_errors error;
-	char *pathshell;
-	char path[PATH_MAX];
-
-	error = 0;
-	if (environ == NULL || environ->envp == NULL)
-		return(errno);
-
-	error = init_shlvl(environ);
 
 	if (getcwd(path, PATH_MAX) == NULL)
 		return (errno);
-	pathshell =	ft_strjoin(path,"/minishell/");
-	if(!error)
-		error = add_or_change_var("SHELL", pathshell, environ);
+	pathshell =	ft_strjoin(path,"/minishell");
+	if (!error && ft_getenv("SHELL", environ->envp) == NULL)
+	{
+		error = add_var("SHELL", pathshell, environ);
+	}
+	else if(!error)
+	{
+		error = change_var("SHELL", pathshell, environ);
+	}
 	free(pathshell);
-	if(!error)
-		error = add_or_change_var("PWD", path, environ);
+	if (!error && (ft_getenv("PWD", environ->envp) == NULL))
+		error = add_var("PWD", path, environ);
+	else if (!error)
+		error = change_var("PWD", path, environ);
+	
 	if (!error && ft_getenv("HOME", environ->envp) == NULL)
 		error = add_var("HOME", path, environ); //si no tenemos acceso a las variables de entorno, establece la carpeta actual como home (pues es la unica de la que tiene certeza existe y es utilizable)
-	if(!error)
-		error = add_or_change_var("OLDPWD", "", environ);
-	if(!error)
-		error = add_or_change_var("?", "0", environ);
+	
+	if (!error && ft_getenv("OLDPWD", environ->envp) == NULL)
+		error = add_var("OLDPWD", "", environ); //al ser el principio de la ejecucion no hay una carpeta previa
+	else if(!error)
+		error = change_var("OLDPWD", "", environ);// si existe, solo la reinicia como cadena vacía
+
+	if (!error && ft_getenv("?", environ->envp) == NULL)
+		error = add_var("?", "0", environ);
+	else if (!error)
+		error = change_var("?", "0", environ);
+//fprintf(stderr, "error=%d/n", error);
 	return(error);
 }
 
