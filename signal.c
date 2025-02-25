@@ -22,7 +22,8 @@ void	handle_sigint_heredoc(int signal)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
-	rl_done = 1;
+	//rl_done = 1;
+	//close(STDOUT_FILENO);
 }
 
 /**

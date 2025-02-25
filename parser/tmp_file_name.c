@@ -62,7 +62,7 @@ e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
 		if (g_ctrlc == SIGINT)
 		{
 		// fprintf(stdout, "%d\n", g_ctrlc);
-			close(fd);
+			//close(fd);
 			g_ctrlc = 0;
 			return (E_SIGINT);
 		}
