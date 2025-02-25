@@ -87,48 +87,39 @@ void *custom_realloc(void **pnt, size_t oldsize, size_t newsize)
 	return (newpnt);
 }
 
-char *cat_key_value(const char *key, const char *value)
-{
-	size_t len;
-	char *newvar;
-
-	len = ft_strlen(key) + ft_strlen(value) + 2; // +1 null terminator, +1 "=" sign key=value
-	newvar = ft_calloc(len, sizeof(char));
-	if (newvar == NULL)
-		return (NULL);
-	ft_strlcpy(newvar, key, len);
-	ft_strlcat(newvar, "=", len);
-	ft_strlcat(newvar, value, len);
-	return (newvar);
-}
-
 e_errors change_var(char *key, char *newvalue, t_environ *environ)
 {
+	size_t len;
 	size_t keylen;
 	char *newvar;
 	int i;
 	char **envp;
 
 	if (!key || !newvalue || !environ)
-		return (1); // poco expresivo
+		return (1);//poco expresivo
 	envp = environ->envp;
-	keylen = ft_strlen(key);
-	newvar = cat_key_value(key, newvalue);
+	keylen= ft_strlen(key);
+	len = keylen + ft_strlen(newvalue) + 2;// +1 caracter nulo final, +1 signo "=" clave=valor
+	newvar = ft_calloc(len, sizeof(char));
 	if (newvar == NULL)
 		return (errno);
+	ft_strlcpy(newvar, key, len);
+	ft_strlcat(newvar, "=", len);
+	ft_strlcat(newvar, newvalue, len);
 	i = 0;
-	while (i < environ->next)
+	while(i < environ->next)
 	{
 		if (ft_strncmp(envp[i], key, keylen) == 0)
 		{
 			free(envp[i]);
 			envp[i] = newvar;
-			return (0);
+			return(0);
 		}
 		i++;
 	}
 	free(newvar);
-	return (1);
+	return(1);
+
 }
 
 e_errors add_var(char *key, char *value, t_environ *environ)

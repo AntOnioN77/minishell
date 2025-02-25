@@ -3,6 +3,27 @@
 #include <errno.h>
 #include "../GNL/get_next_line.h"
 
+char *compose_filename(int i, e_errors *error)
+{
+	char *num;
+	char *str;
+
+	num = NULL;
+	num = ft_itoa(i);
+	if (num == NULL)
+	{
+		*error = errno;
+		return(NULL);
+	}
+	str = ft_strjoin("/tmp/.minishell.", num);
+	ft_free_null((void **)&num);
+	if(str == NULL)
+	{
+		*error = errno;
+		return(NULL);
+	}
+	return(str);
+}
 //#include <fcntl.h>
 //#include <unistd.h>
 //#include "get_next_line.h"
@@ -11,28 +32,14 @@
 char *get_tmp_name(e_errors *error)
 {
 	char *str;
-	char *num;
 	int i;
 
 	i = 0;
 
-	num = NULL;
 	str = NULL;
 	while (i < 500)
 	{
-		num = ft_itoa(i);
-		if (num == NULL)
-		{
-			*error = errno;
-			return(NULL);
-		}
-		str = ft_strjoin("/tmp/.minishell.", num);
-		ft_free_null((void **)&num);
-		if(str == NULL)
-		{
-			*error = errno;
-			return(NULL);
-		}
+		str = compose_filename(i, error);
 		if (access(str, F_OK) != 0 && errno == ENOENT)
 			return (str);
 		i++;
