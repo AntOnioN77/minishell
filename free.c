@@ -1,10 +1,25 @@
 #include <stdlib.h>
 #include "minishell.h"
 
+void free_task(t_tree *node)
+{
+	t_task *task_node;
+
+	task_node = (t_task *)node;
+	if (task_node->redir.tmp_file)
+	{
+		unlink(task_node->redir.tmp_file);
+		free(task_node->redir.tmp_file);
+	}
+	//cleanup_garbage(&(task_node->garb));
+	if (task_node->argv)
+		free(task_node->argv);
+	free(task_node);
+}
+
 void free_tree(t_tree *node) //DEMASIADO LARGA
 {
 	t_pipe *pipe_node;
-	t_task *task_node;
 
     if (!node)
 		return;
@@ -22,18 +37,7 @@ void free_tree(t_tree *node) //DEMASIADO LARGA
 		free(pipe_node);
 	}
     else if (node->type == TASK)
-	{
-		task_node = (t_task *)node;
-		if (task_node->redir.tmp_file)
-		{
-			unlink(task_node->redir.tmp_file);
-			free(task_node->redir.tmp_file);
-		}
-		//cleanup_garbage(&(task_node->garb));
-		if (task_node->argv)
-			free(task_node->argv);
-		free(task_node);
-	}
+		free_task(node);
 	return ;
 }
 

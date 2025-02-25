@@ -3,15 +3,6 @@
 #include "executor.h"
 
 
-
-
-void print_env(t_environ *environ)
-{
-	for (int i = 0; i < environ->next; i++)
-		fprintf(stderr,"%s\n", environ->envp[i]);
-}
-
-
 //Esta funcion es llamada cuando encontramos un pipe con el nodo a su derecha vacío por ejemplo "ls|(vacio)".
 // antes de llamar a esta funcion hay que liberar la t_task vacía.
 //El parametro t_tree **right recibe un puntero al elemento pipe->right
@@ -19,35 +10,20 @@ void print_env(t_environ *environ)
 e_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
 	char	*line;
-	char	*oldline;
 
 	//GESTIONAR SEÑAL AQUI, si ctrl+C es pulsado, dberiamos liberar el arbol y volver a pedir entrada de usuario "mini$hell>"
 	line = readline("> ");
 	if(!line)
-	{
-//		perror("readline:");
 		return (READLINE_FAIL);//pasar codigo de señal??
-	}
 	if(line[0] == '\0')// si la cadena leida esta vacía, vuelve a pedir entrada
 	{
 		free(line); //COMPROBARRRR!!!!!!!!!!
 		return(continue_cmd_tree(right, envp));
 	}
-//////////////////
-	
 	add_history(line);
-	if (is_expansible(line))
-	{
-		oldline = line;
-		if (expandstr(&line, envp))
-			return(ERROR_MALLOC);
-		free(oldline);
-	}
-///////////////////////////
-
-
+	if(expansor(&line, envp) != ALL_OK)
+		return(ERROR_MALLOC);
 	*right = build_tree(line);
-//	rl_clear_history();
 	if (*right == NULL)
 	{
 		free(line);
@@ -61,37 +37,24 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	return (check_tree(*right, envp)); // gestionar retorno
 }
 
+
+
 e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
 		char 	*line;
-		char	*oldline;
 
 		line = readline("mini$hell> ");
-		//(*tree)->line = line;
 		if(!line)
-		{
 			return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
-		}
 		if (*line)
 		{
-			oldline = line;
 			add_history(line);
-//////////////////////////////////////////// quiza deberiamos cambiar esta caja por una funcion "expansor"
-			if (is_expansible(line))
-			{
-				oldline = line;
-				if (expandstr(&line, envp))
-					return(ERROR_MALLOC);
-				free(oldline);
-			}
-//////////////////////////////////////////////
-			//save_history(line);
+			if(expansor(&line, envp) != ALL_OK)
+				return(ERROR_MALLOC);
 		}
 		*tree = build_tree(line);
-		//free(line);
 		if (*tree == NULL)
 		{
-//			free(line);
 			perror("build_tree:");
 			rl_clear_history();
 			return (ERROR_MALLOC);
@@ -125,11 +88,8 @@ void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo writ
 
 e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 {
-
-//fprintf(stderr, "linea 110 variable error:%d\n", (int)error);
 	if (error == 0)
 		return (0);
-
 	if (error == FINISH)
 		error = 0;
 	else if(error != TASK_IS_VOID)
@@ -152,7 +112,6 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	}
 	rl_clear_history();
 	close_fds(0);
-//fprintf(stderr,"linea 170   %d\n", (int)error);
 	exit(error);
 }
 

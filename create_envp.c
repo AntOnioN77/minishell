@@ -152,61 +152,63 @@ e_errors add_var(char *key, char *value, t_environ *environ)
 	return(0);
 }
 
-//SHLVL PWD HOME OLDPWD $?
-e_errors init_envp(t_environ *environ) 
+static e_errors add_or_change_var(char *key, char *newvalue, t_environ *environ)
+{
+	e_errors error;
+
+	error = 0;
+	if (ft_getenv(key, environ->envp) == NULL)
+		error = add_var(key, newvalue, environ);
+	else
+		change_var(key, newvalue, environ);
+	return (error);
+
+}
+
+e_errors init_shlvl(t_environ *environ)
 {
 	e_errors error;
 	char *num;
-	char *pathshell;
-
-	error = 0;
-	char path[PATH_MAX];
-
-	if (environ == NULL || environ->envp == NULL)
-		return(errno);
 
 
 	if (ft_getenv("SHLVL", environ->envp) == NULL)
-	{
 		error = add_var("SHLVL", "1", environ);
-	}
 	else
 	{
 		num = ft_itoa(ft_atoi(ft_getenv("SHLVL", environ->envp)) + 1); 
 		error = change_var("SHLVL", num, environ);
 		free(num);
 	}
+	return(error);
+}
+
+//SHLVL PWD HOME OLDPWD $?
+e_errors init_envp(t_environ *environ) 
+{
+	e_errors error;
+	char *pathshell;
+	char path[PATH_MAX];
+
+	error = 0;
+	if (environ == NULL || environ->envp == NULL)
+		return(errno);
+
+	error = init_shlvl(environ);
 
 	if (getcwd(path, PATH_MAX) == NULL)
 		return (errno);
-	pathshell =	ft_strjoin(path,"/minishell");
-	if (!error && ft_getenv("SHELL", environ->envp) == NULL)
-	{
-		error = add_var("SHELL", pathshell, environ);
-	}
-	else if(!error)
-	{
-		error = change_var("SHELL", pathshell, environ);
-	}
+	pathshell =	ft_strjoin(path,"/minishell/");
+	if(!error)
+		error = add_or_change_var("SHELL", pathshell, environ);
 	free(pathshell);
-	if (!error && (ft_getenv("PWD", environ->envp) == NULL))
-		error = add_var("PWD", path, environ);
-	else if (!error)
-		error = change_var("PWD", path, environ);
-	
+	if(!error)
+		error = add_or_change_var("PWD", path, environ);
 	if (!error && ft_getenv("HOME", environ->envp) == NULL)
 		error = add_var("HOME", path, environ); //si no tenemos acceso a las variables de entorno, establece la carpeta actual como home (pues es la unica de la que tiene certeza existe y es utilizable)
-	
-	if (!error && ft_getenv("OLDPWD", environ->envp) == NULL)
-		error = add_var("OLDPWD", "", environ); //al ser el principio de la ejecucion no hay una carpeta previa
-	else if(!error)
-		error = change_var("OLDPWD", "", environ);// si existe, solo la reinicia como cadena vacía
-
-	if (!error && ft_getenv("?", environ->envp) == NULL)
-		error = add_var("?", "0", environ);
-	else if (!error)
-		error = change_var("?", "0", environ);
-//fprintf(stderr, "error=%d/n", error);
+	if(!error)
+		error = add_or_change_var("OLDPWD", "", environ);
+	if(!error)
+		error = add_or_change_var("?", "0", environ);
 	return(error);
 }
 
@@ -215,14 +217,14 @@ e_errors create_envp(char **original, t_environ *environ)
 	int count;
 	int error;
 
-	//ft_bzero(environ, sizeof(t_environ));////?? rompe ctrl+d (si ha habido un comando antes)
-	environ->alloced = 0;
+	ft_bzero(environ, sizeof(t_environ));////?? rompe ctrl+d (si ha habido un comando antes)
+	/*environ->alloced = 0;
 	environ->envp = 0;
 	environ->local = 0;
 	environ->localloced = 0;
 	environ->locnext = 0;
 	environ->next = 0;
-	//
+	*/
 	if (original == NULL || *original == NULL)
 	{
 		environ->envp = ft_calloc(12, sizeof(char *));
@@ -233,13 +235,6 @@ e_errors create_envp(char **original, t_environ *environ)
 	else
 	{
 		count = count_to_null((void **)original);
-/*fprintf(stderr, "count:%d\n", count);
-fprintf(stderr, "original[0]%s\n", original[0]);
-fprintf(stderr, "original[1]%s\n", original[1]);
-fprintf(stderr, "original[2]%s\n", original[2]);
-fprintf(stderr, "original[3]%s\n", original[3]);
-fprintf(stderr, "original[4]%s\n", original[4]);
-fprintf(stderr, "original[5]%s\n", original[5]);*/
 		environ->envp = ft_calloc(count * 2, sizeof(char *));// alocamos el doble de memoria necesaria, para no tener que realocar todo cada vez que creemos una nueva variable
 		if (environ->envp == NULL)
 			return(errno);
@@ -247,6 +242,5 @@ fprintf(stderr, "original[5]%s\n", original[5]);*/
 		error = copy_prev_envp(original, environ);
 	}
 	error = init_envp(environ);
-//print_env(environ);
 	return (error);
 }

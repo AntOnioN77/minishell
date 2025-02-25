@@ -29,6 +29,14 @@
 #include "minishell.h"
 #include <sys/stat.h>
 
+
+void print_env(t_environ *environ)
+{
+	for (int i = 0; i < environ->next; i++)
+		fprintf(stderr,"%s\n", environ->envp[i]);
+}
+
+
 void test_fds(char *where)
 {
     char buffer[1024] = {0};  // Buffer para almacenar todo el output

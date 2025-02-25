@@ -81,3 +81,22 @@ static int	expand_task(t_task *node, char *envp[])
 	return(0);
 }
 */
+
+//verifica si es necesaria la expansion, si lo es, la realiza llamando a expandstr y libera la linea original
+e_errors expansor(char **line, char **envp)
+{
+	char	*oldline;
+
+	oldline = *line;
+	if (is_expansible(*line))
+	{
+		oldline = *line;
+		if (expandstr(line, envp))
+		{
+			free(oldline);
+			return(ERROR_MALLOC);
+		}
+		free(oldline);
+	}
+	return(ALL_OK);
+}
