@@ -198,7 +198,7 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 	}
 }
 
-int main(int argc, char **argv, char **envp)
+/*int main(int argc, char **argv, char **envp)
 {
 	t_tree	*tree;
 	t_environ environ;
@@ -216,4 +216,40 @@ int main(int argc, char **argv, char **envp)
 		shell_cycle(tree, &environ);
 	}
 	return (0);
+}
+*/
+
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <signal.h>
+
+//volatile sig_atomic_t g_ctrlc = 0;
+
+void handle_sigint_heredoc2(int signal)
+{
+    g_ctrlc = signal;
+    //rl_replace_line("", 0);  // Reemplaza la línea actual con una cadena vacía
+    rl_done = 1;             // Indica que la lectura ha terminado
+	//kill(getpid(), SIGTERM);
+	rl_redisplay();
+}
+
+int main(void)
+{
+    signal(SIGINT, handle_sigint_heredoc2);  // Asigna el manejador de la señal SIGINT
+
+    char *input;
+    while ((input = readline("> ")) != NULL)
+    {
+        if (g_ctrlc)
+        {
+            printf("\nInterrupción SIGINT detectada. Terminando heredoc.\n");
+            g_ctrlc = 0;
+            break;
+        }
+        // Procesa la entrada aquí...
+        free(input);
+    }
+
+    return 0;
 }

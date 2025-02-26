@@ -59,6 +59,10 @@ e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
 	seplen = ft_strlen(separator);
 	while(1)
 	{
+		//get_next_line(0, &line); //ni readline ni get_next_line retornan NULL cuando esperan entrada y pulsas ctrl+c
+			line = readline(""); //dejo readline por que su still reachable esta justificado por subject
+//fprintf(stderr, "get_next_line:%s\n", line);
+//fprintf(stderr, "get_next_line:%p\n", line);
 		if (g_ctrlc == SIGINT)
 		{
 		// fprintf(stdout, "%d\n", g_ctrlc);
@@ -66,10 +70,6 @@ e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
 			g_ctrlc = 0;
 			return (E_SIGINT);
 		}
-		//get_next_line(0, &line); //ni readline ni get_next_line retornan NULL cuando esperan entrada y pulsas ctrl+c
-			line = readline(""); //dejo readline por que su still reachable esta justificado por subject
-//fprintf(stderr, "get_next_line:%s\n", line);
-//fprintf(stderr, "get_next_line:%p\n", line);
 		if (!line)
 		{
 			close(fd);

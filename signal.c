@@ -19,15 +19,15 @@ void	handle_sigint(int signal)
 void	handle_sigint_heredoc(int signal)
 {
 	g_ctrlc = signal;
-	rl_replace_line("", 0);
+	//rl_replace_line("^C", 2);
 	rl_on_new_line();
 	rl_redisplay();
-	//rl_done = 1;
-	//close(STDOUT_FILENO);
+	rl_done = 1;
+	//close(STDIN_FILENO);
 }
 
 /**
- * Configura las señales para CTRL-C (SIGINT) y CTRL-\ (SIGQUIT)
+ * Configura las señales para CTRL+C (SIGINT) y CTRL+\ (SIGQUIT)
  */
 void	signal_conf(void)
 {
