@@ -180,13 +180,55 @@ static e_errors repipe_child(t_task *task, int in, int out, char **word_fail)
 	return (0);
 }
 
-e_errors create_child(t_task *task, char **envp, int in, int out)
+int is_builtin(char *cmd)
+{
+	if(!ft_strcmp(cmd, "echo") ||!ft_strcmp(cmd, "cd") ||!ft_strcmp(cmd, "pwd")
+		||!ft_strcmp(cmd, "export") ||!ft_strcmp(cmd, "unset") ||!ft_strcmp(cmd, "env")
+		||!ft_strcmp(cmd, "exit"))
+		return (1);
+	return (0);
+}
+
+e_errors builtins_exe(t_task *task, t_environ *environ)
+{
+	char *cmd;
+
+	(void)environ;//silenciar unused eviron
+
+	cmd = task->cmd;
+	if (!ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "exit") || !ft_strcmp(cmd, "export")
+	|| !ft_strcmp(cmd, "unset"))
+	{
+		return (FINISH);
+	}
+
+	if (!ft_strcmp(cmd, "echo"))
+	{
+		return (ft_echo(task));
+	}
+	if (!ft_strcmp(cmd, "pwd"))
+	{
+		//TO DO
+	}
+	if (!ft_strcmp(cmd, "env"))
+	{
+		//TO DO
+	}
+
+	return (FAIL_BUILTINS_EXE);
+}
+
+
+e_errors create_child(t_task *task, t_environ *environ , int in, int out)
 {
 	int pid;
 	char *pathcmd;
 	e_errors err;
 	char *word_fail;
+	char **envp;
 
+
+	envp = environ->envp;
 	word_fail = NULL;
 	err = 0;
 	pid = fork();
@@ -198,8 +240,9 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
 		err = repipe_child(task, in, out, &word_fail);
 		if(child_error_handler(err, word_fail))
 			return (1);
-		pathcmd = com_path(task->cmd, envp, &err);
-//fprintf(stderr, "200------err:%d\n", err);
+		if(is_builtin(task->cmd))
+			return(builtins_exe(task, environ));
+		pathcmd = com_path(task->cmd, envp, &err); 			//no Builtin
 		if (err)
 			return (child_error_handler(err, task->cmd));
 		execve(pathcmd, task->argv, envp);
@@ -213,7 +256,7 @@ e_errors create_child(t_task *task, char **envp, int in, int out)
 	return (err);
 }
 
-e_errors exec_pipe(t_pipe *pipe_node, char **envp, int in)
+e_errors exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
 {
     int pipefd[2];
     e_errors err;
@@ -222,24 +265,25 @@ e_errors exec_pipe(t_pipe *pipe_node, char **envp, int in)
 
     if (pipe_node->left)
 	{
-        err = executor((t_tree *)pipe_node->left, envp, in, pipefd[1]);
+        err = executor((t_tree *)pipe_node->left, environ, in, pipefd[1]);
         if(err != 0)
             return (err);
     }
     if (pipe_node->rigth)
 	{
-        err = executor(pipe_node->rigth, envp, pipefd[0], STDOUT_FILENO);
+        err = executor(pipe_node->rigth, environ, pipefd[0], STDOUT_FILENO);
         if(err != 0)
             return (err);
     }
     return (0);
 }
 
-e_errors executor(t_tree *node, char **envp, int in, int out)
+e_errors executor(t_tree *node, t_environ *environ , int in, int out)
 {
 	t_pipe *pipe_node;
 	t_task *task;
 	e_errors	err;
+
 
     if (!node)
         return (0);
@@ -247,14 +291,14 @@ e_errors executor(t_tree *node, char **envp, int in, int out)
     if (node->type == PIPE)
     {
         pipe_node = (t_pipe *)node;
-		err = exec_pipe(pipe_node, envp, in);
+		err = exec_pipe(pipe_node, environ, in);
 		if (err != 0)
 			return (err);
 	}
     else if (node->type == TASK)
     {
         task = (t_task *)node;
-		err = create_child(task, envp, in, out);
+		err = create_child(task, environ, in, out);
 //fprintf(stderr, "executor.c 247¬ variable error:%d\n", (int)err);
 		if (err != 0)
 			return (err);

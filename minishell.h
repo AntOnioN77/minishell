@@ -64,7 +64,9 @@ typedef enum e_errors
 	READLINE_FAIL,//lo he cambiado por retornar errno (14feb)
 	TMP_FILE_ERROR,
 	LINE_TOO_LONG,
-	child_error_handler_fail,   //SOL ODEBUG BORRAR!!!!!!!!!!!!!!!!!
+	child_error_handler_fail,   //SOLO ODEBUG BORRAR!!!!!!!!!!!!!!!!!
+	FAIL_BUILTINS_EXE,			//SOLO ODEBUG BORRAR!!!!!!!!!!!!!!!!!
+	CONTINUE,
 	FINISH
 } e_errors;
 
@@ -204,6 +206,7 @@ int	save_history(char *history);
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree);//, char **envp);
 e_errors expansor(char **line, char **envp);
+e_errors ft_echo(t_task *task);
 // ...
 //LOCATIONS: create_envp.c
 e_errors create_envp(char **original, t_environ *environ);

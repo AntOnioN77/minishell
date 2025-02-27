@@ -12,7 +12,8 @@
 # include <sys/wait.h>
 # include <sys/types.h>
 # include <errno.h>
-#include <fcntl.h>
+# include <fcntl.h>
+# include "minishell.h"
 
 //Crear estructura para almacenar las variables de ejecución
 
@@ -20,9 +21,9 @@ int	free_null_arr(char ***s);
 
 void	free_arr(char **s);
 
-e_errors create_child(t_task *task, char **envp, int in, int out);
+e_errors create_child(t_task *task, t_environ *environ , int in, int out);
 
-e_errors executor(t_tree *node, char **envp, int in, int out);
+e_errors executor(t_tree *node, t_environ *environ, int in, int out);
 
 void close_fds(int fd_since);
 

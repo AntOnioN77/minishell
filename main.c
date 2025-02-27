@@ -127,7 +127,7 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 	if(handlerr(non_pipable_builtin(tree), &tree, environ))
 		return;
 // print_tree(tree, 30);
-	if(0 == handlerr(executor(tree, environ->envp, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
+	if(0 == handlerr(executor(tree, environ, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
 	{
 			status = wait_all(tree);//, envp);
 			str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)

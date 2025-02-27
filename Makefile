@@ -8,7 +8,7 @@ SOURCES = main.c mooks.c parser/4_check_tree.c parser/2_build_tree/constructors.
 parser/1_expansor/expansor_utils.c parser/1_expansor/expansor.c parser/2_build_tree/get_redir.c\
 parser/2_build_tree/build_tree.c parser/2_build_tree/str_utils.c executor/executor.c\
 free.c executor/process.c builtins/non_pipable_builtin.c signal.c history.c\
-executor/apply_redirs.c GNL/get_next_line.c\
+executor/apply_redirs.c GNL/get_next_line.c builtins/builtins.c\
 parser/create_heredoc.c create_envp.c parser/3_touch_up_tree.c
 OBJECTS = $(SOURCES:.c=.o)
 HEADERS = libft/headers/libft.h minishell.h executor.h

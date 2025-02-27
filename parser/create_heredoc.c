@@ -51,47 +51,45 @@ char *get_tmp_name(e_errors *error)
 }
 
 
-e_errors heredoc_writer(char *separator, t_redir *redir)//char *separator)
+static e_errors write_heredoc_line(int fd, char *separator, size_t seplen)
+{
+	char *line;
+
+	line = readline("");
+	if (!line)
+		return (errno);
+	if (ft_strlen(line) == seplen && !ft_strncmp(line, separator, seplen))
+	{
+		free(line);
+		return (ALL_OK);
+	}
+	ft_putstr_fd(line, fd);
+	ft_putchar_fd('\n', fd);
+	free(line);
+	return (CONTINUE);
+}
+
+e_errors heredoc_writer(char *separator, t_redir *redir)
 {
 	int fd;
-	char *line;
 	size_t seplen;
-	e_errors error;
+	e_errors status;
 
-	error = 0;
 	fd = open(redir->tmp_file, O_WRONLY | O_TRUNC);
-
-	//pedir nueva linea mientras linea no sea == separator
-	///////////////ABSTRAER///////////////////////////////////////
+	if (fd < 0)
+		return (errno);
 	seplen = ft_strlen(separator);
-	while(1)
+	while (1)
 	{
-		//get_next_line(0, &line); //ni readline ni get_next_line retornan NULL cuando esperan entrada y pulsas ctrl+c
-			line = readline(""); //dejo readline por que su still reachable esta justificado por subject
-//fprintf(stderr, "get_next_line:%s\n", line);
-//fprintf(stderr, "get_next_line:%p\n", line);
-		if (!line)
+		status = write_heredoc_line(fd, separator, seplen);
+		if (status != CONTINUE)
 		{
 			close(fd);
-//fprintf(stderr, "66\n");				//ctrl+c ?????????
-			return(errno);
+			return (status);
 		}
-		if(ft_strlen(line) == seplen && !ft_strncmp(line, separator, seplen))
-		{
-			free(line);
-			break ;
-		}
-		else
-			ft_putstr_fd(line, fd);
-		ft_putchar_fd('\n', fd);
-		free(line);
-
 	}
-	/////////////////////////FIN ABSTRAER/////////////////////////
-	// redirigir STDIN a un fd que apunte al principio del archivo temporal
 	close(fd);
-	//error = file_redirector(STDIN_FILENO, redir->tmp_file, O_RDONLY);
-	return(error);
+	return (ALL_OK);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
