@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/24 13:37:35 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/27 17:04:38 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,9 +113,10 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 	if (aux == NULL)
 		return (1);
 	*str = *marker;
-	ft_strlcpy(*new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)) + 1);
 	if (!ft_strcmp(aux, ""))
-		**new_str='$';
+	**new_str='$';
+	else
+		ft_strlcpy(*new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)) + 1);
 	free(aux);
 	*new_str = *new_str + ft_strlen(*new_str);
 	return (0);
