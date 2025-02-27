@@ -37,6 +37,7 @@ int non_pipable_builtin(t_tree *tree)//, char **envp)
 			else if(chdir(((t_task *)tree)->argv[1]))
 				perror("minishell: cd:");
 			//pendiente: gestionar error
+			//gestionar $?
 			//pendiente: actualizar variable PWD y OLDPWD(oculta)
 			return (ALL_OK);
 		}

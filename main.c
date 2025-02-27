@@ -2,6 +2,9 @@
 #include "minishell.h"
 #include "executor.h"
 
+int g_ctrlc = 0;
+extern int rl_done; //Esto no serían dos globales???
+
 
 //Esta funcion es llamada cuando encontramos un pipe con el nodo a su derecha vacío por ejemplo "ls|(vacio)".
 // antes de llamar a esta funcion hay que liberar la t_task vacía.
@@ -88,7 +91,7 @@ void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo writ
 
 e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 {
-	if (error == 0)
+	if (error == ALL_OK)
 		return (0);
 	if (error == FINISH)
 		error = 0;
@@ -138,6 +141,7 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 	}
 }
 
+
 int main(int argc, char **argv, char **envp)
 {
 	t_tree	*tree;
@@ -160,3 +164,24 @@ int main(int argc, char **argv, char **envp)
 	return (0);
 }
 
+/*
+int main(void)
+{
+    signal(SIGINT, handle_sigint_heredoc2);  // Asigna el manejador de la señal SIGINT
+
+    char *input;
+    while ((input = readline("> ")) != NULL)
+    {
+        if (g_ctrlc)
+        {
+            printf("\nInterrupción SIGINT detectada. Terminando heredoc.\n");
+            g_ctrlc = 0;
+            break;
+        }
+        // Procesa la entrada aquí...
+        free(input);
+    }
+
+    return 0;
+}
+*/

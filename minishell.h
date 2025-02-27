@@ -21,6 +21,10 @@
 # define HISTORY_FILE "./.history"
 # define DEFAULT_HISTSIZE 500
 
+//VARIABLE GLOBAL
+//static int	g_ctrlc;
+extern int	g_ctrlc;
+
 /*****************************************************************************/
 /* 								ENUMS										 */
 /*****************************************************************************/
@@ -213,6 +217,10 @@ e_errors create_envp(char **original, t_environ *environ);
 e_errors change_var(char *key, char *newvalue, t_environ *environ);
 void test_fds(char *where);
 void print_env(t_environ *environ);
-
+//LOCATION: signal.c
+void	handle_sigint(int signal);
+void	handle_sigint_heredoc(int signal);
+void	signal_conf(void);
+void handle_sigint_heredoc2(int signal);
 
 #endif
