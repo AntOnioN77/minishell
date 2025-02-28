@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/27 17:04:38 by antofern         ###   ########.fr       */
+/*   Updated: 2025/02/27 17:26:28 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,15 +107,15 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 	(*marker)++;
 	*str = *marker;
 	while (**marker && !ft_strchr(WHITESPACES, **marker)
-	&& **marker != '"' && **marker != 39 && **marker != '$')
+	&& **marker != '"' && **marker != 39 && **marker != '$'&& !ft_strchr(DELIMITERS, **marker))
 		(*marker)++;
 	aux = ft_substr(*str, 0, *marker - *str);
 	if (aux == NULL)
 		return (1);
 	*str = *marker;
 	if (!ft_strcmp(aux, ""))
-	**new_str='$';
-	else
+		**new_str='$';
+	else if (ft_getenv(aux, envp))
 		ft_strlcpy(*new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)) + 1);
 	free(aux);
 	*new_str = *new_str + ft_strlen(*new_str);
