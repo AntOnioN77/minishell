@@ -53,20 +53,51 @@ char *get_tmp_name(e_errors *error)
 
 static e_errors write_heredoc_line(int fd, char *separator, size_t seplen)
 {
-	char *line;
+	char	*line;
 
+	signal(SIGINT, handle_sigint_heredoc);
 	line = readline("");
 	if (!line)
 		return (errno);
 	if (ft_strlen(line) == seplen && !ft_strncmp(line, separator, seplen))
 	{
 		free(line);
-		return (ALL_OK);
+		exit (ALL_OK);
 	}
 	ft_putstr_fd(line, fd);
 	ft_putchar_fd('\n', fd);
 	free(line);
-	return (CONTINUE);
+	exit (CONTINUE);
+}
+
+static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
+{
+	//char	*str_status;
+	pid_t	pid;
+	int		status;
+
+	//status = 0;
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("fork");
+		return (ERROR); //Habrá que devolver el error correspondiente al fork
+	}
+	if (pid == 0)
+		status = write_heredoc_line(fd, separator, seplen);
+	else
+	{
+		if (waitpid(pid, &status, 0) == -1)
+		{
+			perror("waitpid");
+			return (ERROR); // igual que el fork, pero en waitpid
+		}
+		status = ((status) & 0xff00) >> 8;
+		//return (((status) & 0xff00) >> 8);
+		// str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
+		// change_var("?", str_status , environ);
+	}
+	return (status);
 }
 
 e_errors heredoc_writer(char *separator, t_redir *redir)
@@ -81,7 +112,7 @@ e_errors heredoc_writer(char *separator, t_redir *redir)
 	seplen = ft_strlen(separator);
 	while (1)
 	{
-		status = write_heredoc_line(fd, separator, seplen);
+		status = write_heredoc_fork(fd, separator, seplen);
 		if (status != CONTINUE)
 		{
 			close(fd);
@@ -89,6 +120,8 @@ e_errors heredoc_writer(char *separator, t_redir *redir)
 		}
 	}
 	close(fd);
+	if (status == E_SIGINT)
+		return (E_SIGINT);
 	return (ALL_OK);
 }
 

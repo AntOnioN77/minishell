@@ -196,10 +196,12 @@ void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
 int wait_all(t_tree *node);
 //LOCATION: parser/check_tree.c
 int	 check_tree(t_tree *tree, char **envp);
-//LOCATION: tmp_file_name.c
+//LOCATION: create_heredoc.c
 e_errors create_heredoc(t_redir *redir);
 char *get_tmp_name(e_errors *error);
 e_errors heredoc_writer(char *separator, t_redir *redir);
+/*static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen);
+static e_errors write_heredoc_line(int fd, char *separator, size_t seplen);*/
 //LOCATION: signal.c
 void handle_sigint(int signal);
 void	signal_conf(void);
@@ -221,6 +223,6 @@ void print_env(t_environ *environ);
 void	handle_sigint(int signal);
 void	handle_sigint_heredoc(int signal);
 void	signal_conf(void);
-void handle_sigint_heredoc2(int signal);
+//void handle_sigint_heredoc2(int signal);
 
 #endif

@@ -163,25 +163,3 @@ int main(int argc, char **argv, char **envp)
 	}
 	return (0);
 }
-
-/*
-int main(void)
-{
-    signal(SIGINT, handle_sigint_heredoc2);  // Asigna el manejador de la señal SIGINT
-
-    char *input;
-    while ((input = readline("> ")) != NULL)
-    {
-        if (g_ctrlc)
-        {
-            printf("\nInterrupción SIGINT detectada. Terminando heredoc.\n");
-            g_ctrlc = 0;
-            break;
-        }
-        // Procesa la entrada aquí...
-        free(input);
-    }
-
-    return 0;
-}
-*/
