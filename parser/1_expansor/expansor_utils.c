@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/01 09:52:39 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/01 11:29:01 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,63 @@ int	count_expansions(t_task *node)
 	return (count);
 }
 
+char *getkey(char *var)
+{
+	size_t len;
+	char *key;
 
-static int	calculate_variable_length(char **str, char *envp[])
+	len = ft_strchr(var, '=') - var;
+	key = ft_substr(var, 0, len);
+	return(key);
+}
+
+
+char *foundvar(char *str, char *envp[])
+{
+	char *validvar;
+	char *namevar;
+	int i;
+	size_t len;
+
+	i = 0;
+	validvar = ft_strdup("");
+	if (strchr(WHITESPACES,*str) || strchr(DELIMITERS,*str))
+		return(ft_strdup("$"));
+	while(envp[i])
+	{
+		namevar = getkey(envp[i]);
+		if (!namevar)
+			return(NULL);
+		len = ft_strlen(namevar);
+		if(!ft_strncmp(namevar, str, len) && len > ft_strlen(validvar))
+		{
+			free(validvar);
+			validvar = namevar;
+		}
+		else
+			free(namevar);
+		i++;
+	}
+	return(validvar);
+	
+}
+
+
+// Si el principio de str coincide con el nombre de alguna variable, retorna strlen(nombre_de variable), en otro caso 0.
+// Si varias variables cumplen con este criterio, elegirá la de nombre mas largo.
+//ejemplo $PWDdsfsdfsd retorna "3" por PWD.
+size_t var_name_len(char *str, char **envp)
+{
+	char *namevar;
+	size_t len;
+
+	namevar = foundvar(str, envp);
+	len = ft_strlen(namevar);
+	free(namevar);
+	return(len);
+}
+
+static int	var_expansion_len(char **str, char *envp[])
 {
 	int j = 0;
 	char *aux;
@@ -86,7 +141,7 @@ int	calculate_expansion_length(char *str, char *envp[])
 		}
 		else if(*str == '$')
 		{
-			ret = calculate_variable_length(&str, envp);//consume en str $NOMBRE_DE_VARIABLE
+			ret = var_expansion_len(&str, envp);//consume en str $NOMBRE_DE_VARIABLE
 			if (ret < 0)
 				return (-1);
 			len += ret;
