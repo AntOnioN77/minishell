@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/01 11:29:01 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/01 13:39:06 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ char *foundvar(char *str, char *envp[])
 	size_t len;
 
 	i = 0;
-	validvar = ft_strdup("");
 	if (strchr(WHITESPACES,*str) || strchr(DELIMITERS,*str))
 		return(ft_strdup("$"));
+	validvar = ft_strdup("");
 	while(envp[i])
 	{
 		namevar = getkey(envp[i]);
@@ -102,25 +102,22 @@ size_t var_name_len(char *str, char **envp)
 	return(len);
 }
 
+////consume en str $NOMBRE_DE_VARIABLE y retorna el tamaño del valor apuntado por esa variable
+//si ocurrio un error retorna -1
 static int	var_expansion_len(char **str, char *envp[])
 {
-	int j = 0;
-	char *aux;
 	int len;
+	char *keyvar;
+	char *valuevar;
 
-	(*str)++;
-	while ((*str)[j] && !ft_strchr(WHITESPACES, (*str)[j])
-	&& (*str)[j] != '"' && (*str)[j] != 39 && (*str)[j] != '$') //echo $VAR$VAR es valido.
-		j++;
-	aux = ft_substr(*str, 0, j);
-	if (aux == NULL)
-		return (-1);
-	*str += j;
-	len = ft_strlen(ft_getenv(aux, envp));
-	if (!ft_strcmp(aux,""))
-		len++;
-	free(aux);
-	return len;
+	*str = *str + 1; //avanzar para saltarse el '$'
+	keyvar = foundvar(*str, envp);
+	*str = (*str) + ft_strlen(keyvar);
+	valuevar = ft_getenv(keyvar, envp);
+	free(keyvar);
+	len = ft_strlen(valuevar);
+
+	return (len);
 }
 
 //NO SEPARAR DE EXPANDSTR()
@@ -155,23 +152,27 @@ int	calculate_expansion_length(char *str, char *envp[])
 
 int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 {
-	char *aux;
+	char *key;
+	char *value;
 
 	ft_strlcpy(*new_str, *str, *marker - *str + 1);
 	*new_str = *new_str + (*marker - *str);
 	(*marker)++;
+	key = foundvar(*marker, envp);
+	if (ft_strcmp("$", key))
+	{
+		*marker = *marker + ft_strlen(key);
+	}
+		if (!ft_strcmp("", key))
+	{
+		**new_str = '$';
+		(*new_str)++;
+	}
+
+	value = ft_getenv(key, envp);
+	free(key);
 	*str = *marker;
-	while (**marker && !ft_strchr(WHITESPACES, **marker)
-	&& **marker != '"' && **marker != 39 && **marker != '$')
-		(*marker)++;
-	aux = ft_substr(*str, 0, *marker - *str);
-	if (aux == NULL)
-		return (1);
-	*str = *marker;
-	ft_strlcpy(*new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)) + 1);
-	if (!ft_strcmp(aux, ""))
-		**new_str='$';
-	free(aux);
+	ft_strlcpy(*new_str, value, ft_strlen(value) + 1);
 	*new_str = *new_str + ft_strlen(*new_str);
 	return (0);
 }
