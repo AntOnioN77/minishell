@@ -1,6 +1,49 @@
 #include "../../minishell.h"
 #include "../../libft/headers/libft.h"
 
+//busca en los primeros caracteres de str una coincidencia con el nombre de una variable de entorno, 
+// si el primer caracter es un separador o un espacio retorna '$', si no encuentra coincidencia retorna una cadena vacia
+
+char *getkey(char *var)
+{
+	size_t len;
+	char *key;
+
+	len = ft_strchr(var, '=') - var;
+	key = ft_substr(var, 0, len);
+	return(key);
+}
+
+char *foundvar(char *str, char *envp[])
+{
+	char *validvar;
+	char *namevar;
+	int i;
+	size_t len;
+
+	i = 0;
+	validvar = ft_strdup("");
+	if (strchr(WHITESPACES,*str) || strchr(DELIMITERS,*str))
+		return(ft_strdup("$"));
+	while(envp[i])
+	{
+		namevar = getkey(envp[i]);
+		if (!namevar)
+			return(NULL);
+		len = ft_strlen(namevar);
+		if(!ft_strncmp(namevar, str, len) && len > ft_strlen(validvar))
+		{
+			free(validvar);
+			validvar = namevar;
+		}
+		else
+			free(namevar);
+		i++;
+	}
+	return(validvar);
+	
+}
+
 //consume marker hasta el siguiente '$', y retorna una copia de la cadena consumida.
 // Si marker apuntaba a '$' consumira los caracteres a continuacion hasta encontrar
 // un caracter separador (<,>,|, ,) y retornará una copia de la cadena, si la variable existe.
@@ -9,8 +52,29 @@
 char *get_piece(char **marker, char *envp[])
 {
 	char *piece;
+	char *varname;
+	size_t len;
 
-	piece = ft_substr(*marker, 0, );
+	if(**marker == '$')
+	{
+		(*marker)++;
+		varname = foundvar(*marker, envp);
+		if (!varname)
+		 return(NULL);
+		if (*varname == '\0' || *varname == '$' )
+			return(varname); //simplemente por que necesitamos una cadena vacia para expresar que no hay nada que concatenar cuando no se encontro un nombre valido
+		return(ft_getenv(varname, envp));
+	}
+	else
+	{
+		if(ft_strchr(*marker, '$'))
+			len = ft_strchr(*marker, '$') - *marker ;
+		else
+			len =ft_strlen(*marker);
+		piece = ft_substr(*marker, 0, len);
+	}
+	*marker = (*marker) +len;
+	return(piece);
 
 }
 
@@ -25,7 +89,7 @@ e_errors	expandstr(char **origin, char *envp[])
 	newstr = get_piece(&marker, envp);
 	if(!newstr)
 		return (ERROR_MALLOC);
-	while(strchr(marker, '$'))
+	while(ft_strchr(marker, '$'))
 	{
 		piece = get_piece(&marker, envp);
 		if(!piece)
@@ -38,7 +102,25 @@ e_errors	expandstr(char **origin, char *envp[])
 		if(!newstr)
 			return (ERROR_MALLOC);
 	}
-	free(origin);
+	free(*origin);
 	*origin = newstr;
 	return (ALL_OK);
+}
+
+e_errors expansor(char **line, char **envp)
+{
+	char	*oldline;
+
+	oldline = *line;
+	if (is_expansible(*line))
+	{
+		oldline = *line;
+		if (expandstr(line, envp))
+		{
+			free(oldline);
+			return(ERROR_MALLOC);
+		}
+		free(oldline);
+	}
+	return(ALL_OK);
 }
