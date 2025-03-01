@@ -107,13 +107,13 @@ typedef struct s_redir
 	char		*tmp_file;//Es creado en caso de insymbol << por la funcion heredoc_handler requiere unlink, y despues free
 	e_errors	error; //Error causado durante la creación de tmp_file
 }	t_redir;
-/*
+
 typedef struct s_garbage {
 	void	**pointers;
 	int		size;
 	int		current;
 }	t_garbage;
-*/
+
 typedef struct s_task
 {
 	e_nodes		type;
@@ -122,7 +122,7 @@ typedef struct s_task
 	t_redir 	redir;
 	char		*cmd;
 	char		**argv;
-	//t_garbage	garb;
+	t_garbage	garb;
 	int   pid; 
 }	t_task;
 
@@ -154,6 +154,7 @@ typedef struct s_environ {
 	int localloced;
 }	t_environ;
 
+
 /*****************************************************************************/
 /* 								PROTOTYPES									 */
 /*****************************************************************************/
@@ -167,8 +168,9 @@ void print_error(char *cmd, char *error_msg);
 t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);
 //Location parser/expansor.c
-e_errors	expandstr(char **origin, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
+e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
 e_errors	touch_up_tree(t_tree *node, char *envp[]);
+e_errors	expand_task(t_task *node, char *envp[]);
 //Location: parser/expansor_utils.c
 int	is_expansible(char *str);
 int	count_expansions(t_task *node);

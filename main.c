@@ -24,8 +24,8 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return(continue_cmd_tree(right, envp));
 	}
 	add_history(line);
-	if(expansor(&line, envp) != ALL_OK)
-		return(ERROR_MALLOC);
+//	if(expansor(&line, envp) != ALL_OK)
+//		return(ERROR_MALLOC);
 	*right = build_tree(line);
 	if (*right == NULL)
 	{
@@ -52,8 +52,8 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		if (*line)
 		{
 			add_history(line);
-			if(expansor(&line, envp) != ALL_OK)
-				return(ERROR_MALLOC);
+//			if(expansor(&line, envp) != ALL_OK)
+//				return(ERROR_MALLOC);
 		}
 		*tree = build_tree(line);
 		if (*tree == NULL)

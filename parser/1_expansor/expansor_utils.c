@@ -6,11 +6,11 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/02/27 17:26:28 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/01 09:52:39 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "minishell.h"
 
 int	is_expansible(char *str)
 {
@@ -26,7 +26,7 @@ int	is_expansible(char *str)
 	}
 	return (0);
 }
-/*
+
 int	count_expansions(t_task *node)
 {
 	int	count;
@@ -45,7 +45,7 @@ int	count_expansions(t_task *node)
 	}
 	return (count);
 }
-*/
+
 
 static int	calculate_variable_length(char **str, char *envp[])
 {
@@ -107,16 +107,15 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 	(*marker)++;
 	*str = *marker;
 	while (**marker && !ft_strchr(WHITESPACES, **marker)
-	&& **marker != '"' && **marker != 39 && **marker != '$'&& !ft_strchr(DELIMITERS, **marker))
+	&& **marker != '"' && **marker != 39 && **marker != '$')
 		(*marker)++;
 	aux = ft_substr(*str, 0, *marker - *str);
 	if (aux == NULL)
 		return (1);
 	*str = *marker;
+	ft_strlcpy(*new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)) + 1);
 	if (!ft_strcmp(aux, ""))
 		**new_str='$';
-	else if (ft_getenv(aux, envp))
-		ft_strlcpy(*new_str, ft_getenv(aux, envp), ft_strlen(ft_getenv(aux, envp)) + 1);
 	free(aux);
 	*new_str = *new_str + ft_strlen(*new_str);
 	return (0);

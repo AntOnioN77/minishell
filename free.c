@@ -1,6 +1,23 @@
 #include <stdlib.h>
 #include "minishell.h"
 
+
+static void cleanup_garbage(t_garbage *garbage)
+{
+	int i;
+	
+	if (garbage == NULL)
+		return ;
+	i = 0;
+    while (i < garbage->current)
+    {
+        free(garbage->pointers[i]);
+		i++;
+    }
+    free(garbage->pointers);
+	
+}
+
 void free_task(t_tree *node)
 {
 	t_task *task_node;
@@ -11,7 +28,7 @@ void free_task(t_tree *node)
 		unlink(task_node->redir.tmp_file);
 		free(task_node->redir.tmp_file);
 	}
-	//cleanup_garbage(&(task_node->garb));
+	cleanup_garbage(&(task_node->garb));
 	if (task_node->argv)
 		free(task_node->argv);
 	free(task_node);
