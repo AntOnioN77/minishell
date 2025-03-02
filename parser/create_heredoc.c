@@ -111,8 +111,8 @@ e_errors heredoc_writer(char *separator, t_redir *redir)
 	if (fd < 0)
 		return (errno);
 	seplen = ft_strlen(separator);
-	status = CONTINUE;
-	while (status == CONTINUE)
+	status = CONTINUE; //he cambiado la condición del bucle para que no sea infinito evitando
+	while (status == CONTINUE) //problemas y aunando el cierre, el desligado y el return
 		status = write_heredoc_fork(fd, separator, seplen);
 	if (close(fd) < 0)
 		return (errno); //ver qué error devolver
