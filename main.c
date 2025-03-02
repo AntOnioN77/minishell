@@ -106,7 +106,6 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		free_tree(*tree);
 		*tree = NULL;
 	}
-fprintf(stderr, "109-------error%d", error);
 	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG || error == E_SIGINT)
 	{
 		if(error == SYNTAX_ERROR)
