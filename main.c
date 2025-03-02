@@ -12,7 +12,8 @@ extern int rl_done; //Esto no serían dos globales???
 //Solicita nueva entrada de usuario, y despliega un nuevo arbol, partiendo del nodo vacío, continuacion del arbol original. 
 e_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
-	char	*line;
+	char		*line;
+	e_errors	error;
 
 	//GESTIONAR SEÑAL AQUI, si ctrl+C es pulsado, dberiamos liberar el arbol y volver a pedir entrada de usuario "mini$hell>"
 	line = readline("> ");
@@ -35,8 +36,9 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return (ERROR_MALLOC);
 	}
 	(*right)->line_extra = line;
-	if(touch_up_tree(*right, envp))
-		perror("64->expandtree:");//esta gestion de error es muy mejorable
+	error = touch_up_tree(*right, envp);//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if (error)
+		return(error);
 	return (check_tree(*right, envp)); // gestionar retorno
 }
 
@@ -45,6 +47,7 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
 		char 	*line;
+		e_errors error;
 
 		line = readline("mini$hell> ");
 		if(!line)
@@ -63,8 +66,9 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 			return (ERROR_MALLOC);
 		}
 		(*tree)->line = line;
-		if(touch_up_tree(*tree, envp))
-			perror("92->expandtree:");//esta gestion de error es muy mejorable
+		error = touch_up_tree(*tree, envp);
+		if (error)
+			return(error);
 		return (check_tree(*tree, envp)); // gestionar retorno
 }
 
@@ -102,7 +106,8 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		free_tree(*tree);
 		*tree = NULL;
 	}
-	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG)
+fprintf(stderr, "109-------error%d", error);
+	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG || error == E_SIGINT)
 	{
 		if(error == SYNTAX_ERROR)
 			change_var("?", "2", environ);
