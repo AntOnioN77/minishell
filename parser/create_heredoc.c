@@ -56,9 +56,12 @@ static e_errors write_heredoc_line(int fd, char *separator, size_t seplen)
 	char	*line;
 
 	signal(SIGINT, handle_sigint_heredoc);
-	line = readline("");
+	line = readline("> ");
 	if (!line)
-		return (errno);
+	{
+		ft_putstr_fd("minishell: warning: here-document delimited by EOF\n", 1);
+		exit (errno);
+	}
 	if (ft_strlen(line) == seplen && !ft_strncmp(line, separator, seplen))
 	{
 		free(line);
@@ -72,11 +75,9 @@ static e_errors write_heredoc_line(int fd, char *separator, size_t seplen)
 
 static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
 {
-	//char	*str_status;
 	pid_t	pid;
 	int		status;
 
-	//status = 0;
 	pid = fork();
 	if (pid < 0)
 	{
@@ -93,9 +94,6 @@ static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
 			return (ERROR); // igual que el fork, pero en waitpid
 		}
 		status = ((status) & 0xff00) >> 8;
-		//return (((status) & 0xff00) >> 8);
-		// str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
-		// change_var("?", str_status , environ);
 	}
 	return (status);
 }

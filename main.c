@@ -3,8 +3,6 @@
 #include "executor.h"
 
 int g_ctrlc = 0;
-extern int rl_done; //Esto no serían dos globales???
-
 
 //Esta funcion es llamada cuando encontramos un pipe con el nodo a su derecha vacío por ejemplo "ls|(vacio)".
 // antes de llamar a esta funcion hay que liberar la t_task vacía.
@@ -12,7 +10,8 @@ extern int rl_done; //Esto no serían dos globales???
 //Solicita nueva entrada de usuario, y despliega un nuevo arbol, partiendo del nodo vacío, continuacion del arbol original. 
 e_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
-	char	*line;
+	char		*line;
+	e_errors	error;
 
 	//GESTIONAR SEÑAL AQUI, si ctrl+C es pulsado, dberiamos liberar el arbol y volver a pedir entrada de usuario "mini$hell>"
 	line = readline("> ");
@@ -35,8 +34,9 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return (ERROR_MALLOC);
 	}
 	(*right)->line_extra = line;
-	if(touch_up_tree(*right, envp))
-		perror("64->expandtree:");//esta gestion de error es muy mejorable
+	error = touch_up_tree(*right, envp);
+	if (error)
+		return(error);
 	return (check_tree(*right, envp)); // gestionar retorno
 }
 
@@ -44,28 +44,30 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 
 e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
-		char 	*line;
+	char	 	*line;
+	e_errors	error;
 
-		line = readline("mini$hell> ");
-		if(!line)
-			return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
-		if (*line)
-		{
-			add_history(line);
-			if(expansor(&line, envp) != ALL_OK)
-				return(ERROR_MALLOC);
-		}
-		*tree = build_tree(line);
-		if (*tree == NULL)
-		{
-			perror("build_tree:");
-			rl_clear_history();
-			return (ERROR_MALLOC);
-		}
-		(*tree)->line = line;
-		if(touch_up_tree(*tree, envp))
-			perror("92->expandtree:");//esta gestion de error es muy mejorable
-		return (check_tree(*tree, envp)); // gestionar retorno
+	line = readline("mini$hell> ");
+	if(!line)
+		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
+	if (*line)
+	{
+		add_history(line);
+		if(expansor(&line, envp) != ALL_OK)
+			return(ERROR_MALLOC);
+	}
+	*tree = build_tree(line);
+	if (*tree == NULL)
+	{
+		perror("build_tree:");
+		rl_clear_history();
+		return (ERROR_MALLOC);
+	}
+	(*tree)->line = line;
+	error = touch_up_tree(*tree, envp);
+	if (error)
+		return(error);
+	return (check_tree(*tree, envp)); // gestionar retorno
 }
 
 void print_error(char *cmd, char *error_msg) //USADA EN IMPRIMIR ERRORES DE PROCESO HIJO
@@ -102,7 +104,8 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		free_tree(*tree);
 		*tree = NULL;
 	}
-	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG)
+	if (error == TASK_IS_VOID || error == SYNTAX_ERROR 
+		|| error == LINE_TOO_LONG || error == E_SIGINT)
 	{
 		if(error == SYNTAX_ERROR)
 			change_var("?", "2", environ);
