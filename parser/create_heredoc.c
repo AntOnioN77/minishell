@@ -97,7 +97,10 @@ static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
 	}
 	return (status);
 }
-
+// Se ocupa de abrir, cerrar y desligar el archivo temporal que utiliza el 
+// heredoc cuando es necesario
+// El bucle permite la ejecución de la función write_heredoc_fork mientras
+// devuelva el estado CONTINUE (162)
 e_errors heredoc_writer(char *separator, t_redir *redir)
 {
 	int fd;
@@ -108,19 +111,14 @@ e_errors heredoc_writer(char *separator, t_redir *redir)
 	if (fd < 0)
 		return (errno);
 	seplen = ft_strlen(separator);
-	while (1)
-	{
+	status = CONTINUE;
+	while (status == CONTINUE)
 		status = write_heredoc_fork(fd, separator, seplen);
-		if (status != CONTINUE)
-		{
-			close(fd);
-			return (status);
-		}
-	}
-	close(fd);
-	if (status == E_SIGINT)
-		return (E_SIGINT);
-	return (ALL_OK);
+	if (close(fd) < 0)
+		return (errno); //ver qué error devolver
+	if (unlink(redir->tmp_file) < 0)
+		return (errno); //ver qué error devolver
+	return (status);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
