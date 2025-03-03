@@ -237,6 +237,7 @@ e_errors create_child(t_task *task, t_environ *environ , int in, int out)
 	task->pid = pid;
 	if (pid == 0)
 	{
+//printf("Proceso hijo: PID=%d, PPID=%d\n", getpid(), getppid());
 		err = repipe_child(task, in, out, &word_fail);
 		if(child_error_handler(err, word_fail))
 			return (1);

@@ -83,7 +83,7 @@ void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo writ
 	if(error == SYNTAX_ERROR)
 		ft_putstr_fd("syntax error", 2);
 	else if(READLINE_FAIL) //Solo deberia llegar aqui por un ctrl+d
-	ft_putstr_fd("exit", 2);
+	ft_putstr_fd("exit", 2); //ARREGLAR!!
 	else
 		ft_putnbr_fd(error, 2);
 	ft_putchar_fd('\n', 2);//temporal, hacer un solo write
@@ -95,7 +95,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		return (0);
 	if (error == FINISH)
 		error = 0;
-	else if(error != TASK_IS_VOID)
+	else if(error != TASK_IS_VOID && error != CONTINUE)
 			ft_perror(error);
 	if ( tree && *tree)
 	{

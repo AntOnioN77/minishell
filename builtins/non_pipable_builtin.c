@@ -40,19 +40,20 @@ void export_error(char* identifier, t_environ *environ)
 	char *atomic;
 	char *aux;
 
-	aux = ft_strjoin("mini$hell: export: `", identifier);
+	aux = ft_strjoin("mini$hell: export: '", identifier);
 	atomic = ft_strjoin(aux, "': not a valid identifier\n");
 	free(aux);
 	ft_putstr_fd(atomic, 2);
 	free(atomic);
-	change_var("$", "1", environ);
+	change_var("?", "1", environ);
 }
 
 //retorna 1 si key es valido (el primer caracter es alpafabetico, contiene solo caracteres alphanumericos y no es una cadena vacía)
 int validate_key(char *key)
 {
 	int i;
-	if(!ft_strcmp(key, ""))
+	if(!ft_strcmp(key, "") || !ft_strcmp(key,"PWD") || !ft_strcmp(key,"SHLVL")
+		|| !ft_strcmp(key,"SHELL")|| !ft_strcmp(key,"HOME")|| !ft_strcmp(key,"OLDPWD"))
 		return(0);
 	if(!ft_isalpha(key[0]))
 			return(0);
@@ -64,6 +65,38 @@ int validate_key(char *key)
 		i++;
 	}
 	return (1);
+}
+
+void ft_unset_one(char *key, t_environ *environ)
+{
+	int index;
+	int i;
+
+	index = search_var(environ->envp, key);
+	if (index == -1)
+		return;
+	free(environ->envp[index]);
+	i = 1;
+	while(environ->envp[index + i])
+	{
+		environ->envp[index + i - 1] =  environ->envp[index + i];
+		i++;
+	}
+	environ->envp[index + i -1] = NULL;
+	environ->next = environ->next - 1;
+}
+void ft_unset(char **argv, t_environ *environ)
+{
+	int i;
+
+	if (!argv || !*argv)
+		return;
+	i = 1; 	
+	while(argv[i])
+	{
+		ft_unset_one(argv[i], environ);
+		i++;
+	}
 }
 
 //export no debe cambiar variables como $? $PWD o $OLDPWD
@@ -108,30 +141,30 @@ int non_pipable_builtin(t_tree *tree, t_environ *environ)
 		//CD NO ESTA TESTEADO, abstraer funcion cd
 		if(!ft_strcmp(task->cmd, "cd"))
 		{	
-			if(countargs((t_task *)tree) != 2)
-				ft_putstr_fd("minishell: cd: too many arguments", 2);
-			else if(chdir(((t_task *)tree)->argv[1]))
+			if(countargs(task) != 2)
+			{
+				ft_putstr_fd("minishell: cd: too many arguments\n", 2);
+				change_var("?", "1", environ);
+			}
+			else if(chdir(task->argv[1]))
+			{
 				perror("minishell: cd:");
+				change_var("?", "1", environ);
+			}
 			//pendiente: gestionar error
-			//gestionar $?
 			//pendiente: actualizar variable PWD y OLDPWD(oculta)
+			
 			return (CONTINUE);
 		}
-		else if(!ft_strcmp(((t_task *)tree)->cmd, "exit"))
-		{
-			//free_tree(tree);
+		else if(!ft_strcmp(task->cmd, "exit"))
 			return(FINISH);
-		}
-		else if(!ft_strcmp(((t_task *)tree)->cmd, "export"))
+		else if(!ft_strcmp(task->cmd, "export"))
 		{
 			ft_export(task, environ);
 			return (CONTINUE);
 		}
-		else if(!ft_strcmp(((t_task *)tree)->cmd, "unset"))
-		{
-			//TODO
-			printf("unset no esta implementado\n");
-		}
+		else if(!ft_strcmp(task->cmd, "unset"))
+			ft_unset(task->argv, environ);
 	}
 	return (ALL_OK);
 }
