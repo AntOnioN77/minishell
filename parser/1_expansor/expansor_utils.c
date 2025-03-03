@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/01 13:39:06 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/02 20:09:02 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,10 +112,11 @@ static int	var_expansion_len(char **str, char *envp[])
 
 	*str = *str + 1; //avanzar para saltarse el '$'
 	keyvar = foundvar(*str, envp);
-	*str = (*str) + ft_strlen(keyvar);
+	if(ft_strcmp(keyvar, "$"))
+		*str = (*str) + ft_strlen(keyvar);
 	valuevar = ft_getenv(keyvar, envp);
 	free(keyvar);
-	len = ft_strlen(valuevar);
+	len = ft_strlen(valuevar) +1;
 
 	return (len);
 }
@@ -163,7 +164,7 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 	{
 		*marker = *marker + ft_strlen(key);
 	}
-		if (!ft_strcmp("", key))
+		if (!ft_strcmp("", key) || !ft_strcmp("$", key))
 	{
 		**new_str = '$';
 		(*new_str)++;

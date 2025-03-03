@@ -71,6 +71,7 @@ typedef enum e_errors
 	child_error_handler_fail,   //SOLO ODEBUG BORRAR!!!!!!!!!!!!!!!!!
 	FAIL_BUILTINS_EXE,			//SOLO ODEBUG BORRAR!!!!!!!!!!!!!!!!!
 	CONTINUE,
+	END_CYCLE,
 	FINISH
 } e_errors;
 
@@ -193,7 +194,6 @@ void	skipwhitesp(char **segment, char *end);
 int skip_quotes(char **strpnt, char *end);
 int strnchr_outquot(char **str, char *end, char c);
 //Location: mooks.c
-char *ft_getenv(const char *name, char *envp[]);
 void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
 int wait_all(t_tree *node);
 //LOCATION: parser/check_tree.c
@@ -210,9 +210,15 @@ void	load_history(void);
 int	save_history(char *history);
 
 /*______________________________Others_Prototypes_________________________*/
-int non_pipable_builtin(t_tree *tree);//, char **envp);
+int non_pipable_builtin(t_tree *tree, t_environ *environ);
 e_errors expansor(char **line, char **envp);
 e_errors ft_echo(t_task *task);
+int	search_var(char **envp, const char* var);
+char *ft_getenv(const char *name, char *envp[]);
+e_errors change_var(char *key, char *newvalue, t_environ *environ);
+e_errors add_var(char *key, char *value, t_environ *environ);
+char *getkey(char *var);
+
 // ...
 //LOCATIONS: create_envp.c
 e_errors create_envp(char **original, t_environ *environ);

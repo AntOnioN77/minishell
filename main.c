@@ -102,7 +102,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		free_tree(*tree);
 		*tree = NULL;
 	}
-	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG)
+	if (error== CONTINUE || error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG)
 	{
 		if(error == SYNTAX_ERROR)
 			change_var("?", "2", environ);
@@ -127,9 +127,9 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 	signal_conf();
 	if(handlerr(get_cmd_tree(&tree, environ->envp), &tree, environ))
 		return;
-	if(handlerr(non_pipable_builtin(tree), &tree, environ))
+	if(handlerr(non_pipable_builtin(tree, environ), &tree, environ))
 		return;
-// print_tree(tree, 30);
+ //print_tree(tree, 30);
 	if(0 == handlerr(executor(tree, environ, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
 	{
 			status = wait_all(tree);//, envp);
