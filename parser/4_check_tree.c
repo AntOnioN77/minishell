@@ -23,6 +23,8 @@ int is_void_task(t_task *task)
 	if(task->cmd == NULL && task->redir.insymbol == 0&& task->redir.outsymbol == 0)
 		return (1);
 	cmd = task->cmd;
+	if(!cmd)
+		return (1);
 	i=0;
 	while (cmd[i] && ft_strchr(WHITESPACES, cmd[i]))
 		i++;
