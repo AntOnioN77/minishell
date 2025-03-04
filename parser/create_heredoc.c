@@ -116,8 +116,8 @@ e_errors heredoc_writer(char *separator, t_redir *redir)
 		status = write_heredoc_fork(fd, separator, seplen);
 	if (close(fd) < 0)
 		return (errno); //ver qué error devolver
-	if (unlink(redir->tmp_file) < 0)
-		return (errno); //ver qué error devolver
+	if (status == E_SIGINT && unlink(redir->tmp_file) < 0)
+		return (errno); //ver qué error devolver*/
 	return (status);
 }
 
