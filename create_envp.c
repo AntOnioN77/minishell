@@ -26,7 +26,7 @@ int	search_var(char **envp, const char* var)
 	return (-1);
 }
 
-//NO alloca memoria, debuelve un puntero ala cadena original en envp, a continuacion de '='
+//NO alloca memoria, debuelve un puntero a la cadena original en envp, a continuacion de '='
 char *ft_getenv(const char *name, char *envp[])
 {
 	int pos;

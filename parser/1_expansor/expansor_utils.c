@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/02 20:09:02 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/04 13:09:05 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,13 @@ static int	var_expansion_len(char **str, char *envp[])
 	return (len);
 }
 
+int is_closed_quote(char *str)
+{
+	if ((*str == 39 || *str == '"') &&  ft_strchr(str +1, *str))
+		return (1);
+	return (0);
+}
+
 //NO SEPARAR DE EXPANDSTR()
 int	calculate_expansion_length(char *str, char *envp[])
 {
@@ -159,12 +166,15 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 	ft_strlcpy(*new_str, *str, *marker - *str + 1);
 	*new_str = *new_str + (*marker - *str);
 	(*marker)++;
+//fprintf(stderr, "-------169 *maker: %s\n", *marker);
 	key = foundvar(*marker, envp);
+//fprintf(stderr, "-------171 key: %s\n", key);
 	if (ft_strcmp("$", key))
 	{
 		*marker = *marker + ft_strlen(key);
 	}
-		if (!ft_strcmp("", key) || !ft_strcmp("$", key))
+//fprintf(stderr, "-------169 *maker: %s\n", *marker);
+		if (!is_closed_quote(*marker) && (!ft_strcmp("", key) || !ft_strcmp("$", key)))
 	{
 		**new_str = '$';
 		(*new_str)++;

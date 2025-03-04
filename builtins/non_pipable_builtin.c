@@ -75,6 +75,13 @@ void ft_unset_one(char *key, t_environ *environ)
 	index = search_var(environ->envp, key);
 	if (index == -1)
 		return;
+
+	if(!ft_strcmp(key,"PWD") || !ft_strcmp(key,"SHLVL")
+		|| !ft_strcmp(key,"SHELL")|| !ft_strcmp(key,"HOME")|| !ft_strcmp(key,"OLDPWD")|| !ft_strcmp(key,"?"))
+	{
+		ft_putstr_fd(" PWD, SHLVL, SHELL, HOME, OLDPWD, ?, are internal variables, not unsettable.\n", 2);
+		return;
+	}
 	free(environ->envp[index]);
 	i = 1;
 	while(environ->envp[index + i])
@@ -129,6 +136,31 @@ void ft_export(t_task *task, t_environ *environ)
 
 }
 
+#include <linux/limits.h>
+
+void ft_cd(t_task *task, t_environ *environ)
+{
+	char buffer[PATH_MAX + NAME_MAX + 1];
+
+	if(countargs(task) != 2)
+	{
+		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
+		change_var("?", "1", environ);
+		return;
+	}
+	if(chdir(task->argv[1]))
+	{
+		perror("minishell: cd:");
+		change_var("?", "1", environ);
+	}
+	change_var("OLDPWD", ft_getenv("PWD", environ->envp), environ);
+	getcwd(buffer, PATH_MAX + NAME_MAX);
+	change_var("PWD", buffer, environ);
+
+	//pendiente: gestionar error
+	//pendiente: actualizar variable PWD y OLDPWD(oculta)
+}
+
 int non_pipable_builtin(t_tree *tree, t_environ *environ)
 {
 	t_task *task;
@@ -141,18 +173,7 @@ int non_pipable_builtin(t_tree *tree, t_environ *environ)
 		//CD NO ESTA TESTEADO, abstraer funcion cd
 		if(!ft_strcmp(task->cmd, "cd"))
 		{	
-			if(countargs(task) != 2)
-			{
-				ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-				change_var("?", "1", environ);
-			}
-			else if(chdir(task->argv[1]))
-			{
-				perror("minishell: cd:");
-				change_var("?", "1", environ);
-			}
-			//pendiente: gestionar error
-			//pendiente: actualizar variable PWD y OLDPWD(oculta)
+			ft_cd(task, environ);
 			
 			return (CONTINUE);
 		}

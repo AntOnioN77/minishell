@@ -20,7 +20,7 @@
 //DEFINES PARA HISTORY
 # define HISTORY_FILE "./.history"
 # define DEFAULT_HISTSIZE 500
-
+# define S_LINE_MAX 4096 
 //VARIABLE GLOBAL
 //static int	g_ctrlc;
 extern int	g_ctrlc;

@@ -40,8 +40,6 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	return (check_tree(*right, envp)); // gestionar retorno
 }
 
-
-
 e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
 		char 	*line;
@@ -49,6 +47,11 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		line = readline("mini$hell> ");
 		if(!line)
 			return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
+		if (ft_strlen(line) >= S_LINE_MAX)
+		{
+			free(line);
+			return(LINE_TOO_LONG);
+		}
 		if (*line)
 		{
 			add_history(line);
@@ -58,6 +61,7 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 		*tree = build_tree(line);
 		if (*tree == NULL)
 		{
+			free(line);
 			perror("build_tree:");
 			rl_clear_history();
 			return (ERROR_MALLOC);
@@ -82,8 +86,10 @@ void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo writ
 	ft_putstr_fd("minishell: ", 2);
 	if(error == SYNTAX_ERROR)
 		ft_putstr_fd("syntax error", 2);
-	else if(READLINE_FAIL) //Solo deberia llegar aqui por un ctrl+d
-	ft_putstr_fd("exit", 2); //ARREGLAR!!
+	else if(error == READLINE_FAIL) //Solo deberia llegar aqui por un ctrl+d
+		ft_putstr_fd("exit", 2); //ARREGLAR!!
+	else if(error == LINE_TOO_LONG)
+		ft_putstr_fd("line too long", 2);
 	else
 		ft_putnbr_fd(error, 2);
 	ft_putchar_fd('\n', 2);//temporal, hacer un solo write

@@ -19,5 +19,12 @@
 EXPANSIONES QUE NO FUNCIONAN
 	1. echo $
 	2. echo "$ " //deberia imprimir el $
+	3. echo $"PWD" //deberia imprimir PWD (sin $)
+
+
+
+
+
+HECHO:
 
 SIGFAULT!!!! si task contiene solamente redirecciones, y ningun comando
