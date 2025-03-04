@@ -170,11 +170,9 @@ int non_pipable_builtin(t_tree *tree, t_environ *environ)
 		task = (t_task *)tree;
 		if(!((t_task *)tree)->cmd)
 			return (ALL_OK);
-		//CD NO ESTA TESTEADO, abstraer funcion cd
 		if(!ft_strcmp(task->cmd, "cd"))
 		{	
 			ft_cd(task, environ);
-			
 			return (CONTINUE);
 		}
 		else if(!ft_strcmp(task->cmd, "exit"))

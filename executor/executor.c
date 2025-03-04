@@ -189,6 +189,8 @@ int is_builtin(char *cmd)
 	return (0);
 }
 
+
+
 e_errors builtins_exe(t_task *task, t_environ *environ)
 {
 	char *cmd;
@@ -208,14 +210,15 @@ e_errors builtins_exe(t_task *task, t_environ *environ)
 	}
 	if (!ft_strcmp(cmd, "pwd"))
 	{
-		//TO DO
+		ft_putstr_fd(ft_getenv("PWD", environ->envp), 1);
+		ft_putchar_fd('\n', 1);
 	}
 	if (!ft_strcmp(cmd, "env"))
 	{
 		//TO DO
 	}
 
-	return (FAIL_BUILTINS_EXE);
+	return (FINISH);
 }
 
 
