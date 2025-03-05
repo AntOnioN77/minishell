@@ -15,6 +15,15 @@
 
 #include "minishell.h"
 
+int bad_redir(t_redir *redir)
+{
+	if (redir->insymbol && !redir->infoo)
+		return (1);
+	if (redir->outsymbol && !redir->outfile)
+		return (1);
+	return (0);
+}
+
 int is_void_task(t_task *task)
 {
 	char *cmd;
@@ -67,6 +76,8 @@ int	 check_tree(t_tree *tree, char **envp)
 	else if (tree->type == TASK)
 	{
 		tasknode = (t_task *)tree;
+		if(bad_redir(&(tasknode->redir)))
+			return (SYNTAX_ERROR);
 		if (is_void_task(tasknode))//NO SIRVE, SI METEN UNA REDIRECCION NADA MAS HACE SIGFAULT
 			return (TASK_IS_VOID);
 		if(tasknode->redir.error) //se podria retornar sin hacer el if, pero parece mas claro así;
