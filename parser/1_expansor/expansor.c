@@ -86,8 +86,11 @@ e_errors	expand_task(t_task *node, char *envp[])
 		return (1);
 //	if (add_pathname(&(node->cmd), &(node->garb), envp))
 //		return (1);
-	if (expandstr(&(node->redir.infoo), &(node->garb), envp))
-		return (1);
+	if (node->redir.insymbol != heredoc)
+	{
+		if (expandstr(&(node->redir.infoo), &(node->garb), envp))
+			return (1);
+	}
 	if (expandstr(&(node->redir.outfile), &(node->garb), envp))
 		return (1);
 	i = 0;
