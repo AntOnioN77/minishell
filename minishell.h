@@ -153,6 +153,8 @@ typedef struct s_environ {
 	char **local;
 	int locnext;
 	int localloced;
+
+//	sighandler_t *sigint_handler;
 }	t_environ;
 
 
