@@ -96,6 +96,7 @@ void ft_unset(char **argv, t_environ *environ)
 {
 	int i;
 
+	change_var("?", "0", environ);
 	if (!argv || !*argv)
 		return;
 	i = 1; 	
@@ -114,6 +115,7 @@ void ft_export(t_task *task, t_environ *environ)
 	int i;
 
 	i = 1; //1 porque argv[0] contiene el nombre del comando y solo queremos los argumentos
+	change_var("?", "0", environ);
 	while(task->argv[i])
 	{
 		key = getkey(task->argv[i]);
@@ -141,24 +143,40 @@ void ft_export(t_task *task, t_environ *environ)
 void ft_cd(t_task *task, t_environ *environ)
 {
 	char buffer[PATH_MAX + NAME_MAX + 1];
+	char *destination;
+	int freedest;
 
+	freedest = 0;
 	if(countargs(task) != 2)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
 		change_var("?", "1", environ);
 		return;
 	}
-	if(chdir(task->argv[1]))
+	destination = task->argv[1];
+	if(destination[0] == '~')
+	{
+		destination = ft_strjoin(ft_getenv("HOME", environ->envp), destination + 1);
+		freedest = 1;
+	}
+	else if(destination[0] == '-')
+	{
+		ft_putstr_fd("Mini$ell: No options for cd\n", 2);
+		change_var("?", "1", environ);
+		return;
+	}
+	if(chdir(destination) == -1)
 	{
 		perror("minishell: cd:");
 		change_var("?", "1", environ);
 	}
+	else
+		change_var("?", "0", environ);
+	if(freedest)
+		free(destination);
 	change_var("OLDPWD", ft_getenv("PWD", environ->envp), environ);
 	getcwd(buffer, PATH_MAX + NAME_MAX);
 	change_var("PWD", buffer, environ);
-
-	//pendiente: gestionar error
-	//pendiente: actualizar variable PWD y OLDPWD(oculta)
 }
 
 int non_pipable_builtin(t_tree *tree, t_environ *environ)
