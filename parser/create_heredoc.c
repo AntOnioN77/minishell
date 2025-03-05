@@ -55,6 +55,7 @@ static e_errors write_heredoc_line(int fd, char *separator, size_t seplen)
 {
 	char	*line;
 
+	signal(SIGINT, SIG_DFL);
 	signal(SIGINT, handle_sigint_heredoc);
 	line = readline("> ");
 	if (!line)
@@ -78,6 +79,7 @@ static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
 	pid_t	pid;
 	int		status;
 
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
 	{
@@ -93,6 +95,7 @@ static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
 			perror("waitpid");
 			return (ERROR); // igual que el fork, pero en waitpid
 		}
+		signal(SIGINT, handle_sigint);
 		status = ((status) & 0xff00) >> 8;
 	}
 	return (status);
@@ -114,9 +117,6 @@ e_errors heredoc_writer(char *separator, t_redir *redir)
 	status = CONTINUE; //he cambiado la condición del bucle para que no sea infinito evitando
 	while (status == CONTINUE) //problemas y aunando el cierre, el desligado y el return
 		status = write_heredoc_fork(fd, separator, seplen);
-	/*ft_putstr_fd("status: ", 1);
-	ft_putnbr_fd(status, 1);
-	ft_putstr_fd("\n", 1);*/
 	if (close(fd) < 0)
 		return (errno); //ver qué error devolver
 	if (status == E_SIGINT && unlink(redir->tmp_file) < 0)
