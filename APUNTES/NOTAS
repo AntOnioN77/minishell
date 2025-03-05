@@ -38,3 +38,8 @@ valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./
 Test 132
 
 $CONESPACIOINICIAL$CONESPACIOINICIAL es cos
+
+
+
+hilo slack=
+https://42born2code.slack.com/archives/CNA2Z8RBP/p1731409467616239

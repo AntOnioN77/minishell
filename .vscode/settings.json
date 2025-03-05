@@ -1,3 +1,4 @@
+/*
 {
 	"files.associations": {
 		"history.h": "c",
@@ -13,5 +14,8 @@
 		"features.h": "c",
 		"stdio.h": "c",
 		"3_": "cpp"
-	}
+	},
+	"editor.codeLens": true,
+    "C_Cpp.codeLens": "Enabled"
 }
+*/
