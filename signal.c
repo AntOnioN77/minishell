@@ -21,12 +21,13 @@ void	handle_sigint(int signal)
  */
 void	handle_sigint_heredoc(int signal)
 {
-	g_ctrlc = signal;
-	//rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-	rl_done = 1;
-	//close(STDIN_FILENO);
+	//g_ctrlc = signal;
+	(void) signal;
+	//write(1, "^C", 2);
+	//rl_on_new_line();
+	rl_replace_line("", 0);
+	//rl_redisplay();
+	//rl_done = 1;
 	exit(E_SIGINT);
 }
 
