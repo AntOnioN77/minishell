@@ -218,6 +218,7 @@ char *ft_getenv(const char *name, char *envp[]);
 e_errors change_var(char *key, char *newvalue, t_environ *environ);
 e_errors add_var(char *key, char *value, t_environ *environ);
 char *getkey(char *var);
+void ft_env(t_environ *environ);
 
 // ...
 //LOCATIONS: create_envp.c

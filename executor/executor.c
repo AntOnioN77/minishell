@@ -249,6 +249,7 @@ e_errors create_child(t_task *task, t_environ *environ , int in, int out)
 		pathcmd = com_path(task->cmd, envp, &err); 			//no Builtin
 		if (err)
 			return (child_error_handler(err, task->cmd));
+		rl_clear_history();
 		execve(pathcmd, task->argv, envp);
 		err = errno;
 		free(pathcmd);
