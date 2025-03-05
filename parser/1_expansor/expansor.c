@@ -49,17 +49,17 @@ e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe 
 	char	*str;
 
 	if(!is_expansible(*origin))
-		return (0);
+		return (ALL_OK);
 	str = *origin;
 	if (prepare_expansion(origin, &new_str, garbage, envp))
-		return (1);
+		return (ERROR_MALLOC);
 	marker = str;
 	while (*marker)
 	{
 		if (*marker == '$')
 		{
 			if(handle_dollar(&new_str, &str, &marker, envp))
-				return (1);
+				return (ERROR_MALLOC);
 			continue ;
 		}
 		if (*marker == 39 && ft_strchr(marker + 1, 39))
@@ -68,7 +68,7 @@ e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe 
 	}
 	if (*str)
         ft_strlcpy(new_str, str, marker - str + 1);
-    return 0;
+    return (ALL_OK);
 }
 
 //
