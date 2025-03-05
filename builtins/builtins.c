@@ -28,3 +28,16 @@ e_errors ft_echo(t_task *task)
 		ft_putchar_fd('\n', 1);
 	return(FINISH);
 }
+
+void ft_env(t_environ *environ)
+{
+	int i;
+
+	i = 0;
+	while(environ->envp[i])
+	{
+		ft_putstr_fd(environ->envp[i], 1);
+		ft_putchar_fd('\n', 1);
+		i++;
+	}
+}

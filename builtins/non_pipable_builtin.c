@@ -48,19 +48,19 @@ void export_error(char* identifier, t_environ *environ)
 	change_var("?", "1", environ);
 }
 
-//retorna 1 si key es valido (el primer caracter es alpafabetico, contiene solo caracteres alphanumericos y no es una cadena vacía)
+//retorna 1 si key es valido (el primer caracter es alfabetico, contiene solo caracteres alphanumericos y no es una cadena vacía)
 int validate_key(char *key)
 {
 	int i;
 	if(!ft_strcmp(key, "") || !ft_strcmp(key,"PWD") || !ft_strcmp(key,"SHLVL")
 		|| !ft_strcmp(key,"SHELL")|| !ft_strcmp(key,"HOME")|| !ft_strcmp(key,"OLDPWD"))
 		return(0);
-	if(!ft_isalpha(key[0]))
+	if(!ft_isalpha(key[0]) && key[0] != '_')
 			return(0);
 	i =1;
 	while (key[i])
 	{
-		if(!ft_isalnum(key[i]))
+		if(!ft_isalnum(key[i]) && key[i] != '_') 
 			return(0);
 		i++;
 	}

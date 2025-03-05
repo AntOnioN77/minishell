@@ -215,7 +215,7 @@ e_errors builtins_exe(t_task *task, t_environ *environ)
 	}
 	if (!ft_strcmp(cmd, "env"))
 	{
-		//TO DO
+		ft_env(environ);
 	}
 
 	return (FINISH);
