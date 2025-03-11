@@ -11,8 +11,8 @@ void	handle_sigint(int signal)
 {
 	g_ctrlc = signal;
 	write(1, "\n", 1);
-	rl_on_new_line();
 	rl_replace_line("", 0);
+	rl_on_new_line();
 	rl_redisplay();
 }
 
@@ -21,13 +21,9 @@ void	handle_sigint(int signal)
  */
 void	handle_sigint_heredoc(int signal)
 {
-	//g_ctrlc = signal;
 	(void) signal;
-	//write(1, "^C", 2);
-	//rl_on_new_line();
+	write(1, "\n", 1);
 	rl_replace_line("", 0);
-	//rl_redisplay();
-	//rl_done = 1;
 	exit(E_SIGINT);
 }
 
