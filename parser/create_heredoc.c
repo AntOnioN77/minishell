@@ -134,6 +134,8 @@ e_errors create_heredoc(t_redir *redir)
 
 	if(redir->insymbol != heredoc)
 		return (0);
+	if(redir->infoo == NULL || (redir->infoo[0]) == '\0')
+		return (SYNTAX_ERROR);
 	error = 0;
 	tmp_file = get_tmp_name(&error);
 	if (error || !tmp_file)
