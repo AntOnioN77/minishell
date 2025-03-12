@@ -48,7 +48,11 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 	g_ctrlc = 0;
 	line = readline("mini$hell> ");
 fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
-
+	if(g_ctrlc == 130)
+	{
+		g_ctrlc = 0;
+		return(E_SIGINT);
+	}
 fprintf(stdout, "--------------line: %s\n", line);
 	if(!line)
 	{
@@ -121,6 +125,8 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		free_tree(*tree);
 		*tree = NULL;
 	}
+	if (g_ctrlc == 130)
+		exit (0);
 	if (error== CONTINUE || error == TASK_IS_VOID
 		|| error == SYNTAX_ERROR || error == LINE_TOO_LONG || error == E_SIGINT)
 	{
