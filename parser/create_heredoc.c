@@ -61,7 +61,7 @@ static e_errors write_heredoc_line(int fd, char *separator, size_t seplen)
 	if (!line)
 	{
 		ft_putstr_fd("minishell: warning: here-document delimited by EOF\n", 1);
-		exit (errno);
+		exit (ALL_OK);
 	}
 	if (ft_strlen(line) == seplen && !ft_strncmp(line, separator, seplen))
 	{
@@ -82,19 +82,13 @@ static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
 	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
-	{
-		perror("fork");
-		return (ERROR); //Habrá que devolver el error correspondiente al fork
-	}
+		return (errno); //Habrá que devolver el error correspondiente al fork
 	if (pid == 0)
 		status = write_heredoc_line(fd, separator, seplen);
 	else
 	{
 		if (waitpid(pid, &status, 0) == -1)
-		{
-			perror("waitpid");
-			return (ERROR); // igual que el fork, pero en waitpid
-		}
+			return (errno); // igual que el fork, pero en waitpid
 		signal(SIGINT, handle_sigint);
 		status = ((status) & 0xff00) >> 8;
 	}

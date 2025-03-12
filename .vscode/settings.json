@@ -1,4 +1,10 @@
-/*
+{
+	"files.associations": {
+		"minishell.h": "c",
+		"*.tcc": "c",
+		"ostream": "c"
+	}
+}/*
 {
 	"files.associations": {
 		"history.h": "c",

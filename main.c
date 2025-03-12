@@ -45,9 +45,18 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 	char	 	*line;
 	e_errors	error;
 
+	g_ctrlc = 0;
 	line = readline("mini$hell> ");
+fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
 	if(!line)
+	{
+		if(g_ctrlc)
+		{
+			g_ctrlc = 0;
+			return(E_SIGINT);
+		}
 		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
+	}
 	if (ft_strlen(line) >= S_LINE_MAX)
 	{
 		free(line);
@@ -88,8 +97,8 @@ void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo writ
 	ft_putstr_fd("minishell: ", 2);
 	if(error == SYNTAX_ERROR)
 		ft_putstr_fd("syntax error", 2);
-	else if(error == READLINE_FAIL) //Solo deberia llegar aqui por un ctrl+d
-		ft_putstr_fd("exit", 2); //ARREGLAR!!
+//	else if(error == READLINE_FAIL) //Solo deberia llegar aqui por un ctrl+d
+//		ft_putstr_fd("exit", 2); //ARREGLAR!!
 	else if(error == LINE_TOO_LONG)
 		ft_putstr_fd("line too long", 2);
 	else
@@ -101,7 +110,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 {
 	if (error == ALL_OK)
 		return (0);
-	if (error == FINISH)
+	if (error == FINISH || error == READLINE_FAIL)
 		error = 0;
 	else if(error != TASK_IS_VOID && error != CONTINUE)
 			ft_perror(error);
@@ -115,8 +124,11 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	{
 		if(error == SYNTAX_ERROR)
 			change_var("?", "2", environ);
+		else if(error == E_SIGINT)
+			change_var("?", "130", environ);
 		return (error);//continue
 	}
+
 	if(environ)
 	{
 		free_arr(environ->envp);
@@ -142,7 +154,10 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 	if(0 == handlerr(executor(tree, environ, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
 	{
 			status = wait_all(tree);//, envp);
-			str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
+			if (((((status) & 0x7f) + 1) >> 1) > 0) //aplicamos mascara WIFSIGNALED(status)
+				str_status = ft_itoa(((status) & 0x7f)  + 128);//aplicamos mascara WTERMSIG(status) y sumamos 128 (los codigos de señal en bash empiezan en 128)
+			else
+				str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
 			change_var("?", str_status , environ);
 			free(str_status);//NO GESTIONADO POR HANDLE ERROR
 			close_fds(3);//SOBRA?????????
