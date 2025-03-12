@@ -21,6 +21,7 @@
 # define HISTORY_FILE "./.history"
 # define DEFAULT_HISTSIZE 500
 # define S_LINE_MAX 4096 
+# define IS_SIGNAL 128
 //VARIABLE GLOBAL
 //static int	g_ctrlc;
 extern int	g_ctrlc;
@@ -60,6 +61,7 @@ typedef enum e_errors
     ERROR_MALLOC = 151, // evitamos solapar valores de errno, de esta manera
 //nuestras funciones pueden retornar tanto valores capturados de errno, como
 //nuestros propios casos de error
+	READ_SIGINT,
 	NO_PERMISSION,
 	NO_EXIST,
     INVALID_TYPE,//solo para debug	

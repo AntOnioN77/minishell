@@ -48,13 +48,15 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 	g_ctrlc = 0;
 	line = readline("mini$hell> ");
 fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
+
+fprintf(stdout, "--------------line: %s\n", line);
 	if(!line)
 	{
-		if(g_ctrlc)
+		/*if(g_ctrlc) //no sirve, ctrl+c no nos saca del flujo de readline
 		{
 			g_ctrlc = 0;
-			return(E_SIGINT);
-		}
+			return(READ_SIGINT);
+		}*/
 		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
 	}
 	if (ft_strlen(line) >= S_LINE_MAX)
@@ -155,7 +157,7 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 	{
 			status = wait_all(tree);//, envp);
 			if (((((status) & 0x7f) + 1) >> 1) > 0) //aplicamos mascara WIFSIGNALED(status)
-				str_status = ft_itoa(((status) & 0x7f)  + 128);//aplicamos mascara WTERMSIG(status) y sumamos 128 (los codigos de señal en bash empiezan en 128)
+				str_status = ft_itoa(((status) & 0x7f) + IS_SIGNAL);//aplicamos mascara WTERMSIG(status) y sumamos 128 (los codigos de señal en bash empiezan en 128)
 			else
 				str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
 			change_var("?", str_status , environ);
