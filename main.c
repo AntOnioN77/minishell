@@ -126,6 +126,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		error = 0;
 	else if(error != TASK_IS_VOID && error != CONTINUE)
 			ft_perror(error);
+//fprintf(stdout, "--------------$?: %d\n", atoi(ft_getenv("?", environ->envp)));
 	if ( tree && *tree)
 	{
 		free_tree(*tree);
