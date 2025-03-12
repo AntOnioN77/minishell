@@ -48,21 +48,26 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 	g_ctrlc = 0;
 	line = readline("mini$hell> ");
 fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
-	if(g_ctrlc == 130)
+	/*if(g_ctrlc == 130)
 	{
 		g_ctrlc = 0;
+		free(line);
 		return(E_SIGINT);
-	}
+	}*/
 fprintf(stdout, "--------------line: %s\n", line);
 	if(!line)
 	{
-		/*if(g_ctrlc) //no sirve, ctrl+c no nos saca del flujo de readline
+			fprintf(stdout, "--------------salir\n");
+		if(g_ctrlc == 130) //no sirve, ctrl+c no nos saca del flujo de readline
 		{
 			g_ctrlc = 0;
-			return(READ_SIGINT);
-		}*/
+			fprintf(stdout, "--------------salir\n");
+			free(line);
+			return(E_SIGINT);
+		}
 		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
 	}
+			fprintf(stdout, "--------------no salir\n");
 	if (ft_strlen(line) >= S_LINE_MAX)
 	{
 		free(line);
