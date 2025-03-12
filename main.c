@@ -49,13 +49,6 @@ e_errors	get_cmd_tree(t_tree **tree, char **envp)
 	line = readline("mini$hell> ");
 fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
 fprintf(stdout, "--------------strlen: %zu\n", ft_strlen(line));
-	if(g_ctrlc == 130 && ft_strlen(line) == 0)/*&& ft_strcmp(line, "\n") != 0*/ 
-	{
-			fprintf(stdout, "--------------salir1\n");
-		g_ctrlc = 0;
-		free(line);
-		return(E_SIGINT);
-	}
 fprintf(stdout, "--------------line: %s\n", line);
 	if(!line)// || ft_strcmp(line, "\n") > 0)// || (g_ctrlc == 130 && ft_strcmp(line, "\n")))
 	{
@@ -68,6 +61,13 @@ fprintf(stdout, "--------------line: %s\n", line);
 			return(E_SIGINT);
 		}*/
 		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
+	}
+	if(g_ctrlc == 130 && ft_strlen(line) == 0)
+	{
+			fprintf(stdout, "--------------salir1\n");
+		g_ctrlc = 0;
+		free(line);
+		return(E_SIGINT);
 	}
 	if (ft_strlen(line) >= S_LINE_MAX)
 	{
@@ -132,7 +132,7 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		*tree = NULL;
 	}
 	if (g_ctrlc == 130)
-		exit (0);
+		change_var("?", "130", environ);
 	if (error== CONTINUE || error == TASK_IS_VOID
 		|| error == SYNTAX_ERROR || error == LINE_TOO_LONG || error == E_SIGINT)
 	{
