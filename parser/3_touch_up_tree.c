@@ -65,9 +65,9 @@ e_errors	touch_up_tree(t_tree *node, char *envp[])
 	if (node->type == PIPE)
 	{
 		pipe = (t_pipe *)node;
-		error=ALL_OK;// expand_task(pipe->left, envp); //cancelamos expand_task para expandir directamente la linea original
-		//if(error)
-		//	return (error);
+		error=expand_task(pipe->left, envp); //cancelamos expand_task para expandir directamente la linea original
+		if(error)
+			return (error);
 		unquote_task(((t_task *)pipe->left));
 		error=create_heredoc(&(pipe->left->redir)); //si hubo error lo anota, sera encontrado por check_tree
 		if (error)
@@ -77,9 +77,9 @@ e_errors	touch_up_tree(t_tree *node, char *envp[])
 	else if (node->type == TASK)
 	{
 		task = (t_task *)node;
-		error = ALL_OK; //expand_task(task, envp); //cancelamos expand_task para expandir directamente la linea original
-		//if(error)
-		//	return (error);
+		error = expand_task(task, envp); //cancelamos expand_task para expandir directamente la linea original
+		if(error)
+			return (error);
 		unquote_task(task);
 		error = create_heredoc(&(task->redir)); //si hubo error lo anota, sera encontrado por check_tree
 	}

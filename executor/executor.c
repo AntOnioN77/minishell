@@ -189,6 +189,8 @@ int is_builtin(char *cmd)
 	return (0);
 }
 
+
+
 e_errors builtins_exe(t_task *task, t_environ *environ)
 {
 	char *cmd;
@@ -208,14 +210,15 @@ e_errors builtins_exe(t_task *task, t_environ *environ)
 	}
 	if (!ft_strcmp(cmd, "pwd"))
 	{
-		//TO DO
+		ft_putstr_fd(ft_getenv("PWD", environ->envp), 1);
+		ft_putchar_fd('\n', 1);
 	}
 	if (!ft_strcmp(cmd, "env"))
 	{
-		//TO DO
+		ft_env(environ);
 	}
 
-	return (FAIL_BUILTINS_EXE);
+	return (FINISH);
 }
 
 
@@ -237,6 +240,7 @@ e_errors create_child(t_task *task, t_environ *environ , int in, int out)
 	task->pid = pid;
 	if (pid == 0)
 	{
+//printf("Proceso hijo: PID=%d, PPID=%d\n", getpid(), getppid());
 		err = repipe_child(task, in, out, &word_fail);
 		if(child_error_handler(err, word_fail))
 			return (1);
@@ -245,6 +249,7 @@ e_errors create_child(t_task *task, t_environ *environ , int in, int out)
 		pathcmd = com_path(task->cmd, envp, &err); 			//no Builtin
 		if (err)
 			return (child_error_handler(err, task->cmd));
+		rl_clear_history();
 		execve(pathcmd, task->argv, envp);
 		err = errno;
 		free(pathcmd);

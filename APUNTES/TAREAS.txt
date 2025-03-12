@@ -15,3 +15,16 @@
 4. Verificar si se gestiona adecuadamente comando es un archivo sin permisos de ejecucion
 5. Verificar si se gestiona adecuadamente outfile es un archivo sin permisos de ejecucion
 6
+
+EXPANSIONES QUE NO FUNCIONAN
+	1. echo $
+	2. echo "$ " //deberia imprimir el $
+	3. echo $"PWD" //deberia imprimir PWD (sin $)
+
+
+
+
+
+HECHO:
+
+SIGFAULT!!!! si task contiene solamente redirecciones, y ningun comando

@@ -1,5 +1,12 @@
 {
 	"files.associations": {
+		"minishell.h": "c",
+		"*.tcc": "c",
+		"ostream": "c"
+	}
+}/*
+{
+	"files.associations": {
 		"history.h": "c",
 		"readline.h": "c",
 		"libft.h": "c",
@@ -13,5 +20,8 @@
 		"features.h": "c",
 		"stdio.h": "c",
 		"3_": "cpp"
-	}
+	},
+	"editor.codeLens": true,
+    "C_Cpp.codeLens": "Enabled"
 }
+*/

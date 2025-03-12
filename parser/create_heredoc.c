@@ -53,22 +53,51 @@ char *get_tmp_name(e_errors *error)
 
 static e_errors write_heredoc_line(int fd, char *separator, size_t seplen)
 {
-	char *line;
+	char	*line;
 
-	line = readline("");
+	signal(SIGINT, SIG_DFL);
+	signal(SIGINT, handle_sigint_heredoc);
+	line = readline("> ");
 	if (!line)
-		return (errno);
+	{
+		ft_putstr_fd("minishell: warning: here-document delimited by EOF\n", 1);
+		exit (ALL_OK);
+	}
 	if (ft_strlen(line) == seplen && !ft_strncmp(line, separator, seplen))
 	{
 		free(line);
-		return (ALL_OK);
+		exit (ALL_OK);
 	}
 	ft_putstr_fd(line, fd);
 	ft_putchar_fd('\n', fd);
 	free(line);
-	return (CONTINUE);
+	exit (CONTINUE);
 }
 
+static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
+{
+	pid_t	pid;
+	int		status;
+
+	signal(SIGINT, SIG_IGN);
+	pid = fork();
+	if (pid < 0)
+		return (errno); //Habrá que devolver el error correspondiente al fork
+	if (pid == 0)
+		status = write_heredoc_line(fd, separator, seplen);
+	else
+	{
+		if (waitpid(pid, &status, 0) == -1)
+			return (errno); // igual que el fork, pero en waitpid
+		signal(SIGINT, handle_sigint);
+		status = ((status) & 0xff00) >> 8;
+	}
+	return (status);
+}
+// Se ocupa de abrir, cerrar y desligar el archivo temporal que utiliza el 
+// heredoc cuando es necesario
+// El bucle permite la ejecución de la función write_heredoc_fork mientras
+// devuelva el estado CONTINUE (162)
 e_errors heredoc_writer(char *separator, t_redir *redir)
 {
 	int fd;
@@ -79,17 +108,14 @@ e_errors heredoc_writer(char *separator, t_redir *redir)
 	if (fd < 0)
 		return (errno);
 	seplen = ft_strlen(separator);
-	while (1)
-	{
-		status = write_heredoc_line(fd, separator, seplen);
-		if (status != CONTINUE)
-		{
-			close(fd);
-			return (status);
-		}
-	}
-	close(fd);
-	return (ALL_OK);
+	status = CONTINUE; //he cambiado la condición del bucle para que no sea infinito evitando
+	while (status == CONTINUE) //problemas y aunando el cierre, el desligado y el return
+		status = write_heredoc_fork(fd, separator, seplen);
+	if (close(fd) < 0)
+		return (errno); //ver qué error devolver
+	if (status == E_SIGINT && unlink(redir->tmp_file) < 0)
+		return (errno); //ver qué error devolver*/
+	return (status);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,6 +128,8 @@ e_errors create_heredoc(t_redir *redir)
 
 	if(redir->insymbol != heredoc)
 		return (0);
+	if(redir->infoo == NULL || (redir->infoo[0]) == '\0')
+		return (SYNTAX_ERROR);
 	error = 0;
 	tmp_file = get_tmp_name(&error);
 	if (error || !tmp_file)

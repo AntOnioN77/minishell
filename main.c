@@ -3,8 +3,6 @@
 #include "executor.h"
 
 int g_ctrlc = 0;
-extern int rl_done; //Esto no serían dos globales???
-
 
 //Esta funcion es llamada cuando encontramos un pipe con el nodo a su derecha vacío por ejemplo "ls|(vacio)".
 // antes de llamar a esta funcion hay que liberar la t_task vacía.
@@ -12,7 +10,8 @@ extern int rl_done; //Esto no serían dos globales???
 //Solicita nueva entrada de usuario, y despliega un nuevo arbol, partiendo del nodo vacío, continuacion del arbol original. 
 e_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
-	char	*line;
+	char		*line;
+	e_errors	error;
 
 	//GESTIONAR SEÑAL AQUI, si ctrl+C es pulsado, dberiamos liberar el arbol y volver a pedir entrada de usuario "mini$hell>"
 	line = readline("> ");
@@ -24,8 +23,8 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return(continue_cmd_tree(right, envp));
 	}
 	add_history(line);
-	if(expansor(&line, envp) != ALL_OK)
-		return(ERROR_MALLOC);
+//	if(expansor(&line, envp) != ALL_OK)
+//		return(ERROR_MALLOC);
 	*right = build_tree(line);
 	if (*right == NULL)
 	{
@@ -35,37 +34,55 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return (ERROR_MALLOC);
 	}
 	(*right)->line_extra = line;
-	if(touch_up_tree(*right, envp))
-		perror("64->expandtree:");//esta gestion de error es muy mejorable
+	error = touch_up_tree(*right, envp);
+	if (error)
+		return(error);
 	return (check_tree(*right, envp)); // gestionar retorno
 }
 
-
-
 e_errors	get_cmd_tree(t_tree **tree, char **envp)
 {
-		char 	*line;
+	char	 	*line;
+	e_errors	error;
 
-		line = readline("mini$hell> ");
-		if(!line)
-			return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
-		if (*line)
+	g_ctrlc = 0;
+	line = readline("mini$hell> ");
+fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
+
+fprintf(stdout, "--------------line: %s\n", line);
+	if(!line)
+	{
+		/*if(g_ctrlc) //no sirve, ctrl+c no nos saca del flujo de readline
 		{
-			add_history(line);
-			if(expansor(&line, envp) != ALL_OK)
-				return(ERROR_MALLOC);
-		}
-		*tree = build_tree(line);
-		if (*tree == NULL)
-		{
-			perror("build_tree:");
-			rl_clear_history();
-			return (ERROR_MALLOC);
-		}
-		(*tree)->line = line;
-		if(touch_up_tree(*tree, envp))
-			perror("92->expandtree:");//esta gestion de error es muy mejorable
-		return (check_tree(*tree, envp)); // gestionar retorno
+			g_ctrlc = 0;
+			return(READ_SIGINT);
+		}*/
+		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
+	}
+	if (ft_strlen(line) >= S_LINE_MAX)
+	{
+		free(line);
+		return(LINE_TOO_LONG);
+	}
+	if (*line)
+	{
+		add_history(line);
+//		if(expansor(&line, envp) != ALL_OK)
+//				return(ERROR_MALLOC);
+	}
+	*tree = build_tree(line);
+	if (*tree == NULL)
+	{
+		free(line);
+		perror("build_tree:");
+		rl_clear_history();
+		return (ERROR_MALLOC);
+	}
+	(*tree)->line = line;
+	error = touch_up_tree(*tree, envp);
+	if (error)
+		return(error);
+	return (check_tree(*tree, envp)); // gestionar retorno
 }
 
 void print_error(char *cmd, char *error_msg) //USADA EN IMPRIMIR ERRORES DE PROCESO HIJO
@@ -82,8 +99,10 @@ void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo writ
 	ft_putstr_fd("minishell: ", 2);
 	if(error == SYNTAX_ERROR)
 		ft_putstr_fd("syntax error", 2);
-	else if(READLINE_FAIL) //Solo deberia llegar aqui por un ctrl+d
-	ft_putstr_fd("exit", 2);
+//	else if(error == READLINE_FAIL) //Solo deberia llegar aqui por un ctrl+d
+//		ft_putstr_fd("exit", 2); //ARREGLAR!!
+	else if(error == LINE_TOO_LONG)
+		ft_putstr_fd("line too long", 2);
 	else
 		ft_putnbr_fd(error, 2);
 	ft_putchar_fd('\n', 2);//temporal, hacer un solo write
@@ -93,21 +112,25 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 {
 	if (error == ALL_OK)
 		return (0);
-	if (error == FINISH)
+	if (error == FINISH || error == READLINE_FAIL)
 		error = 0;
-	else if(error != TASK_IS_VOID)
+	else if(error != TASK_IS_VOID && error != CONTINUE)
 			ft_perror(error);
 	if ( tree && *tree)
 	{
 		free_tree(*tree);
 		*tree = NULL;
 	}
-	if (error == TASK_IS_VOID || error == SYNTAX_ERROR || error == LINE_TOO_LONG)
+	if (error== CONTINUE || error == TASK_IS_VOID
+		|| error == SYNTAX_ERROR || error == LINE_TOO_LONG || error == E_SIGINT)
 	{
 		if(error == SYNTAX_ERROR)
 			change_var("?", "2", environ);
+		else if(error == E_SIGINT)
+			change_var("?", "130", environ);
 		return (error);//continue
 	}
+
 	if(environ)
 	{
 		free_arr(environ->envp);
@@ -127,13 +150,16 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 	signal_conf();
 	if(handlerr(get_cmd_tree(&tree, environ->envp), &tree, environ))
 		return;
-	if(handlerr(non_pipable_builtin(tree), &tree, environ))
+	if(handlerr(non_pipable_builtin(tree, environ), &tree, environ))
 		return;
-// print_tree(tree, 30);
+ //print_tree(tree, 30);
 	if(0 == handlerr(executor(tree, environ, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
 	{
 			status = wait_all(tree);//, envp);
-			str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
+			if (((((status) & 0x7f) + 1) >> 1) > 0) //aplicamos mascara WIFSIGNALED(status)
+				str_status = ft_itoa(((status) & 0x7f) + IS_SIGNAL);//aplicamos mascara WTERMSIG(status) y sumamos 128 (los codigos de señal en bash empiezan en 128)
+			else
+				str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
 			change_var("?", str_status , environ);
 			free(str_status);//NO GESTIONADO POR HANDLE ERROR
 			close_fds(3);//SOBRA?????????
@@ -153,6 +179,7 @@ int main(int argc, char **argv, char **envp)
 	if (argc != 1 || !argv)
 		return(0);
 	handlerr(create_envp(envp, &environ), &tree, &environ);
+	
 	while(1)
 	{
 //str_bug=ft_strdup("BUG LEAK INTENCIONAL");
@@ -163,25 +190,3 @@ int main(int argc, char **argv, char **envp)
 	}
 	return (0);
 }
-
-/*
-int main(void)
-{
-    signal(SIGINT, handle_sigint_heredoc2);  // Asigna el manejador de la señal SIGINT
-
-    char *input;
-    while ((input = readline("> ")) != NULL)
-    {
-        if (g_ctrlc)
-        {
-            printf("\nInterrupción SIGINT detectada. Terminando heredoc.\n");
-            g_ctrlc = 0;
-            break;
-        }
-        // Procesa la entrada aquí...
-        free(input);
-    }
-
-    return 0;
-}
-*/

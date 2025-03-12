@@ -20,7 +20,8 @@
 //DEFINES PARA HISTORY
 # define HISTORY_FILE "./.history"
 # define DEFAULT_HISTSIZE 500
-
+# define S_LINE_MAX 4096 
+# define IS_SIGNAL 128
 //VARIABLE GLOBAL
 //static int	g_ctrlc;
 extern int	g_ctrlc;
@@ -60,6 +61,7 @@ typedef enum e_errors
     ERROR_MALLOC = 151, // evitamos solapar valores de errno, de esta manera
 //nuestras funciones pueden retornar tanto valores capturados de errno, como
 //nuestros propios casos de error
+	READ_SIGINT,
 	NO_PERMISSION,
 	NO_EXIST,
     INVALID_TYPE,//solo para debug	
@@ -71,6 +73,7 @@ typedef enum e_errors
 	child_error_handler_fail,   //SOLO ODEBUG BORRAR!!!!!!!!!!!!!!!!!
 	FAIL_BUILTINS_EXE,			//SOLO ODEBUG BORRAR!!!!!!!!!!!!!!!!!
 	CONTINUE,
+	END_CYCLE,
 	FINISH
 } e_errors;
 
@@ -107,13 +110,13 @@ typedef struct s_redir
 	char		*tmp_file;//Es creado en caso de insymbol << por la funcion heredoc_handler requiere unlink, y despues free
 	e_errors	error; //Error causado durante la creación de tmp_file
 }	t_redir;
-/*
+
 typedef struct s_garbage {
 	void	**pointers;
 	int		size;
 	int		current;
 }	t_garbage;
-*/
+
 typedef struct s_task
 {
 	e_nodes		type;
@@ -122,7 +125,7 @@ typedef struct s_task
 	t_redir 	redir;
 	char		*cmd;
 	char		**argv;
-	//t_garbage	garb;
+	t_garbage	garb;
 	int   pid; 
 }	t_task;
 
@@ -152,7 +155,10 @@ typedef struct s_environ {
 	char **local;
 	int locnext;
 	int localloced;
+
+//	sighandler_t *sigint_handler;
 }	t_environ;
+
 
 /*****************************************************************************/
 /* 								PROTOTYPES									 */
@@ -167,8 +173,9 @@ void print_error(char *cmd, char *error_msg);
 t_task *createtask(char *segment, char *end);
 t_tree *createpipe(char *line,char *pnt);
 //Location parser/expansor.c
-e_errors	expandstr(char **origin, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
+e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
 e_errors	touch_up_tree(t_tree *node, char *envp[]);
+e_errors	expand_task(t_task *node, char *envp[]);
 //Location: parser/expansor_utils.c
 int	is_expansible(char *str);
 int	count_expansions(t_task *node);
@@ -196,10 +203,12 @@ void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
 int wait_all(t_tree *node);
 //LOCATION: parser/check_tree.c
 int	 check_tree(t_tree *tree, char **envp);
-//LOCATION: tmp_file_name.c
+//LOCATION: create_heredoc.c
 e_errors create_heredoc(t_redir *redir);
 char *get_tmp_name(e_errors *error);
 e_errors heredoc_writer(char *separator, t_redir *redir);
+/*static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen);
+static e_errors write_heredoc_line(int fd, char *separator, size_t seplen);*/
 //LOCATION: signal.c
 void handle_sigint(int signal);
 void	signal_conf(void);
@@ -208,9 +217,16 @@ void	load_history(void);
 int	save_history(char *history);
 
 /*______________________________Others_Prototypes_________________________*/
-int non_pipable_builtin(t_tree *tree);//, char **envp);
+int non_pipable_builtin(t_tree *tree, t_environ *environ);
 e_errors expansor(char **line, char **envp);
 e_errors ft_echo(t_task *task);
+int	search_var(char **envp, const char* var);
+char *ft_getenv(const char *name, char *envp[]);
+e_errors change_var(char *key, char *newvalue, t_environ *environ);
+e_errors add_var(char *key, char *value, t_environ *environ);
+char *getkey(char *var);
+void ft_env(t_environ *environ);
+
 // ...
 //LOCATIONS: create_envp.c
 e_errors create_envp(char **original, t_environ *environ);

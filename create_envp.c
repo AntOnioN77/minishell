@@ -8,6 +8,7 @@
 int	search_var(char **envp, const char* var)
 {
 	int pos;
+	int len;
 
 //fprintf(stderr, "search_var var:%s --- ", var);
 	if(!envp)
@@ -15,9 +16,9 @@ int	search_var(char **envp, const char* var)
 	pos = 0;
 	while (envp[pos])
 	{
-		if (ft_strncmp(envp[pos], var, ft_strlen(var)) == 0)
+		len = strchr(envp[pos], '=') - envp[pos];
+		if (ft_strncmp(envp[pos], var, len) == 0)
 		{
-
 			return (pos);
 		}
 		pos++;
@@ -25,6 +26,7 @@ int	search_var(char **envp, const char* var)
 	return (-1);
 }
 
+//NO alloca memoria, debuelve un puntero a la cadena original en envp, a continuacion de '='
 char *ft_getenv(const char *name, char *envp[])
 {
 	int pos;
@@ -197,8 +199,11 @@ e_errors init_envp(t_environ *environ)
 	if (!error && ft_getenv("HOME", environ->envp) == NULL)
 		error = add_var("HOME", path, environ); //si no tenemos acceso a las variables de entorno, establece la carpeta actual como home (pues es la unica de la que tiene certeza existe y es utilizable)
 	
+//print_env(environ);
 	if (!error && ft_getenv("OLDPWD", environ->envp) == NULL)
+	{
 		error = add_var("OLDPWD", "", environ); //al ser el principio de la ejecucion no hay una carpeta previa
+	}
 	else if(!error)
 		error = change_var("OLDPWD", "", environ);// si existe, solo la reinicia como cadena vacía
 
