@@ -40,35 +40,32 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	return (check_tree(*right, envp)); // gestionar retorno
 }
 
-e_errors	get_cmd_tree(t_tree **tree, char **envp)
+e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
 {
 	char	 	*line;
 	e_errors	error;
+	char     **envp;
 
+	envp = environ->envp;
 	g_ctrlc = 0;
+//signal(SIGINT,SIG_DFL);
 	line = readline("mini$hell> ");
-fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
-fprintf(stdout, "--------------strlen: %zu\n", ft_strlen(line));
-fprintf(stdout, "--------------line: %s\n", line);
+ fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
+// fprintf(stdout, "--------------strlen: %zu\n", ft_strlen(line));
+// fprintf(stdout, "--------------line: %s\n", line);
 	if(!line)// || ft_strcmp(line, "\n") > 0)// || (g_ctrlc == 130 && ft_strcmp(line, "\n")))
 	{
-			fprintf(stdout, "--------------salir3\n");
-		/*if(g_ctrlc == 130 && ft_strcmp(line, "\n")) //no sirve, ctrl+c no nos saca del flujo de readline
-		{
-			g_ctrlc = 0;
-			fprintf(stdout, "--------------salir4\n");
-			free(line);
-			return(E_SIGINT);
-		}*/
 		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
 	}
-	if(g_ctrlc == 130 && ft_strlen(line) == 0)
+	if (g_ctrlc == 2)
+		change_var("?", "130", environ);
+	/*if(g_ctrlc == 2 && ft_strlen(line) == 0)
 	{
-			fprintf(stdout, "--------------salir1\n");
 		g_ctrlc = 0;
+			fprintf(stdout, "--------------salir2\n");
 		free(line);
 		return(E_SIGINT);
-	}
+	}*/
 	if (ft_strlen(line) >= S_LINE_MAX)
 	{
 		free(line);
@@ -132,8 +129,8 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 		free_tree(*tree);
 		*tree = NULL;
 	}
-	if (g_ctrlc == 130)
-		change_var("?", "130", environ);
+	/*if (g_ctrlc == 2)
+		change_var("?", "135", environ);*/
 	if (error== CONTINUE || error == TASK_IS_VOID
 		|| error == SYNTAX_ERROR || error == LINE_TOO_LONG || error == E_SIGINT)
 	{
@@ -161,7 +158,7 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 
 	str_status = NULL;
 	signal_conf();
-	if(handlerr(get_cmd_tree(&tree, environ->envp), &tree, environ))
+	if(handlerr(get_cmd_tree(&tree, environ), &tree, environ))
 		return;
 	if(handlerr(non_pipable_builtin(tree, environ), &tree, environ))
 		return;

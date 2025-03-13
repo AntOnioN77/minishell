@@ -167,7 +167,7 @@ typedef struct s_environ {
 /*_____________________Parser_Prototypes______________________________________*/
 //Location: main.c
 e_errors	continue_cmd_tree(t_tree **tree, char **envp);
-e_errors	get_cmd_tree(t_tree **tree, char **envp);
+e_errors	get_cmd_tree(t_tree **tree, t_environ *environ);
 void print_error(char *cmd, char *error_msg);
 //Location: parser/constructors.c
 t_task *createtask(char *segment, char *end);

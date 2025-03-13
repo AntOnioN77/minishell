@@ -6,12 +6,11 @@
 #include "executor.h"
 
 /**
- * Imprime una nueva línea y redibuja el prompt de readline
+ * Imprime una nueva línea y redibuja el prompt de readlinewwwwwwwwwwwwwwwwwwwwwwwwwww
  */
 void	handle_sigint(int signal)
 {
-	(void)signal;
-	g_ctrlc = 130;
+	g_ctrlc = signal;
 	write(1, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
@@ -24,7 +23,6 @@ void	handle_sigint(int signal)
 void	handle_sigint_heredoc(int signal)
 {
 	(void)signal;
-	g_ctrlc = 130;
 	write(1, "\n", 1);
 	rl_replace_line("", 0);
 	close_fds(3);
