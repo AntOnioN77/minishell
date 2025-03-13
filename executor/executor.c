@@ -254,6 +254,8 @@ e_errors create_child(t_task *task, t_environ *environ , int in, int out)
 		err = errno;
 		free(pathcmd);
 	}
+
+	signal(SIGINT, SIG_IGN);
 	if (out != STDOUT_FILENO)
 		close(out);
 	if (in != STDIN_FILENO)

@@ -15,3 +15,4 @@
 *.vsix
 *.o
 minishell_tester
+readline.supp
