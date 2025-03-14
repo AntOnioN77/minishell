@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/14 21:23:11 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/14 21:42:47 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ void create_file(char *segment, char *end, int flag, t_redir *redir)
 	
 	// Crear el archivo si no existe y si redir no es NULL (redir NULL significa que solo estamos usando get redir para skippear redirs)
 	file = ft_substr(segment, 0, findchars(segment, end, DELIMITERS) - segment);
+	unquote(file);
 	if (redir && !access(file, F_OK) && access(file, W_OK) == -1)
 		redir->error = NO_PERMISSION;
 	else
