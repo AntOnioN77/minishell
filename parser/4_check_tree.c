@@ -80,8 +80,8 @@ int	 check_tree(t_tree *tree, char **envp)
 			return (SYNTAX_ERROR);
 		if (is_void_task(tasknode))//NO SIRVE, SI METEN UNA REDIRECCION NADA MAS HACE SIGFAULT
 			return (TASK_IS_VOID);
-		if(tasknode->redir.error) //se podria retornar sin hacer el if, pero parece mas claro así;
-			return(tasknode->redir.error);
+		if(tasknode->redir.error == SYNTAX_ERROR ) //se podria retornar sin hacer el if, pero parece mas claro así;
+			return(SYNTAX_ERROR);
 	}
 	else
 		return(INVALID_TYPE);

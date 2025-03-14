@@ -47,11 +47,11 @@ static e_errors file_redirector(int newfd, char *file, int openflag, char **word
 		}
 	}
 
-
+//creo que esto se va
 	if ((openflag & O_CREAT) == O_CREAT)
 		fd = open(file, openflag, 0664);
 	else
-		fd = open(file, openflag);
+		fd = open(file, openflag); /////////////// fin se va
 	if (fd == -1 || dup2(fd, newfd) == -1 || close(fd))
 		return(errno);
 	return(ALL_OK);

@@ -50,7 +50,7 @@ e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
 	g_ctrlc = 0;
 //signal(SIGINT,SIG_DFL);
 	line = readline("mini$hell> ");
- fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
+//fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
 // fprintf(stdout, "--------------strlen: %zu\n", ft_strlen(line));
 // fprintf(stdout, "--------------line: %s\n", line);
 	if(!line)// || ft_strcmp(line, "\n") > 0)// || (g_ctrlc == 130 && ft_strcmp(line, "\n")))

@@ -6,11 +6,35 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/05 13:38:30 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/14 21:23:11 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+#include <errno.h>
+
+char *findchars(char *str, char *end, char *wanted)
+{
+    char *ptr;
+    
+    if (!str || !end || !wanted)
+        return end;
+    
+    // Recorremos la cadena desde str hasta end
+    for (ptr = str; ptr < end; ptr++) {
+        // Para cada carácter en la cadena destino, verificamos si está en wanted
+        char *w;
+        for (w = wanted; *w != '\0'; w++) {
+            if (*ptr == *w) {
+                // Encontrada coincidencia, devolvemos el puntero
+                return ptr;
+            }
+        }
+    }
+    
+    // No se encontró coincidencia, devolvemos end
+    return end;
+}
 
 static void handle_heredoc(char **segment, char *end, t_redir *redir)
 {
@@ -27,9 +51,35 @@ static void handle_heredoc(char **segment, char *end, t_redir *redir)
 	return;
 }
 
+void create_file(char *segment, char *end, int flag, t_redir *redir)
+{
+	int fd;
+	char *file;
+	
+	// Crear el archivo si no existe y si redir no es NULL (redir NULL significa que solo estamos usando get redir para skippear redirs)
+	file = ft_substr(segment, 0, findchars(segment, end, DELIMITERS) - segment);
+	if (redir && !access(file, F_OK) && access(file, W_OK) == -1)
+		redir->error = NO_PERMISSION;
+	else
+	{
+		fd = open(file, O_WRONLY | O_CREAT | flag, 0664);
+		close(fd);
+	}
+	free(file);
+}
+
 static void handle_append(char **segment, char *end, t_redir *redir)
 {
+	int fd;
+	char *file;
+
+	
 	(*segment) += 2;
+	file = ft_substr(*segment, 0, findchars(*segment, end, DELIMITERS) - *segment);
+	fd = open(file, O_APPEND, 0664);
+	//		if (fd == -1)
+	//			redir->error = errno;
+	close(fd);
  	if (redir)
 	{
 		redir->outsymbol = append;
@@ -37,6 +87,8 @@ static void handle_append(char **segment, char *end, t_redir *redir)
 	}
 	else
 		getpntword(segment, end, NULL);
+	free(file);
+	return;
 }
 
 static void handle_input(char **segment, char *end, t_redir *redir)
@@ -57,11 +109,15 @@ static void handle_output(char **segment, char *end, t_redir *redir)
 	(*segment)++;
  	if (redir)
 	{
+		create_file(*segment, end, O_TRUNC, redir);
+
+		// instanciar redir >
 		redir->outsymbol = outfile;
 		getpntword(segment, end, &(redir->outfile));
 	}
 	else
 		getpntword(segment, end, NULL);
+	return;
 }
 }
 
@@ -69,8 +125,13 @@ static void handle_output(char **segment, char *end, t_redir *redir)
 //Si hay un heredoc, crea el archivo temporal necesario.
 void	get_redir(char **segment, char *end, t_redir *redir)
 {
+//fprintf(stderr, "___________________________________get redir\n");
 	while (*segment < end)
 	{
+		if (redir && !(redir->error == ALL_OK))
+		{
+			redir = NULL;
+		}
 		skipwhitesp(segment, end);
 		if (*segment == ft_strnstr(*segment, "<<", end - *segment))
 			handle_heredoc(segment, end, redir);
