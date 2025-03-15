@@ -19,7 +19,6 @@
 
 int	free_null_arr(char ***s);
 
-void	free_arr(char **s);
 
 e_errors create_child(t_task *task, t_environ *environ , int in, int out);
 

@@ -227,6 +227,8 @@ e_errors add_var(char *key, char *value, t_environ *environ);
 char *getkey(char *var);
 void ft_env(t_environ *environ);
 void unquote(char *str);
+e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ);
+void	free_arr(char **s);
 
 // ...
 //LOCATIONS: create_envp.c
