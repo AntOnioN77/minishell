@@ -21,7 +21,7 @@ EXPANSIONES QUE NO FUNCIONAN
 	2. echo "$ " //deberia imprimir el $
 	3. echo $"PWD" //deberia imprimir PWD (sin $)
 
-
+!!!!! echo "'$USER'" should print the value of the USER variable. 
 
 
 

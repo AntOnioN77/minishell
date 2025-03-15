@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/14 21:42:47 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/15 10:19:07 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,24 +71,15 @@ void create_file(char *segment, char *end, int flag, t_redir *redir)
 
 static void handle_append(char **segment, char *end, t_redir *redir)
 {
-	int fd;
-	char *file;
-
-	
 	(*segment) += 2;
-	file = ft_substr(*segment, 0, findchars(*segment, end, DELIMITERS) - *segment);
-	fd = open(file, O_APPEND, 0664);
-	//		if (fd == -1)
-	//			redir->error = errno;
-	close(fd);
  	if (redir)
 	{
+		create_file(*segment, end, O_APPEND, redir);
 		redir->outsymbol = append;
 		getpntword(segment, end, &(redir->outfile));
 	}
 	else
 		getpntword(segment, end, NULL);
-	free(file);
 	return;
 }
 
