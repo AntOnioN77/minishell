@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/15 10:19:07 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/15 11:11:07 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,15 +51,19 @@ static void handle_heredoc(char **segment, char *end, t_redir *redir)
 	return;
 }
 
+// si el archivo no existe lo crea.
+//Introduce un error en redir->error en caso de que el archivo exista pero no tengamos permisos de escritura
 void create_file(char *segment, char *end, int flag, t_redir *redir)
 {
 	int fd;
 	char *file;
 	
+	if(!redir)
+		return ;
 	// Crear el archivo si no existe y si redir no es NULL (redir NULL significa que solo estamos usando get redir para skippear redirs)
 	file = ft_substr(segment, 0, findchars(segment, end, DELIMITERS) - segment);
 	unquote(file);
-	if (redir && !access(file, F_OK) && access(file, W_OK) == -1)
+	if (!access(file, F_OK) && access(file, W_OK) == -1)
 		redir->error = NO_PERMISSION;
 	else
 	{
@@ -83,11 +87,27 @@ static void handle_append(char **segment, char *end, t_redir *redir)
 	return;
 }
 
+//introduce error en redir->error en caso de que el archivo no exista o no se disponga de permiso de lectura
+//si redir es == NULL no hace nada, esto es util cuando simplemente estamos skipeando redirs
+void check_file(char *segment, char *end, t_redir *redir)
+{
+	char *file;
+	
+	if(!redir)
+		return ;
+	file = ft_substr(segment, 0, findchars(segment, end, DELIMITERS) - segment);
+	unquote(file);
+	if (access(file, F_OK) || access(file, R_OK))
+		redir->error = NO_PERMISSION;
+	free(file);
+}
+
 static void handle_input(char **segment, char *end, t_redir *redir)
 {
 	(*segment)++;
  	if (redir)
 	{
+		check_file(*segment, end, redir);
 		redir->insymbol = infile;
 		getpntword(segment, end, &(redir->infoo));
 	}
