@@ -240,6 +240,7 @@ e_errors create_child(t_task *task, t_environ *environ , int in, int out)
 	task->pid = pid;
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 //printf("Proceso hijo: PID=%d, PPID=%d\n", getpid(), getppid());
 		err = repipe_child(task, in, out, &word_fail);
 		if(child_error_handler(err, word_fail))
@@ -254,8 +255,8 @@ e_errors create_child(t_task *task, t_environ *environ , int in, int out)
 		err = errno;
 		free(pathcmd);
 	}
-
-	signal(SIGINT, SIG_IGN);
+	else
+		signal(SIGINT, SIG_IGN);
 	if (out != STDOUT_FILENO)
 		close(out);
 	if (in != STDIN_FILENO)
