@@ -229,6 +229,7 @@ void ft_env(t_environ *environ);
 void unquote(char *str);
 e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ);
 void	free_arr(char **s);
+void	handle_sigint_vis(int signal);
 
 // ...
 //LOCATIONS: create_envp.c

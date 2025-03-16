@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/16 14:35:09 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/16 21:32:22 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char *foundvar(char *str, char *envp[])
 	size_t len;
 
 	i = 0;
-	if (strchr(WHITESPACES,*str) || strchr(DELIMITERS,*str))
+	if (strchr(WHITESPACES,*str) || ft_strchr(DELIMITERS,*str))
 		return(ft_strdup("$"));
 	validvar = ft_strdup("");
 	while(envp[i])

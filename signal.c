@@ -17,6 +17,12 @@ void	handle_sigint(int signal)
 	rl_redisplay();
 }
 
+void	handle_sigint_vis(int signal)
+{
+	g_ctrlc = signal;
+	write(1, "\n", 1);
+}
+
 /**
  * Gestiona Ctrl+C con heredoc
  */
