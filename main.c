@@ -166,6 +166,14 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 	if(0 == handlerr(executor(tree, environ, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
 	{
 			status = wait_all(tree);//, envp);
+			if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+			{
+//write(1, "A\n",2);
+//fprintf(stderr, "main 171, pid(%d)\n", getpid());
+            	handle_sigint_vis(SIGINT);
+//write(1, "B\n",2);
+				signal(SIGINT, handle_sigint);
+			}
 			if (((((status) & 0x7f) + 1) >> 1) > 0) //aplicamos mascara WIFSIGNALED(status)
 				str_status = ft_itoa(((status) & 0x7f) + IS_SIGNAL);//aplicamos mascara WTERMSIG(status) y sumamos 128 (los codigos de señal en bash empiezan en 128)
 			else
@@ -175,6 +183,7 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 			close_fds(3);//SOBRA?????????
 			free_tree(tree);
 	}
+//write(1, "C\n",2);
 }
 
 

@@ -21,6 +21,7 @@ void	handle_sigint_vis(int signal)
 {
 	g_ctrlc = signal;
 	write(1, "\n", 1);
+//fprintf(stderr, "handle_sigint_vis %d", getpid());
 }
 
 /**
