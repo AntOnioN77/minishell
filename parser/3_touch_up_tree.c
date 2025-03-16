@@ -17,7 +17,7 @@ void unquote(char *str)
 	{
 		if ((*pntstr == 39 || *pntstr == '"') &&  ft_strchr(pntstr +1, *pntstr))
 		{
-			quotlen = ft_strchr(pntstr +1, *pntstr) - (pntstr +1) ;
+			quotlen = ft_strchr(pntstr +1, *pntstr) - (pntstr +1);
 			ft_strlcpy(pntnew, pntstr +1, quotlen +1);
 			pntnew = pntnew + quotlen;
 			pntstr = ft_strchr(pntstr +1, *pntstr);
