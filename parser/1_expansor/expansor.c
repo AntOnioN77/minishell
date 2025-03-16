@@ -71,7 +71,7 @@ e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe 
     return (ALL_OK);
 }
 
-//
+
 e_errors	expand_task(t_task *node, char *envp[])
 {
 	int	i;
@@ -84,8 +84,6 @@ e_errors	expand_task(t_task *node, char *envp[])
 	
 	if (expandstr(&(node->cmd), &(node->garb), envp))
 		return (1);
-//	if (add_pathname(&(node->cmd), &(node->garb), envp))
-//		return (1);
 	if (node->redir.insymbol != heredoc)
 	{
 		if (expandstr(&(node->redir.infoo), &(node->garb), envp))

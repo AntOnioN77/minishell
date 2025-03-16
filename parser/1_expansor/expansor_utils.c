@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/04 13:09:05 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:35:09 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ char *foundvar(char *str, char *envp[])
 		i++;
 	}
 	return(validvar);
-	
 }
 
 
@@ -179,7 +178,6 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 		**new_str = '$';
 		(*new_str)++;
 	}
-
 	value = ft_getenv(key, envp);
 	free(key);
 	*str = *marker;
