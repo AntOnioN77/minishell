@@ -1,4 +1,3 @@
-
 #include "../minishell.h"
 #include "../libft/headers/libft.h"
 
@@ -34,7 +33,7 @@ void unquote(char *str)
 	free(newstr);
 }
 
-static int	unquote_task(t_task *node)
+static void unquote_task(t_task *node)
 {
 	int	i;
 
@@ -47,41 +46,49 @@ static int	unquote_task(t_task *node)
 		unquote((node->argv)[i]);
 		i++;
 	}
-	return(0);
+	return;
 }
 
-//FIN TEMPORAL
-
-//Si retorna 1 imprimir perror(errno)
-//trabaja en este orden: 1.Desenvuelve comillas no anidadas 2.Crea documento temporal para heredoc si fuera necesario
-//Nueva funcionalidad (requiere cambio de nombre): ahora tambien escribe en archivo temporal para heredocs
-e_errors	touch_up_tree(t_tree *node, char *envp[])
+static e_errors	handle_pipe_node(t_pipe *pipe, char *envp[])
 {
-	t_task *task;
-	t_pipe *pipe;
 	e_errors error;
 
-	error = INVALID_TYPE;
+	error = expand_task(pipe->left, envp);
+	if (error)
+		return (error);
+	unquote_task((t_task *)pipe->left);
+	error = create_heredoc(&(pipe->left->redir));
+	if (error)
+		return (error);
+	error = touch_up_tree((t_tree *)pipe->rigth, envp);
+	return (error);
+}
+
+static e_errors	handle_task_node(t_task *task, char *envp[])
+{
+	e_errors error;
+
+	error = expand_task(task, envp);
+	if (error)
+		return (error);
+	unquote_task(task);
+	error = create_heredoc(&(task->redir));
+	return (error);
+}
+
+e_errors	touch_up_tree(t_tree *node, char *envp[])
+{
+	e_errors error;
+
 	if (node->type == PIPE)
 	{
-		pipe = (t_pipe *)node;
-		error=expand_task(pipe->left, envp); //cancelamos expand_task para expandir directamente la linea original
-		if(error)
-			return (error);
-		unquote_task(((t_task *)pipe->left));
-		error=create_heredoc(&(pipe->left->redir)); //si hubo error lo anota, sera encontrado por check_tree
-		if (error)
-			return (error);
-		error= touch_up_tree((t_tree *)pipe->rigth, envp);
+		error = handle_pipe_node((t_pipe *)node, envp);
+		return (error);
 	}
 	else if (node->type == TASK)
 	{
-		task = (t_task *)node;
-		error = expand_task(task, envp); //cancelamos expand_task para expandir directamente la linea original
-		if(error)
-			return (error);
-		unquote_task(task);
-		error = create_heredoc(&(task->redir)); //si hubo error lo anota, sera encontrado por check_tree
+		error = handle_task_node((t_task *)node, envp);
+		return (error);
 	}
-	return (error);
+	return (INVALID_TYPE);
 }
