@@ -153,6 +153,13 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 	exit(error);
 }
 
+/*
+	la expansion de estos macros, que por norma no podemos usar ensucia el codigo,
+	deberiamos simplemente crear funciones para suplirlos:
+	WIFSIGNALED(status) se expande en (((signed char) (((status) & 0x7f) + 1) >> 1) > 0)
+	WTERMSIG(status) se expande en ((status) & 0x7f)
+	WTERMSIG(status)
+	WEXISTATUS*/
 void shell_cycle(t_tree *tree, t_environ *environ)
 {
 	int status;
@@ -164,17 +171,13 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 		return;
 	if(handlerr(non_pipable_builtin(tree, environ), &tree, environ))
 		return;
- //print_tree(tree, 30);
 	if(0 == handlerr(executor(tree, environ, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
 	{
 			status = wait_all(tree);//, envp);
-			if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+			if ((((signed char) (((status) & 0x7f) + 1) >> 1) > 0) && ((status) & 0x7f) == SIGINT) // if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 			{
-//write(1, "A\n",2);
-//fprintf(stderr, "main 171, pid(%d)\n", getpid());
             	handle_sigint_vis(SIGINT);
-//write(1, "B\n",2);
-				signal(SIGINT, handle_sigint);
+				signal(SIGINT, handle_sigint);// ¿¿¿NECESARIO????
 			}
 			if (((((status) & 0x7f) + 1) >> 1) > 0) //aplicamos mascara WIFSIGNALED(status)
 				str_status = ft_itoa(((status) & 0x7f) + IS_SIGNAL);//aplicamos mascara WTERMSIG(status) y sumamos 128 (los codigos de señal en bash empiezan en 128)
@@ -185,7 +188,6 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 			close_fds(3);//SOBRA?????????
 			free_tree(tree);
 	}
-//write(1, "C\n",2);
 }
 
 
