@@ -1,11 +1,30 @@
 #include "../minishell.h"
 #include "../libft/headers/libft.h"
 
+char *unquote_one(char **pntnew, char *pntstr)
+{
+	size_t	quotlen;
+	
+	if ((*pntstr == 39 || *pntstr == '"') &&  ft_strchr(pntstr +1, *pntstr))
+	{
+		quotlen = ft_strchr(pntstr +1, *pntstr) - (pntstr +1);
+		ft_strlcpy(*pntnew, pntstr +1, quotlen +1);
+		*pntnew = *pntnew + quotlen;
+		pntstr = ft_strchr(pntstr +1, *pntstr);
+	}
+	else
+	{
+		ft_strlcpy(*pntnew, pntstr, 2);
+		(*pntnew)++;
+	}
+	pntstr++;
+	return (pntstr);
+}
+
 void unquote(char *str)
 {
 	char *newstr;
 	char *pntnew;
-	int quotlen;
 	char *pntstr;
 
 	pntstr = str;
@@ -15,19 +34,7 @@ void unquote(char *str)
 	pntnew = newstr;
 	while(*pntstr)
 	{
-		if ((*pntstr == 39 || *pntstr == '"') &&  ft_strchr(pntstr +1, *pntstr))
-		{
-			quotlen = ft_strchr(pntstr +1, *pntstr) - (pntstr +1);
-			ft_strlcpy(pntnew, pntstr +1, quotlen +1);
-			pntnew = pntnew + quotlen;
-			pntstr = ft_strchr(pntstr +1, *pntstr);
-		}
-		else
-		{
-			ft_strlcpy(pntnew, pntstr, 2);
-			pntnew++;
-		}
-		pntstr++;
+		pntstr = unquote_one(&pntnew, pntstr);
 	}
 	ft_strlcpy(str, newstr, 1 + ft_strlen(str));
 	free(newstr);
