@@ -55,6 +55,7 @@ e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
 // fprintf(stdout, "--------------line: %s\n", line);
 	if(!line)// || ft_strcmp(line, "\n") > 0)// || (g_ctrlc == 130 && ft_strcmp(line, "\n")))
 	{
+		
 		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
 	}
 	if (g_ctrlc == 2)
@@ -119,9 +120,9 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 {
 	if (error == ALL_OK)
 		return (0);
-	if (error == FINISH || error == READLINE_FAIL)
+	if (error == FINISH)
 		error = 0;
-	else if(error != TASK_IS_VOID && error != CONTINUE)
+	else if(error != TASK_IS_VOID && error != CONTINUE && error != READLINE_FAIL)
 			ft_perror(error);
 //fprintf(stdout, "--------------$?: %d\n", atoi(ft_getenv("?", environ->envp)));
 	if ( tree && *tree)
@@ -140,7 +141,8 @@ e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
 			change_var("?", "130", environ);
 		return (error);//continue
 	}
-
+	if (error == READLINE_FAIL)
+		error = (unsigned char) ft_atoi(ft_getenv("?", environ->envp));
 	if(environ)
 	{
 		free_arr(environ->envp);

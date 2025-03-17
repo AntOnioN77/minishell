@@ -230,6 +230,7 @@ void unquote(char *str);
 e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ);
 void	free_arr(char **s);
 void	handle_sigint_vis(int signal);
+void ft_exit(t_task *task, t_tree *tree, t_environ *environ);
 
 // ...
 //LOCATIONS: create_envp.c
