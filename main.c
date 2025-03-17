@@ -177,7 +177,7 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 			if ((((signed char) (((status) & 0x7f) + 1) >> 1) > 0) && ((status) & 0x7f) == SIGINT) // if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 			{
             	handle_sigint_vis(SIGINT);
-				signal(SIGINT, handle_sigint);// ¿¿¿NECESARIO????
+//				signal(SIGINT, handle_sigint);// ¿¿¿NECESARIO????
 			}
 			if (((((status) & 0x7f) + 1) >> 1) > 0) //aplicamos mascara WIFSIGNALED(status)
 				str_status = ft_itoa(((status) & 0x7f) + IS_SIGNAL);//aplicamos mascara WTERMSIG(status) y sumamos 128 (los codigos de señal en bash empiezan en 128)
