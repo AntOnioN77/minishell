@@ -16,7 +16,7 @@ int	search_var(char **envp, const char* var)
 	pos = 0;
 	while (envp[pos])
 	{
-		len = strchr(envp[pos], '=') - envp[pos];
+		len = ft_strchr(envp[pos], '=') - envp[pos];
 		if (ft_strncmp(envp[pos], var, len) == 0)
 		{
 			return (pos);

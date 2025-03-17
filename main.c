@@ -13,7 +13,6 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	char		*line;
 	e_errors	error;
 
-	//GESTIONAR SEÑAL AQUI, si ctrl+C es pulsado, dberiamos liberar el arbol y volver a pedir entrada de usuario "mini$hell>"
 	line = readline("> ");
 	if(!line)
 		return (READLINE_FAIL);//pasar codigo de señal??
@@ -23,8 +22,6 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return(continue_cmd_tree(right, envp));
 	}
 	add_history(line);
-//	if(expansor(&line, envp) != ALL_OK)
-//		return(ERROR_MALLOC);
 	*right = build_tree(line);
 	if (*right == NULL)
 	{
@@ -48,36 +45,18 @@ e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
 
 	envp = environ->envp;
 	g_ctrlc = 0;
-//signal(SIGINT,SIG_DFL);
 	line = readline("mini$hell> ");
-//fprintf(stdout, "--------------g_ctrlc: %d\n", g_ctrlc);
-// fprintf(stdout, "--------------strlen: %zu\n", ft_strlen(line));
-// fprintf(stdout, "--------------line: %s\n", line);
 	if(!line)// || ft_strcmp(line, "\n") > 0)// || (g_ctrlc == 130 && ft_strcmp(line, "\n")))
-	{
-		
 		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
-	}
 	if (g_ctrlc == 2)
 		change_var("?", "130", environ);
-	/*if(g_ctrlc == 2 && ft_strlen(line) == 0)
-	{
-		g_ctrlc = 0;
-			fprintf(stdout, "--------------salir2\n");
-		free(line);
-		return(E_SIGINT);
-	}*/
 	if (ft_strlen(line) >= S_LINE_MAX)
 	{
 		free(line);
 		return(LINE_TOO_LONG);
 	}
 	if (*line)
-	{
 		add_history(line);
-//		if(expansor(&line, envp) != ALL_OK)
-//				return(ERROR_MALLOC);
-	}
 	*tree = build_tree(line);
 	if (*tree == NULL)
 	{
