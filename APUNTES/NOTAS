@@ -1,5 +1,7 @@
 papelera trash Trash = ~/snap/code/187/.local/share/Trash/files
 
+buscar funciones no definidas (para verificar que no esten prohibidas) hay que ir carpeta por carpeta:
+nm -u *.o | sort | uniq
 
 Polimorfismo en tiempo de ejecucion:
 https://embeddedartistry.com/fieldatlas/technique-inheritance-and-polymorphism-in-c/#:~:text=While%20C%20is%20not%20an,can%20be%20implemented%20in%20C.

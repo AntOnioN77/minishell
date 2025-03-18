@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/17 13:31:01 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/18 12:50:02 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,23 @@
 
 int	is_expansible(char *str)
 {
+	int doubleq;
+
+	doubleq = 0;
 	if(!str)
 		return (0);
 	while (*str)
 	{
+		if (*str == '"')
+		{
+			if(ft_strchr(str + 1, '"'))
+				doubleq = 1;
+			else
+				doubleq = 0;
+		}
 		if (*str == '$')
 			return (1);
-		if (*str == 39 && ft_strchr(str + 1, 39))
+		if (*str == 39 && ft_strchr(str + 1, 39) && doubleq == 0)
 			str = ft_strchr(str + 1, 39);
 		str++;
 	}
@@ -55,7 +65,6 @@ char *getkey(char *var)
 	key = ft_substr(var, 0, len);
 	return(key);
 }
-
 
 char *foundvar(char *str, char *envp[])
 {
@@ -133,11 +142,12 @@ int	calculate_expansion_length(char *str, char *envp[])
 	int len;
 	int	ret;
 	char *aux;
+	//int doublequot;
 
 	len = 0;
 	while (*str)
 	{
-		if (*str == 39 && ft_strchr(str + 1, 39))
+		if (*str == 39 && ft_strchr(str + 1, 39))// && //compara con flag que indique si estamos dentro de doblequotes (si estas simplequotes estan anidadas no evitan la expansion))
 		{
 			aux = str;
 			str = ft_strchr(str + 1, 39);
