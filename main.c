@@ -95,7 +95,7 @@ void ft_perror(int error) //IMPORTANTE: impresion debe ser atomica, un solo writ
 	ft_putchar_fd('\n', 2);//temporal, hacer un solo write
 }
 
-e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ)
+e_errors	handlerr(e_errors error, t_tree **tree, t_environ *environ)
 {
 	if (error == ALL_OK)
 		return (0);
@@ -170,25 +170,20 @@ void shell_cycle(t_tree *tree, t_environ *environ)
 }
 
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	t_tree	*tree;
-	t_environ environ;
-
-//char *str_bug;
+	t_tree		*tree;
+	t_environ	environ;
 
 	tree = NULL;
-	if (argc != 1 || !argv)
-		return(0);
-	handlerr(create_envp(envp, &environ), &tree, &environ);
-	
-	while(1)
+	if (argc > 1)
 	{
-//str_bug=ft_strdup("BUG LEAK INTENCIONAL");
-//printf("%s\n", str_bug);
-//str_bug=NULL;
-		shell_cycle(tree, &environ);
-//test_fds("196 main.c main");
+		ft_putstr_fd("Minishell doesn't admit arguments like: ", 2);
+		ft_putstr_fd(argv[1], 2);
+		return (1);
 	}
+	handlerr(create_envp(envp, &environ), &tree, &environ);
+	while(1)
+		shell_cycle(tree, &environ);
 	return (0);
 }

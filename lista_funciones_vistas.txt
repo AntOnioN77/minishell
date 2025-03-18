@@ -1,0 +1,31 @@
+Lista de las funciones refactorizadas hasta el momento:
+
+RAIZ
+	MAIN.C
+		int	main(int argc, char **argv, char **envp)
+
+ENVIRONMENT
+	CREATE_ENVP
+		e_errors	create_envp(char **original, t_environ *environ)
+		int			count_to_null(void **pnt)
+		e_errors	copy_prev_envp(char **original, t_environ *environ)
+	INIT_ENVP
+		e_errors	init_envp(t_environ *environ) //ECHAR VISTAZO A LA NORMA
+		e_errors	set_shlvl(t_environ *environ)
+		e_errors	set_pathshell(t_environ *environ, char *path, e_errors error)
+	GET_ENVP
+		char	*ft_getenv(const char *name, char *envp[])
+	VAR_OPERATION
+		e_errors 	add_var(char *key, char *value, t_environ *environ) //línea 80 hay que despedazarla
+		void		*custom_realloc(void **pnt, size_t oldsize, size_t newsize) //LIBFT?
+		e_errors	change_var(char *key, char *newvalue, t_environ *environ)
+		char		*var_buid(char *key, char *newvalue)
+		int	search_var(char **envp, const char* var)
+
+
+
+
+
+
+
+

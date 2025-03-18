@@ -58,13 +58,13 @@ typedef enum e_errors
 	COM_NOT_FOUND = 127,
 	E_SIGINT = 130,
 	E_SIGQUIT = 131,
-    ERROR_MALLOC = 151, // evitamos solapar valores de errno, de esta manera
-//nuestras funciones pueden retornar tanto valores capturados de errno, como
-//nuestros propios casos de error
+	ERROR_MALLOC = 151, // evitamos solapar valores de errno, de esta manera
+	//nuestras funciones pueden retornar tanto valores capturados de errno, como
+	//nuestros propios casos de error
 	READ_SIGINT,
 	NO_PERMISSION,
 	NO_EXIST,
-    INVALID_TYPE,//solo para debug	
+	INVALID_TYPE,//solo para debug	
 	TASK_IS_VOID,	
 	SYNTAX_ERROR,
 	READLINE_FAIL,//lo he cambiado por retornar errno (14feb)
@@ -90,7 +90,7 @@ función. El elemento type, permite a esa función determinar que tipo de dato h
 en realidad.*/
 typedef struct s_tree
 {
-	e_nodes type;
+	e_nodes	type;
 	char	*line;		//solo el primer nodo del arbol contendrá line!=NULL
 	char	*line_extra;//Solo en caso de "ls|(vacio)" line_extra !=NULL
 }	t_tree;
@@ -102,7 +102,7 @@ si no se encuentra ninguna redireccion los e_symbols pemanecen "none"
 */
 typedef struct s_redir
 {
-	e_nodes	type;
+	e_nodes		type;
 	e_symbols	insymbol;//< o <<
 	char		*infoo;// será un archivo para <, O un separator para <<
 	e_symbols	outsymbol;//>> o >
@@ -120,13 +120,13 @@ typedef struct s_garbage {
 typedef struct s_task
 {
 	e_nodes		type;
-	char	*line;		//solo el primer nodo del arbol contendrá line!=NULL
-	char	*line_extra;//Solo en caso de "ls|(vacio)" line_extra !=NULL
-	t_redir 	redir;
+	char		*line;		//solo el primer nodo del arbol contendrá line!=NULL
+	char		*line_extra;//Solo en caso de "ls|(vacio)" line_extra !=NULL
+	t_redir		redir;
 	char		*cmd;
 	char		**argv;
 	t_garbage	garb;
-	int   pid; 
+	int			pid; 
 }	t_task;
 
 //si left o rigth fuesen NULL indica error de reserva de memoria, hay que liverar el arbol entero y lanzar error.
@@ -147,14 +147,14 @@ typedef struct s_pipe {
 
 typedef struct s_environ {
 	// gestion de variables de netorno:
-	char **envp;
-	int next;//posicion no inicializada (null) donde podemos escribir la siguiente variable global
-	int alloced; //numero total de posiciones allocadas, de manera que si next+1 < alloced, no sera necesario reallocar memoria  
+	char	**envp;
+	int		next;//posicion no inicializada (null) donde podemos escribir la siguiente variable global
+	int		alloced; //numero total de posiciones allocadas, de manera que si next+1 < alloced, no sera necesario reallocar memoria  
 
 	// gestion de variables locales:
-	char **local;
-	int locnext;
-	int localloced;
+	char	**local;
+	int		locnext;
+	int		localloced;
 
 //	sighandler_t *sigint_handler;
 }	t_environ;
@@ -168,53 +168,73 @@ typedef struct s_environ {
 //Location: main.c
 e_errors	continue_cmd_tree(t_tree **tree, char **envp);
 e_errors	get_cmd_tree(t_tree **tree, t_environ *environ);
-void print_error(char *cmd, char *error_msg);
+void		print_error(char *cmd, char *error_msg);
 //Location: parser/constructors.c
-t_task *createtask(char *segment, char *end);
-t_tree *createpipe(char *line,char *pnt);
+t_task		*createtask(char *segment, char *end);
+t_tree		*createpipe(char *line,char *pnt);
 //Location parser/expansor.c
 e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
 e_errors	touch_up_tree(t_tree *node, char *envp[]);
 e_errors	expand_task(t_task *node, char *envp[]);
 //Location: parser/expansor_utils.c
-int	is_expansible(char *str);
-int	count_expansions(t_task *node);
-int	calculate_expansion_length(char *str, char *envp[]);
-int handle_dollar(char **new_str, char **str, char **marker, char *envp[]);
+int			is_expansible(char *str);
+int			count_expansions(t_task *node);
+int			calculate_expansion_length(char *str, char *envp[]);
+int			handle_dollar(char **new_str, char **str, char **marker, char *envp[]);
 //Location: parser/free_tree.c
-void free_tree(t_tree *node);
+void		free_tree(t_tree *node);
 //Location: parser/get_redir.c
-void	get_redir(char **segment, char *end, t_redir *redir);
+void		get_redir(char **segment, char *end, t_redir *redir);
 //Location: parser/build_tree.c
-void	getpntword(char **segment, char *end, char **dst);
-int count_cmdflags(char *segment, char *end);
-int parse_task(char *segment, char *end, t_task *task);
-int parsepipe(char *line, t_tree **ret);
-t_tree *build_tree(char *line);
+void		getpntword(char **segment, char *end, char **dst);
+int			count_cmdflags(char *segment, char *end);
+int			parse_task(char *segment, char *end, t_task *task);
+int			parsepipe(char *line, t_tree **ret);
+t_tree		*build_tree(char *line);
 //Location: parser/str_utils.c
-int isdelimiter(char c);
-void	nullify_delimiters(char *str);
-void	skipwhitesp(char **segment, char *end);
-int skip_quotes(char **strpnt, char *end);
-int strnchr_outquot(char **str, char *end, char c);
+int			isdelimiter(char c);
+void		nullify_delimiters(char *str);
+void		skipwhitesp(char **segment, char *end);
+int			skip_quotes(char **strpnt, char *end);
+int			strnchr_outquot(char **str, char *end, char c);
 //Location: mooks.c
-char *ft_getenv(const char *name, char *envp[]);
-void print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
-int wait_all(t_tree *node);
+char		*ft_getenv(const char *name, char *envp[]);
+void		print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
+int			wait_all(t_tree *node);
 //LOCATION: parser/check_tree.c
-int	 check_tree(t_tree *tree, char **envp);
+int			check_tree(t_tree *tree, char **envp);
 //LOCATION: create_heredoc.c
-e_errors create_heredoc(t_redir *redir);
-char *get_tmp_name(e_errors *error);
-e_errors heredoc_writer(char *separator, t_redir *redir);
+e_errors	create_heredoc(t_redir *redir);
+char		*get_tmp_name(e_errors *error);
+e_errors	heredoc_writer(char *separator, t_redir *redir);
 /*static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen);
 static e_errors write_heredoc_line(int fd, char *separator, size_t seplen);*/
 //LOCATION: signal.c
-void handle_sigint(int signal);
-void	signal_conf(void);
+void		handle_sigint(int signal);
+void		signal_conf(void);
 //LOCATION: history.c
-void	load_history(void);
-int	save_history(char *history);
+void		load_history(void);
+int			save_history(char *history);
+
+/*_____________________Environment_Prototypes_________________________________*/
+//LOCATIONS: create_envp.c
+int			count_to_null(void **pnt);
+e_errors	copy_prev_envp(char **original, t_environ *environ);
+e_errors	create_envp(char **original, t_environ *environ);
+void test_fds(char *where);
+void print_env(t_environ *environ);
+//LOCATION: init_envp.c
+e_errors	set_shlvl(t_environ *environ);
+e_errors	set_pathshell(t_environ *environ, char *path, e_errors error);
+e_errors	init_envp(t_environ *environ);
+//LOCATION: get_envp.c
+char		*ft_getenv(const char *name, char *envp[]);
+//LOCATION: var_operation.c
+void		*custom_realloc(void **pnt, size_t oldsize, size_t newsize);
+char		*var_buid(char *key, char *newvalue);
+e_errors 	change_var(char *key, char *newvalue, t_environ *environ);
+e_errors	add_var(char *key, char *value, t_environ *environ);
+int			search_var(char **envp, const char* var);
 
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree, t_environ *environ);
@@ -234,11 +254,7 @@ void ft_exit(t_task *task, t_tree *tree, t_environ *environ);
 int is_doublequoted(char *str, int original_flag);
 
 // ...
-//LOCATIONS: create_envp.c
-e_errors create_envp(char **original, t_environ *environ);
-e_errors change_var(char *key, char *newvalue, t_environ *environ);
-void test_fds(char *where);
-void print_env(t_environ *environ);
+
 //LOCATION: signal.c
 void	handle_sigint(int signal);
 void	handle_sigint_heredoc(int signal);
