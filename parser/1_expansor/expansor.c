@@ -47,7 +47,9 @@ e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe 
 	char	*marker;
 	char	*new_str;
 	char	*str;
+	int		doublequot;
 
+	doublequot = 0;
 	if(!is_expansible(*origin))
 		return (ALL_OK);
 	str = *origin;
@@ -62,7 +64,8 @@ e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]) //envp debe 
 				return (ERROR_MALLOC);
 			continue ;
 		}
-		if (*marker == 39 && ft_strchr(marker + 1, 39))
+		doublequot = is_doublequoted(marker, doublequot);
+		if (*marker == 39 && ft_strchr(marker + 1, 39) && doublequot == 0)
 			marker = ft_strchr(marker + 1, 39);
 		marker++;
 	}

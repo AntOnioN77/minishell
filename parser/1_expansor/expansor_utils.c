@@ -6,11 +6,26 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/18 12:50:02 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/18 13:17:20 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+//si str comienza por " y a continuacion hay una nueva ocurrencia de " retorna 1 para indicar que se habren comillas dobles.
+//si str comienza por " pero ya no hay mas a continuacion, retorna 0
+//si str comienza por algo distinto a " retorna original_flag, para no modificar el estado.
+int is_doublequoted(char *str, int original_flag)
+{
+	if (*str == '"')
+	{
+		if(ft_strchr(str + 1, '"'))
+			return (1);
+		else
+			return (0);
+	}
+	return (original_flag);
+}
 
 int	is_expansible(char *str)
 {
@@ -21,13 +36,7 @@ int	is_expansible(char *str)
 		return (0);
 	while (*str)
 	{
-		if (*str == '"')
-		{
-			if(ft_strchr(str + 1, '"'))
-				doubleq = 1;
-			else
-				doubleq = 0;
-		}
+		doubleq = is_doublequoted(str, doubleq);
 		if (*str == '$')
 			return (1);
 		if (*str == 39 && ft_strchr(str + 1, 39) && doubleq == 0)
@@ -142,12 +151,14 @@ int	calculate_expansion_length(char *str, char *envp[])
 	int len;
 	int	ret;
 	char *aux;
-	//int doublequot;
+	int doublequot;
 
+	doublequot = 0;
 	len = 0;
 	while (*str)
 	{
-		if (*str == 39 && ft_strchr(str + 1, 39))// && //compara con flag que indique si estamos dentro de doblequotes (si estas simplequotes estan anidadas no evitan la expansion))
+		doublequot = is_doublequoted(str, doublequot);
+		if (*str == 39 && ft_strchr(str + 1, 39) && doublequot == 0)//compara con flag que indique si estamos dentro de doblequotes (si estas simplequotes estan anidadas no evitan la expansion))
 		{
 			aux = str;
 			str = ft_strchr(str + 1, 39);
