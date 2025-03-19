@@ -15,6 +15,7 @@ void	ft_perror(int error)
 {
 	char	*msg;
 	char	*strerr;
+	char	*num;
 
 	//msg = NULL;
 	if (error == SYNTAX_ERROR)
@@ -23,7 +24,9 @@ void	ft_perror(int error)
 		msg = ft_strdup("minishell: line too long\n");
 	else
 	{
-		strerr = ft_strjoin(ft_itoa(error), "\n");
+		num = ft_itoa(error);
+		strerr = ft_strjoin(num, "\n");
+		free(num);
 		msg = ft_strjoin("minishell: ", strerr);
 		free(strerr);
 	}
