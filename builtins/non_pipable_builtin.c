@@ -148,13 +148,16 @@ void ft_cd(t_task *task, t_environ *environ)
 	int freedest;
 
 	freedest = 0;
-	if(countargs(task) != 2)
+	if(countargs(task) > 2)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
 		change_var("?", "1", environ);
 		return;
 	}
-	destination = task->argv[1];
+	if (countargs(task) == 1)
+		destination = ft_strdup("~");
+	else
+		destination = task->argv[1];
 	if(destination[0] == '~')
 	{
 		destination = ft_strjoin(ft_getenv("HOME", environ->envp), destination + 1);

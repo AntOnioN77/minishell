@@ -54,7 +54,7 @@ e_errors	change_var(char *key, char *newvalue, t_environ *environ)
 	i = 0;
 	while (i < environ->next)
 	{
-		if (ft_strncmp(envp[i], key, ft_strlen(key)) == 0)
+		if (ft_strncmp(envp[i], key, keylen) == 0)
 		{
 			free(envp[i]);
 			envp[i] = newvar;
