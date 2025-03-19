@@ -115,3 +115,4 @@ int	search_var(char **envp, const char* var)
 	}
 	return (-1);
 }
+
