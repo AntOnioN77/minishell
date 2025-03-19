@@ -5,7 +5,11 @@
 int	cd_destination(t_task *task, char **destination, t_environ *environ)
 {
 	*destination = task->argv[1];
-	if ((*destination)[0] == '~')
+	if (*destination == NULL)
+	{
+		*destination = ft_getenv("HOME", environ->envp);
+	}
+	else if ((*destination)[0] == '~')
 	{
 		*destination = ft_strjoin(ft_getenv("HOME", environ->envp),
 				*destination + 1);
@@ -26,7 +30,7 @@ void	ft_cd(t_task *task, t_environ *environ)
 	char	*destination;
 	int		freedest;
 
-	if (countargs(task) != 2)
+	if (countargs(task) > 2)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
 		change_var("?", "1", environ);
