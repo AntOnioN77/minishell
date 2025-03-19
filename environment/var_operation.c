@@ -54,7 +54,7 @@ e_errors	change_var(char *key, char *newvalue, t_environ *environ)
 	i = 0;
 	while (i < environ->next)
 	{
-		if (ft_strncmp(envp[i], key, ft_strlen(key)) == 0)
+		if (ft_strncmp(envp[i], key, keylen) == 0)
 		{
 			free(envp[i]);
 			envp[i] = newvar;
@@ -79,7 +79,9 @@ e_errors	add_var(char *key, char *value, t_environ *environ)
 	if (environ->next >= (environ->alloced - 1))
 	{
 //fprintf(stderr,"---------------------------------------------------------entra en realloc\n");
-		if(!custom_realloc((void **)&(environ->envp), environ->alloced * sizeof(char *), environ->alloced * 2 * sizeof(char *)))
+		if (!custom_realloc((void **)&(environ->envp)
+				, environ->alloced * sizeof(char *)
+				, environ->alloced * 2 * sizeof(char *)))
 			return(errno);
 		environ->alloced = environ->alloced * 2;
 	}

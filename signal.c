@@ -6,7 +6,7 @@
 #include "executor.h"
 
 /**
- * Imprime una nueva línea y redibuja el prompt de readlinewwwwwwwwwwwwwwwwwwwwwwwwwww
+ * Imprime una nueva línea y redibuja el prompt de readline
  */
 void	handle_sigint(int signal)
 {
@@ -15,13 +15,6 @@ void	handle_sigint(int signal)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
-}
-
-void	handle_sigint_vis(int signal)
-{
-	g_ctrlc = signal;
-	write(1, "\n", 1);
-//fprintf(stderr, "handle_sigint_vis %d", getpid());
 }
 
 /**

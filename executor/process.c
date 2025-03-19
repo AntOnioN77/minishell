@@ -21,23 +21,24 @@ void close_fds(int fd_since)
 
 int wait_all(t_tree *node)//, char **envp)
 {
-    int status;
-    
+	int status;
+
 	status = 0;
-    if (!node)
-        return (0);//????????????
-        
-    if (node->type == PIPE)
-    {
-        t_pipe *pipe_node = (t_pipe *)node;
-        status = wait_all(pipe_node->rigth);//, envp);
-        wait_all((t_tree *)pipe_node->left);//, envp);
-    }
-    else if (node->type == TASK)
-    {
-        t_task *task = (t_task *)node;
+	if (!node)
+		return (0);//????????????
+	if (node->type == PIPE)
+	{
+		t_pipe *pipe_node = (t_pipe *)node;
+		status = wait_all(pipe_node->rigth);//, envp);
+		wait_all((t_tree *)pipe_node->left);//, envp);
+	}
+	else if (node->type == TASK)
+	{
+		t_task *task = (t_task *)node;
 		waitpid(task->pid, &status, 0);
-//test_fds("60 process.c");
+		if ((((signed char)(((status) & 0x7f) + 1) >> 1) > 0)
+			&& ((status) & 0x7f) == SIGINT)
+			g_ctrlc = SIGINT;
 		close_fds(3);
 	}
 	return (status);

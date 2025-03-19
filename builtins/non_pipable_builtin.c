@@ -5,11 +5,11 @@
 #include "minishell.h"
 #include <linux/limits.h>
 
-static int countargs(t_task *task)
+int countargs(t_task *task)
 {
 	int i;
 
-	if(!task || !task->argv)
+	if (!task || !task->argv)
 		return (0);
 	i = 0;
 	while(task->argv[i])
@@ -30,9 +30,9 @@ char *getvalue(char *var)
 
 	start = ft_strchr(var, '=');
 	if (!start)
-		return(NULL);
+		return (NULL);
 	start++;
-	return(ft_strdup(start));
+	return (ft_strdup(start));
 	
 }
 
@@ -53,16 +53,16 @@ void export_error(char* identifier, t_environ *environ)
 int validate_key(char *key)
 {
 	int i;
-	if(!ft_strcmp(key, "") || !ft_strcmp(key,"PWD") || !ft_strcmp(key,"SHLVL")
+	if (!ft_strcmp(key, "") || !ft_strcmp(key,"PWD") || !ft_strcmp(key,"SHLVL")
 		|| !ft_strcmp(key,"SHELL")|| !ft_strcmp(key,"HOME")|| !ft_strcmp(key,"OLDPWD"))
-		return(0);
-	if(!ft_isalpha(key[0]) && key[0] != '_')
-			return(0);
+		return (0);
+	if (!ft_isalpha(key[0]) && key[0] != '_')
+			return (0);
 	i =1;
 	while (key[i])
 	{
-		if(!ft_isalnum(key[i]) && key[i] != '_') 
-			return(0);
+		if (!ft_isalnum(key[i]) && key[i] != '_') 
+			return (0);
 		i++;
 	}
 	return (1);
@@ -77,7 +77,7 @@ void ft_unset_one(char *key, t_environ *environ)
 	if (index == -1)
 		return;
 
-	if(!ft_strcmp(key,"PWD") || !ft_strcmp(key,"SHLVL")
+	if (!ft_strcmp(key,"PWD") || !ft_strcmp(key,"SHLVL")
 		|| !ft_strcmp(key,"SHELL")|| !ft_strcmp(key,"HOME")|| !ft_strcmp(key,"OLDPWD")|| !ft_strcmp(key,"?"))
 	{
 		ft_putstr_fd(" PWD, SHLVL, SHELL, HOME, OLDPWD, ?, are internal variables, not unsettable.\n", 2);
@@ -128,7 +128,7 @@ void ft_export(t_task *task, t_environ *environ)
 			continue;
 		}
 		value = getvalue(task->argv[i]);
-			if(search_var(environ->envp, key) == -1)
+			if (search_var(environ->envp, key) == -1)
 				add_var(key, value, environ);
 			else
 				change_var(key, value, environ);
@@ -139,47 +139,6 @@ void ft_export(t_task *task, t_environ *environ)
 
 }
 
-
-
-void ft_cd(t_task *task, t_environ *environ)
-{
-	char buffer[PATH_MAX + NAME_MAX + 1];
-	char *destination;
-	int freedest;
-
-	freedest = 0;
-	if(countargs(task) != 2)
-	{
-		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-		change_var("?", "1", environ);
-		return;
-	}
-	destination = task->argv[1];
-	if(destination[0] == '~')
-	{
-		destination = ft_strjoin(ft_getenv("HOME", environ->envp), destination + 1);
-		freedest = 1;
-	}
-	else if(destination[0] == '-')
-	{
-		ft_putstr_fd("Mini$ell: No options for cd\n", 2);
-		change_var("?", "1", environ);
-		return;
-	}
-	if(chdir(destination) == -1)
-	{
-		perror("minishell: cd:");
-		change_var("?", "1", environ);
-	}
-	else
-		change_var("?", "0", environ);
-	if(freedest)
-		free(destination);
-	change_var("OLDPWD", ft_getenv("PWD", environ->envp), environ);
-	getcwd(buffer, PATH_MAX + NAME_MAX);
-	change_var("PWD", buffer, environ);
-}
-
 //libera todo y termina minishell con exit(), solo retorna en caso de error
 void ft_exit(t_task *task, t_tree *tree, t_environ *environ)
 {
@@ -187,21 +146,21 @@ void ft_exit(t_task *task, t_tree *tree, t_environ *environ)
 	unsigned char truncated;
 	char *argument;
 
-	if(countargs(task) > 2)
+	if (countargs(task) > 2)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
 		change_var("?", "1", environ);
 		return;
 	}
-	if(countargs(task) == 2)
+	if (countargs(task) == 2)
 	{
 		argument = task->argv[1];
 		skipwhitesp(&argument, argument + ft_strlen(argument));
-		if(*argument == '+' || *argument == '-')
+		if (*argument == '+' || *argument == '-')
 			argument++;
 		while (ft_isdigit(*argument))
 			argument++;
-		if(*argument != '\0')
+		if (*argument != '\0')
 		{
 			ft_putstr_fd("bash: exit: 1 0: numeric argument required\n", 2);
 			exitcode = 2;
@@ -218,28 +177,28 @@ void ft_exit(t_task *task, t_tree *tree, t_environ *environ)
 	exit(truncated);
 }
 
-int non_pipable_builtin(t_tree *tree, t_environ *environ)
+int	non_pipable_builtin(t_tree *tree, t_environ *environ)
 {
-	t_task *task;
+	t_task	*task;
 
-	if(tree->type == TASK)
+	if (tree->type == TASK)
 	{
 		task = (t_task *)tree;
-		if(!((t_task *)tree)->cmd)
+		if (!((t_task *)tree)->cmd)
 			return (ALL_OK); 
-		if(!ft_strcmp(task->cmd, "cd"))
+		if (!ft_strcmp(task->cmd, "cd"))
 		{	
 			ft_cd(task, environ);
 		}
-		else if(!ft_strcmp(task->cmd, "exit"))
+		else if (!ft_strcmp(task->cmd, "exit"))
 		{
 			ft_exit(task, tree, environ);
 		}
-		else if(!ft_strcmp(task->cmd, "export"))
+		else if (!ft_strcmp(task->cmd, "export"))
 		{
 			ft_export(task, environ);
 		}
-		else if(!ft_strcmp(task->cmd, "unset"))
+		else if (!ft_strcmp(task->cmd, "unset"))
 			ft_unset(task->argv, environ);
 		else		//si se cumple alguna de las condiciones retornamos continue, si la task no era un builtin retornamos all ok, para no interrumpir el flujo normal
 			return (ALL_OK);

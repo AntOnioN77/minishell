@@ -17,9 +17,6 @@
 
 # define WHITESPACES " \r\n\v\t"
 # define DELIMITERS "|<> \r\n\v\t"
-//DEFINES PARA HISTORY
-# define HISTORY_FILE "./.history"
-# define DEFAULT_HISTSIZE 500
 # define S_LINE_MAX 4096 
 # define IS_SIGNAL 128
 //VARIABLE GLOBAL
@@ -166,8 +163,8 @@ typedef struct s_environ {
 
 /*_____________________Parser_Prototypes______________________________________*/
 //Location: main.c
-e_errors	continue_cmd_tree(t_tree **tree, char **envp);
-e_errors	get_cmd_tree(t_tree **tree, t_environ *environ);
+void		status_control(int status, t_environ *environ);
+void		shell_cycle(t_tree *tree, t_environ *environ);
 void		print_error(char *cmd, char *error_msg);
 //Location: parser/constructors.c
 t_task		*createtask(char *segment, char *end);
@@ -211,10 +208,20 @@ e_errors	heredoc_writer(char *separator, t_redir *redir);
 static e_errors write_heredoc_line(int fd, char *separator, size_t seplen);*/
 //LOCATION: signal.c
 void		handle_sigint(int signal);
+void		handle_sigint_heredoc(int signal);
 void		signal_conf(void);
-//LOCATION: history.c
-void		load_history(void);
-int			save_history(char *history);
+//LOCATION: handler_error.c
+void		print_error(char *cmd, char *error_msg);
+void		ft_perror(int error);
+e_errors	error_var(e_errors error, t_environ *environ);
+e_errors	handlerr(e_errors error, t_tree **tree, t_environ *environ);
+//LOCATION
+void		free_task(t_tree *node);
+void		free_tree(t_tree *node);
+//LOCATION
+e_errors	continue_cmd_tree(t_tree **tree, char **envp);
+e_errors	get_cmd_tree(t_tree **tree, t_environ *environ);
+
 
 /*_____________________Environment_Prototypes_________________________________*/
 //LOCATIONS: create_envp.c
@@ -236,6 +243,10 @@ e_errors 	change_var(char *key, char *newvalue, t_environ *environ);
 e_errors	add_var(char *key, char *value, t_environ *environ);
 int			search_var(char **envp, const char* var);
 
+/*_____________________Builtins Prototypes____________________________________*/
+//LOCATIONS: ft_cd.c
+void 		ft_cd(t_task *task, t_environ *environ);
+
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree, t_environ *environ);
 e_errors expansor(char **line, char **envp);
@@ -247,18 +258,14 @@ e_errors add_var(char *key, char *value, t_environ *environ);
 char *getkey(char *var);
 void ft_env(t_environ *environ);
 void unquote(char *str);
-e_errors handlerr(e_errors error, t_tree **tree, t_environ *environ);
 void	free_arr(char **s);
 void	handle_sigint_vis(int signal);
 void ft_exit(t_task *task, t_tree *tree, t_environ *environ);
 int is_doublequoted(char *str, int original_flag);
+int countargs(t_task *task);
 
 // ...
 
-//LOCATION: signal.c
-void	handle_sigint(int signal);
-void	handle_sigint_heredoc(int signal);
-void	signal_conf(void);
-void handle_sigint_heredoc2(int signal);
+
 
 #endif

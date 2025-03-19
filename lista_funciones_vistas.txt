@@ -1,28 +1,51 @@
 Lista de las funciones refactorizadas hasta el momento:
 
-RAIZ
-	MAIN.C
-		int	main(int argc, char **argv, char **envp)
-
-ENVIRONMENT
-	CREATE_ENVP
+RAIZ			3/5 mooks?
+	MAIN.C 				3/3
+		int			main(int argc, char **argv, char **envp)
+		void		shell_cycle(t_tree *tree, t_environ *environ)
+		void		status_control(int status, t_environ *environ)
+	HANDLER_ERROR.C		4/4
+		e_errors	handlerr(e_errors error, t_tree **tree, t_environ *environ)
+		e_errors	error_var(e_errors error, t_environ *environ)
+		void		ft_perror(int error)
+		void		print_error(char *cmd, char *error_msg)
+	SIGNAL.C			3/3
+		void		signal_conf(void)
+		void		handle_sigint(int signal)
+		void		handle_sigint_heredoc(int signal)
+	CMD_TREE_BUILDER.C	2/3
+		e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
+		e_errors	line_control(char *line, t_environ *environ)
+ENVIRONMENT		4/4
+	CREATE_ENVP			3/3
 		e_errors	create_envp(char **original, t_environ *environ)
 		int			count_to_null(void **pnt)
 		e_errors	copy_prev_envp(char **original, t_environ *environ)
-	INIT_ENVP
+	INIT_ENVP			3/3
 		e_errors	init_envp(t_environ *environ) //ECHAR VISTAZO A LA NORMA
 		e_errors	set_shlvl(t_environ *environ)
 		e_errors	set_pathshell(t_environ *environ, char *path, e_errors error)
-	GET_ENVP
-		char	*ft_getenv(const char *name, char *envp[])
-	VAR_OPERATION
-		e_errors 	add_var(char *key, char *value, t_environ *environ) //línea 80 hay que despedazarla
+	GET_ENVP			1/1
+		char		*ft_getenv(const char *name, char *envp[])
+	VAR_OPERATION		5/5
+		e_errors 	add_var(char *key, char *value, t_environ *environ)
 		void		*custom_realloc(void **pnt, size_t oldsize, size_t newsize) //LIBFT?
 		e_errors	change_var(char *key, char *newvalue, t_environ *environ)
 		char		*var_buid(char *key, char *newvalue)
-		int	search_var(char **envp, const char* var)
-
-
+		int			search_var(char **envp, const char* var)
+FREE			1/2
+	FREE.C				0/
+	FREE_TREE.C			3/3
+		void		free_tree(t_tree *node)
+		void		free_task(t_tree *node)
+		static void	cleanup_garbage(t_garbage *garbage)
+BUILTINS		0/3
+	BUILTINS.C			0/2
+	FT_CD.C				2/2
+		void		ft_cd(t_task *task, t_environ *environ)						//ojocuidao esta
+		int	cd_destination(t_task *task, char **destination, t_environ *environ)	//quizá es mejor pasarle para modificar freedest que destination
+	NON_PIPABLE_BUILTIN.C	0/8
 
 
 
