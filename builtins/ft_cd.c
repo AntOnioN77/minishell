@@ -1,6 +1,7 @@
 
 #include "minishell.h"
-#include <linux/limits.h>
+//#include <linux/limits.h>
+#include <limits.h>
 
 int	cd_destination(t_task *task, char **destination, t_environ *environ)
 {

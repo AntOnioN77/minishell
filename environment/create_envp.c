@@ -1,7 +1,8 @@
 #include "../minishell.h"
 #include "../libft/headers/libft.h"
 #include <errno.h>
-#include <linux/limits.h>
+// #include <linux/limits.h>
+#include <limits.h>
 
 //mas adelante, descomponer este archivo en varios, en la carpeta environment
 
@@ -11,7 +12,7 @@
 int	count_to_null(void **pnt)
 {
     int	i;
-	
+
 	i = 0;
     while (pnt[i] != NULL)
         i++;

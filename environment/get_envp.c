@@ -1,7 +1,8 @@
 #include "../minishell.h"
 #include "../libft/headers/libft.h"
 #include <errno.h>
-#include <linux/limits.h>
+// #include <linux/limits.h>
+#include <limits.h>
 
 //NO alloca memoria, debuelve un puntero a la cadena original en envp, a continuacion de '='
 char	*ft_getenv(const char *name, char *envp[])

@@ -3,7 +3,8 @@
 //la solucion mas directa es ejecutarlos solo cuando el arbol sea unicamente de un nodo
 
 #include "minishell.h"
-#include <linux/limits.h>
+//#include <linux/limits.h>
+#include <limits.h>
 
 int countargs(t_task *task)
 {
@@ -25,7 +26,7 @@ static char *getnamevar()
 */
 
 char *getvalue(char *var)
-{	
+{
 	char *start;
 
 	start = ft_strchr(var, '=');
@@ -33,7 +34,7 @@ char *getvalue(char *var)
 		return (NULL);
 	start++;
 	return (ft_strdup(start));
-	
+
 }
 
 void export_error(char* identifier, t_environ *environ)
@@ -61,7 +62,7 @@ int validate_key(char *key)
 	i =1;
 	while (key[i])
 	{
-		if (!ft_isalnum(key[i]) && key[i] != '_') 
+		if (!ft_isalnum(key[i]) && key[i] != '_')
 			return (0);
 		i++;
 	}
@@ -100,7 +101,7 @@ void ft_unset(char **argv, t_environ *environ)
 	change_var("?", "0", environ);
 	if (!argv || !*argv)
 		return;
-	i = 1; 	
+	i = 1;
 	while(argv[i])
 	{
 		ft_unset_one(argv[i], environ);
@@ -135,46 +136,8 @@ void ft_export(t_task *task, t_environ *environ)
 		free(key);
 		free(value);
 		i++;
-	}	
-
-}
-
-//libera todo y termina minishell con exit(), solo retorna en caso de error
-void ft_exit(t_task *task, t_tree *tree, t_environ *environ)
-{
-	int	exitcode;
-	unsigned char truncated;
-	char *argument;
-
-	if (countargs(task) > 2)
-	{
-		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-		change_var("?", "1", environ);
-		return;
 	}
-	if (countargs(task) == 2)
-	{
-		argument = task->argv[1];
-		skipwhitesp(&argument, argument + ft_strlen(argument));
-		if (*argument == '+' || *argument == '-')
-			argument++;
-		while (ft_isdigit(*argument))
-			argument++;
-		if (*argument != '\0')
-		{
-			ft_putstr_fd("bash: exit: 1 0: numeric argument required\n", 2);
-			exitcode = 2;
-		}
-		else
-			exitcode = ft_atoi(task->argv[1]);
-	}
-	else
-		exitcode = ft_atoi(ft_getenv("?", environ->envp));
 
-	truncated = (unsigned char) exitcode;
-	free_tree(tree);
-	free_arr(environ->envp);
-	exit(truncated);
 }
 
 int	non_pipable_builtin(t_tree *tree, t_environ *environ)
@@ -185,9 +148,9 @@ int	non_pipable_builtin(t_tree *tree, t_environ *environ)
 	{
 		task = (t_task *)tree;
 		if (!((t_task *)tree)->cmd)
-			return (ALL_OK); 
+			return (ALL_OK);
 		if (!ft_strcmp(task->cmd, "cd"))
-		{	
+		{
 			ft_cd(task, environ);
 		}
 		else if (!ft_strcmp(task->cmd, "exit"))

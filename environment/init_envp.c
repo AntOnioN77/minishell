@@ -1,7 +1,8 @@
 #include "../minishell.h"
 #include "../libft/headers/libft.h"
 #include <errno.h>
-#include <linux/limits.h>
+// #include <linux/limits.h>
+#include <limits.h>
 
 e_errors	set_shlvl(t_environ *environ)
 {

@@ -40,11 +40,15 @@ FREE			1/2
 		void		free_tree(t_tree *node)
 		void		free_task(t_tree *node)
 		static void	cleanup_garbage(t_garbage *garbage)
-BUILTINS		0/3
-	BUILTINS.C			0/2
+BUILTINS		2/4
+	BUILTINS.C			2/2
+		e_errors	ft_echo(t_task *task)
+		void	ft_env(t_environ *environ)
 	FT_CD.C				2/2
 		void		ft_cd(t_task *task, t_environ *environ)						//ojocuidao esta
 		int	cd_destination(t_task *task, char **destination, t_environ *environ)	//quizá es mejor pasarle para modificar freedest que destination
+	FT_EXIT.C			0/2
+		void		ft_exit(t_task *task, t_tree *tree, t_environ *environ)
 	NON_PIPABLE_BUILTIN.C	0/8
 
 

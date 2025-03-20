@@ -1,7 +1,8 @@
 #include "../minishell.h"
 #include "../libft/headers/libft.h"
 #include <errno.h>
-#include <linux/limits.h>
+// #include <linux/limits.h>
+#include <limits.h>
 
 //a la libft?
 //newsize debe ser siempre superior a oldsize
