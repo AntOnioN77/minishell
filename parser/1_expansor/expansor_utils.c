@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/18 13:17:20 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/20 10:42:06 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,9 @@ char *getkey(char *var)
 	return(key);
 }
 
+
+//busca una variable con el nombre str, si no lo encuentra retorna cadena vacia que se debe liberar
+//Si str es un espacio u otro delimitador, retorna $. En caso de error retorna NULL 
 char *foundvar(char *str, char *envp[])
 {
 	char *validvar;
@@ -193,15 +196,13 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 	ft_strlcpy(*new_str, *str, *marker - *str + 1);
 	*new_str = *new_str + (*marker - *str);
 	(*marker)++;
-//fprintf(stderr, "-------169 *maker: %s\n", *marker);
 	key = foundvar(*marker, envp);
-//fprintf(stderr, "-------171 key: %s\n", key);
 	if (ft_strcmp("$", key))
 	{
 		*marker = *marker + ft_strlen(key);
 	}
-//fprintf(stderr, "-------169 *maker: %s\n", *marker);
-		if (!is_closed_quote(*marker) && (!ft_strcmp("", key) || !ft_strcmp("$", key)))
+	if (!is_closed_quote(*marker) && (!ft_strcmp("", key)
+			|| !ft_strcmp("$", key)))
 	{
 		**new_str = '$';
 		(*new_str)++;
