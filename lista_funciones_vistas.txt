@@ -43,12 +43,21 @@ FREE			1/2
 BUILTINS		2/4
 	BUILTINS.C			2/2
 		e_errors	ft_echo(t_task *task)
-		void	ft_env(t_environ *environ)
+		void		ft_env(t_environ *environ)
 	FT_CD.C				2/2
 		void		ft_cd(t_task *task, t_environ *environ)						//ojocuidao esta
 		int	cd_destination(t_task *task, char **destination, t_environ *environ)	//quizá es mejor pasarle para modificar freedest que destination
-	FT_EXIT.C			0/2
-		void		ft_exit(t_task *task, t_tree *tree, t_environ *environ)
+	FT_EXIT.C			2/2
+		void		ft_exit(t_task *task, t_tree *tree, t_environ *environ)		//mirar en 42 si hay que imprimir "exit cada" vez
+		int			select_exitcode(t_task *task, t_environ *environ, char *argument)
+	FT_EXPORT.C			4/4
+		void		ft_export(t_task *task, t_environ *environ)
+		void		export_error(char *identifier, t_environ *environ)
+		int			validate_key(char *key)
+		char		*getvalue(char *var)
+	FT_UNSET.C			2/2
+		void		ft_unset(char **argv, t_environ *environ)
+		void		ft_unset_one(char *key, t_environ *environ, int index)
 	NON_PIPABLE_BUILTIN.C	0/8
 
 

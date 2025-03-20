@@ -3,20 +3,20 @@
 //#include <linux/limits.h>
 #include <limits.h>
 
-int	cd_destination(t_task *task, char **destination, t_environ *environ)
+int	cd_destination(t_task *task, char **dest, t_environ *environ)
 {
-	*destination = task->argv[1];
-	if (*destination == NULL)
+	*dest = task->argv[1];
+	if (*dest == NULL)
 	{
-		*destination = ft_getenv("HOME", environ->envp);
+		*dest = ft_getenv("HOME", environ->envp);
 	}
-	else if ((*destination)[0] == '~')
+	else if ((*dest)[0] == '~')
 	{
-		*destination = ft_strjoin(ft_getenv("HOME", environ->envp),
-				*destination + 1);
+		*dest = ft_strjoin(ft_getenv("HOME", environ->envp),
+				*dest + 1);
 		return (1);
 	}
-	else if ((*destination)[0] == '-')
+	else if ((*dest)[0] == '-')
 	{
 		ft_putstr_fd("Mini$ell: No options for cd\n", 2);
 		change_var("?", "1", environ);

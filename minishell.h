@@ -17,7 +17,7 @@
 
 # define WHITESPACES " \r\n\v\t"
 # define DELIMITERS "|<> \r\n\v\t"
-# define S_LINE_MAX 4096 
+# define S_LINE_MAX 4096
 # define IS_SIGNAL 128
 //VARIABLE GLOBAL
 //static int	g_ctrlc;
@@ -61,8 +61,8 @@ typedef enum e_errors
 	READ_SIGINT,
 	NO_PERMISSION,
 	NO_EXIST,
-	INVALID_TYPE,//solo para debug	
-	TASK_IS_VOID,	
+	INVALID_TYPE,//solo para debug
+	TASK_IS_VOID,
 	SYNTAX_ERROR,
 	READLINE_FAIL,//lo he cambiado por retornar errno (14feb)
 	TMP_FILE_ERROR,
@@ -123,7 +123,7 @@ typedef struct s_task
 	char		*cmd;
 	char		**argv;
 	t_garbage	garb;
-	int			pid; 
+	int			pid;
 }	t_task;
 
 //si left o rigth fuesen NULL indica error de reserva de memoria, hay que liverar el arbol entero y lanzar error.
@@ -146,7 +146,7 @@ typedef struct s_environ {
 	// gestion de variables de netorno:
 	char	**envp;
 	int		next;//posicion no inicializada (null) donde podemos escribir la siguiente variable global
-	int		alloced; //numero total de posiciones allocadas, de manera que si next+1 < alloced, no sera necesario reallocar memoria  
+	int		alloced; //numero total de posiciones allocadas, de manera que si next+1 < alloced, no sera necesario reallocar memoria
 
 	// gestion de variables locales:
 	char	**local;
@@ -245,7 +245,19 @@ int			search_var(char **envp, const char* var);
 
 /*_____________________Builtins Prototypes____________________________________*/
 //LOCATIONS: ft_cd.c
-void 		ft_cd(t_task *task, t_environ *environ);
+void		ft_cd(t_task *task, t_environ *environ);
+int			cd_destination(t_task *task, char **dest, t_environ *environ);
+//LOCATIONS: ft_exit.c
+void		ft_exit(t_task *task, t_tree *tree, t_environ *environ);
+int			select_exitcode(t_task *task, t_environ *environ, char *argument);
+//LOCATIONS: ft_export.c
+int			validate_key(char *key);
+void		ft_export(t_task *task, t_environ *environ);
+char		*getvalue(char *var);
+void		export_error(char *identifier, t_environ *environ);
+//LOCATIONS: ft_unset.c
+void		ft_unset(char **argv, t_environ *environ);
+void		ft_unset_one(char *key, t_environ *environ, int index);
 
 /*______________________________Others_Prototypes_________________________*/
 int non_pipable_builtin(t_tree *tree, t_environ *environ);
@@ -260,7 +272,6 @@ void ft_env(t_environ *environ);
 void unquote(char *str);
 void	free_arr(char **s);
 void	handle_sigint_vis(int signal);
-void ft_exit(t_task *task, t_tree *tree, t_environ *environ);
 int is_doublequoted(char *str, int original_flag);
 int countargs(t_task *task);
 
