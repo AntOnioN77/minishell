@@ -145,12 +145,23 @@ int is_closed_quote(char *str)
 	return (0);
 }
 
+//consume hasta la siguiente comilla simple.
+//Retorna el numero de caracteres consumidos.
+//Ignora el primer caracter apuntado por str. No verifica que el primer caracter sea una comilla.
+int consume_simplequotes(char **str)
+{
+	char *aux;
+
+	aux = *str;
+	*str = ft_strchr(*str + 1, 39);
+	return (*str - aux);
+}
+
 //NO SEPARAR DE EXPANDSTR()
 int	calculate_expansion_length(char *str, char *envp[])
 {
 	int len;
 	int	ret;
-	char *aux;
 	int doublequot;
 
 	doublequot = 0;
@@ -159,11 +170,7 @@ int	calculate_expansion_length(char *str, char *envp[])
 	{
 		doublequot = is_doublequoted(str, doublequot);
 		if (*str == 39 && ft_strchr(str + 1, 39) && doublequot == 0)//compara con flag que indique si estamos dentro de doblequotes (si estas simplequotes estan anidadas no evitan la expansion))
-		{
-			aux = str;
-			str = ft_strchr(str + 1, 39);
-			len += (str - aux);
-		}
+			len += consume_simplequotes(&str);
 		else if(*str == '$')
 		{
 			ret = var_expansion_len(&str, envp);//consume en str $NOMBRE_DE_VARIABLE
