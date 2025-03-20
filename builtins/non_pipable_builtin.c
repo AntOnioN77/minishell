@@ -6,18 +6,6 @@
 //#include <linux/limits.h>
 #include <limits.h>
 
-int countargs(t_task *task)
-{
-	int i;
-
-	if (!task || !task->argv)
-		return (0);
-	i = 0;
-	while(task->argv[i])
-		i++;
-	return (i);
-}
-
 /*
 static char *getnamevar()
 {
@@ -25,7 +13,17 @@ static char *getnamevar()
 }
 */
 
+int	countargs(t_task *task)
+{
+	int	i;
 
+	if (!task || !task->argv)
+		return (0);
+	i = 0;
+	while (task->argv[i])
+		i++;
+	return (i);
+}
 
 int	non_pipable_builtin(t_tree *tree, t_environ *environ)
 {
@@ -45,9 +43,7 @@ int	non_pipable_builtin(t_tree *tree, t_environ *environ)
 			ft_exit(task, tree, environ);
 		}
 		else if (!ft_strcmp(task->cmd, "export"))
-		{
 			ft_export(task, environ);
-		}
 		else if (!ft_strcmp(task->cmd, "unset"))
 			ft_unset(task->argv, environ);
 		else		//si se cumple alguna de las condiciones retornamos continue, si la task no era un builtin retornamos all ok, para no interrumpir el flujo normal

@@ -40,7 +40,7 @@ FREE			1/2
 		void		free_tree(t_tree *node)
 		void		free_task(t_tree *node)
 		static void	cleanup_garbage(t_garbage *garbage)
-BUILTINS		2/4
+BUILTINS		6/6
 	BUILTINS.C			2/2
 		e_errors	ft_echo(t_task *task)
 		void		ft_env(t_environ *environ)
@@ -58,7 +58,9 @@ BUILTINS		2/4
 	FT_UNSET.C			2/2
 		void		ft_unset(char **argv, t_environ *environ)
 		void		ft_unset_one(char *key, t_environ *environ, int index)
-	NON_PIPABLE_BUILTIN.C	0/8
+	NON_PIPABLE_BUILTIN.C	2/2
+		int			countargs(t_task *task)
+		int			non_pipable_builtin(t_tree *tree, t_environ *environ)
 
 
 

@@ -244,6 +244,9 @@ e_errors	add_var(char *key, char *value, t_environ *environ);
 int			search_var(char **envp, const char* var);
 
 /*_____________________Builtins Prototypes____________________________________*/
+//LOCATIONS: builtins.c
+e_errors	ft_echo(t_task *task);
+void		ft_env(t_environ *environ);
 //LOCATIONS: ft_cd.c
 void		ft_cd(t_task *task, t_environ *environ);
 int			cd_destination(t_task *task, char **dest, t_environ *environ);
@@ -258,17 +261,16 @@ void		export_error(char *identifier, t_environ *environ);
 //LOCATIONS: ft_unset.c
 void		ft_unset(char **argv, t_environ *environ);
 void		ft_unset_one(char *key, t_environ *environ, int index);
+//LOCATIONS: non_pipable_builtin.c
+int			countargs(t_task *task);
+int			non_pipable_builtin(t_tree *tree, t_environ *environ);
 
 /*______________________________Others_Prototypes_________________________*/
-int non_pipable_builtin(t_tree *tree, t_environ *environ);
 e_errors expansor(char **line, char **envp);
-e_errors ft_echo(t_task *task);
 int	search_var(char **envp, const char* var);
-char *ft_getenv(const char *name, char *envp[]);
 e_errors change_var(char *key, char *newvalue, t_environ *environ);
 e_errors add_var(char *key, char *value, t_environ *environ);
 char *getkey(char *var);
-void ft_env(t_environ *environ);
 void unquote(char *str);
 void	free_arr(char **s);
 void	handle_sigint_vis(int signal);
