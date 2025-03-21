@@ -271,7 +271,9 @@ void		close_fds(int fd_since);
 //LOCATIONS: apply_redirs.c
 e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail);
 e_errors	apply_redirs(t_redir *redir, char **word_fail);
-//LOCATIOS: executor.c
+//LOCATIONS: path.c
+char		*com_path(char *cmd, char **envp, e_errors *err);
+//LOCATIONS: executor.c
 
 
 

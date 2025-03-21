@@ -34,8 +34,11 @@ ENVIRONMENT		4/4
 		e_errors	change_var(char *key, char *newvalue, t_environ *environ)
 		char		*var_buid(char *key, char *newvalue)
 		int			search_var(char **envp, const char* var)
-FREE			1/2
-	FREE.C				0/
+FREE			2/2
+	FREE.C				3/3
+		void	free_arr(char **s)
+		int		free_null_arr(char ***s)
+		void	ft_free_null(void **pnt)
 	FREE_TREE.C			3/3
 		void		free_tree(t_tree *node)
 		void		free_task(t_tree *node)
@@ -68,7 +71,13 @@ EXECUTOR
 	APPLY_REDIRS.C		2/2
 		e_errors	apply_redirs(t_redir *redir, char **word_fail)
 		e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail)		//hay que echarle un vistazo por los comentarios, que quizá sobre código. le he quitado lo estático por lo largo del prototipo
-	EXECUTOR.C
+	PATH.C				5/5
+		char		*com_path(char *cmd, char **envp, e_errors *err)
+		static int	is_absolutepath(char *cmd, e_errors *err)
+		static int	get_index_path(char **envp)
+		static char	*match_pathcmd(char *cmd, char **enpath, e_errors *err)
+		static char	*form_path(char *cmd, char **enpath, e_errors *err, char **slash)		//Esta hay que mirarla con lupa por si el slash no se libera. probar en 42 con valgrind
+	EXECUTOR.C			0/7
 
 
 

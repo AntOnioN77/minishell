@@ -1,29 +1,26 @@
 #include <stdlib.h>
 #include "../minishell.h"
 
-
-
 /*
 	Libera y nulifica pnt.
 	Protege de una liberacion incorrecta si pnt ya esta nulificado
 */
-void ft_free_null(void **pnt)
+void	ft_free_null(void **pnt)
 {
 	if (pnt == NULL || *pnt == NULL)
-		return;
+		return ;
 	free(*pnt);
 	*pnt = NULL;
-	return;
+	return ;
 }
-
 
 /**
  * Libera la memoria reservada en matrices (ej: split) y nullifica
  */
 int	free_null_arr(char ***s)
 {
-	int    i;
-	char   **ptr;
+	int		i;
+	char	**ptr;
 
 	i = 0;
 	if (!s || !*s || !**s)
@@ -35,7 +32,7 @@ int	free_null_arr(char ***s)
 		i++;
 	}
 	free(ptr);
-	*s = NULL;  // Nullificamos el puntero original
+	*s = NULL;// Nullificamos el puntero original
 	return (1);
 }
 
@@ -44,7 +41,7 @@ int	free_null_arr(char ***s)
  */
 void	free_arr(char **s)
 {
-	int    i;
+	int	i;
 
 	i = 0;
 	if (!s || !*s)
@@ -55,5 +52,5 @@ void	free_arr(char **s)
 		i++;
 	}
 	free(s);
-	return;
+	return ;
 }
