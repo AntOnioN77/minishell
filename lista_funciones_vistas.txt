@@ -61,8 +61,14 @@ BUILTINS		6/6
 	NON_PIPABLE_BUILTIN.C	2/2
 		int			countargs(t_task *task)
 		int			non_pipable_builtin(t_tree *tree, t_environ *environ)
-
-
+EXECUTOR
+	PROCESS.C			2/2
+		int			wait_all(t_tree *node)
+		void		close_fds(int fd_since)
+	APPLY_REDIRS.C		2/2
+		e_errors	apply_redirs(t_redir *redir, char **word_fail)
+		e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail)		//hay que echarle un vistazo por los comentarios, que quizá sobre código. le he quitado lo estático por lo largo del prototipo
+	EXECUTOR.C
 
 
 

@@ -4,13 +4,12 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-
-static char *match_pathcmd(char *cmd, char **enpath, e_errors *err)
+static char	*match_pathcmd(char *cmd, char **enpath, e_errors *err)
 {
 	char *pathcmd;
 	char *slash;
 	int i;
-	
+
 	i= 1;
 	while (enpath[i])
 	{
@@ -295,7 +294,7 @@ e_errors executor(t_tree *node, t_environ *environ , int in, int out)
 
     if (!node)
         return (0);
-    
+
     if (node->type == PIPE)
     {
         pipe_node = (t_pipe *)node;

@@ -197,7 +197,6 @@ int			strnchr_outquot(char **str, char *end, char c);
 //Location: mooks.c
 char		*ft_getenv(const char *name, char *envp[]);
 void		print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
-int			wait_all(t_tree *node);
 //LOCATION: parser/check_tree.c
 int			check_tree(t_tree *tree, char **envp);
 //LOCATION: create_heredoc.c
@@ -264,6 +263,17 @@ void		ft_unset_one(char *key, t_environ *environ, int index);
 //LOCATIONS: non_pipable_builtin.c
 int			countargs(t_task *task);
 int			non_pipable_builtin(t_tree *tree, t_environ *environ);
+
+/*_____________________Executor Prototypes____________________________________*/
+//LOCATIONS: process.c
+int			wait_all(t_tree *node);
+void		close_fds(int fd_since);
+//LOCATIONS: apply_redirs.c
+e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail);
+e_errors	apply_redirs(t_redir *redir, char **word_fail);
+//LOCATIOS: executor.c
+
+
 
 /*______________________________Others_Prototypes_________________________*/
 e_errors expansor(char **line, char **envp);
