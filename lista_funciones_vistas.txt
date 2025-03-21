@@ -76,7 +76,7 @@ EXECUTOR
 		static int	is_absolutepath(char *cmd, e_errors *err)
 		static int	get_index_path(char **envp)
 		static char	*match_pathcmd(char *cmd, char **enpath, e_errors *err)
-		static char	*form_path(char *cmd, char **enpath, e_errors *err, char **slash)		//Esta hay que mirarla con lupa por si el slash no se libera. probar en 42 con valgrind
+		static char	*form_path(char *cmd, char **enpath, e_errors *err, int i)		//Esta hay que mirarla con lupa por si el slash no se libera. probar en 42 con valgrind
 	EXECUTOR.C			0/7
 
 

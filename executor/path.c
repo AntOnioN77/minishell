@@ -4,18 +4,20 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-static char	*form_path(char *cmd, char **enpath, e_errors *err, char **slash)
+static char	*form_path(char *cmd, char **enpath, e_errors *err, int i)
 {
 	char	*pathcmd;
+	char	*slash;
 
-	if (*slash == NULL)
+	slash = ft_strjoin(enpath[i], "/");
+	if (slash == NULL)
 	{
 		*err = ERROR_MALLOC;
 		free_null_arr(&enpath);
 		return (NULL);
 	}
-	pathcmd = ft_strjoin(*slash, cmd);
-	free(*slash);
+	pathcmd = ft_strjoin(slash, cmd);
+	free(slash);
 	if (pathcmd == NULL)
 	{
 		*err = ERROR_MALLOC;
@@ -28,14 +30,12 @@ static char	*form_path(char *cmd, char **enpath, e_errors *err, char **slash)
 static char	*match_pathcmd(char *cmd, char **enpath, e_errors *err)
 {
 	char	*pathcmd;
-	char	*slash;
 	int		i;
 
 	i = 0;
 	while (enpath[++i])
 	{
-		slash = ft_strjoin(enpath[i], "/");
-		pathcmd = form_path(cmd, enpath, err, &slash);
+		pathcmd = form_path(cmd, enpath, err, i);
 		if (pathcmd == NULL)
 			return (NULL);
 		if (access(pathcmd, F_OK) == 0)
