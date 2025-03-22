@@ -136,7 +136,6 @@ void ft_export(t_task *task, t_environ *environ)
 		free(value);
 		i++;
 	}	
-
 }
 
 //libera todo y termina minishell con exit(), solo retorna en caso de error

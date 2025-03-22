@@ -101,7 +101,7 @@ e_errors	add_var(char *key, char *value, t_environ *environ)
 int	search_var(char **envp, const char* var)
 {
 	int pos;
-	int len;
+	size_t len;
 
 	if (!envp)
 		return (-1);
@@ -109,7 +109,7 @@ int	search_var(char **envp, const char* var)
 	while (envp[pos])
 	{
 		len = ft_strchr(envp[pos], '=') - envp[pos];
-		if (ft_strncmp(envp[pos], var, len) == 0)
+		if (ft_strncmp(envp[pos], var, len) == 0 && len == ft_strlen(var))
 		{
 			return (pos);
 		}
