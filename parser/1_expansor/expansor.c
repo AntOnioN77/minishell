@@ -53,22 +53,6 @@ bool skip_singleq(char **marker)
 	return (0);
 }
 
-static void flush_buffer(char **newline, char *buffer)
-{
-	char *auxline;
-
-	auxline = ft_strjoin(*newline, buffer);
-	if (!auxline)
-	{
-		free(*newline);
-		*newline = NULL;
-		return;
-	}
-	free(*newline);
-	*newline = auxline;
-	ft_bzero(buffer, BUFFER_SIZE);
-}
-/*
 static char *join_line_buffer(char **newline, char *buffer)
 {
 	char *auxline = ft_strjoin(*newline, buffer);
@@ -78,9 +62,16 @@ static char *join_line_buffer(char **newline, char *buffer)
 	*newline = auxline;
 	return auxline;
 }
-*/
 
-
+static char *handle_dollar_sign(char **newline)
+{
+	char *auxline = ft_strjoin(*newline, "$");
+	if (!auxline)
+		return NULL;
+	free(*newline);
+	*newline = auxline;
+	return auxline;
+}
 
 static char *expand_key(char **newline, char *marker, int *i, char **envp)
 {
@@ -100,7 +91,9 @@ static char *expand_key(char **newline, char *marker, int *i, char **envp)
 	if (!key)
 		return NULL;
 	ft_strlcpy(key, &(marker[1]), *i);
-	auxline = ft_strjoin(*newline, ft_getenv(key, envp));
+	auxline = NULL;
+	if (search_var(envp, key) != -1)
+		auxline = ft_strjoin(*newline, ft_getenv(key, envp));
 	free(key);
 	if (!auxline)
 		return NULL;
@@ -111,41 +104,59 @@ static char *expand_key(char **newline, char *marker, int *i, char **envp)
 
 int expand_one(char **newline, char *buffer, char *marker, char **envp)
 {
-	char *auxline;
 	int i = 1; // Starts at 1 assuming marker[0] contains $
+	char *auxline;
 
 	// Append buffer to newline
-	flush_buffer(newline, buffer);
-	if (!*newline)
+	auxline = join_line_buffer(newline, buffer);
+	if (!auxline)
 		return -1;
 
 	// Handle expansion
 	if (ft_strchr(DELIMITERS, marker[i]) || ft_strchr(WHITESPACES, marker[i]) || ft_strchr("\'\"", marker[i]))
 	{
-		auxline = ft_strjoin(*newline, "$");
-		free(*newline);
-		*newline = auxline;
-		if (!*newline)
+		auxline = handle_dollar_sign(newline);
+		if (!auxline)
 			return -1;
 	}
 	else
 	{
+
 		auxline = expand_key(newline, marker, &i, envp);
+		if(!newline)
+			return -1;
 	}
 
 	return i;
 }
 
+static void flush_buffer(char **newline, char *buffer)
+{
+	char *auxline;
 
+	auxline = ft_strjoin(*newline, buffer);
+	if (!auxline)
+	{
+		free(*newline);
+		*newline = NULL;
+		return;
+	}
+	free(*newline);
+	*newline = auxline;
+	ft_bzero(buffer, BUFFER_SIZE);
+}
 
 static bool handle_expansion(char **marker, char **newline, char *buffer, char **envp)
 {
-	if(expand_one(newline, buffer, *marker, envp) == - 1)
-		return (FALSE);
-/*	if (expanded < 0)
-		(*marker)++;
+	int expanded;
+
+	expanded = expand_one(newline, buffer, *marker, envp);
+	if(expanded > 0)
+		*marker += expanded;
 	else
-		*marker += expanded;*/
+	{
+		return (FALSE);
+	} 
 	if (!*newline)
 		return (FALSE); // Handle memory allocation failure
 	ft_bzero(buffer, BUFFER_SIZE);
@@ -205,6 +216,27 @@ e_errors expandstr(char **origin, t_garbage *garbage, char *envp[])
 
 	if(expandstr_motor(origin, &newline, buffer, envp))
 		return (ERROR_MALLOC);
+/*////////////////////ABSTRAER desde aqui
+	int quoted = 0;
+	char *marker = *origin;
+	int i = 0;
+
+	while (*marker)
+	{
+		quoted = is_quoted(marker, quoted);
+		if (quoted != 1 && *marker == '$')
+		{
+			if (!handle_expansion(&marker, &newline, buffer, envp))
+				return ERROR_MALLOC;
+			i = 0;
+		}
+		else
+		{
+			if (!append_to_buffer(&newline, buffer, &marker, &i))
+				return ERROR_MALLOC;
+		}
+	}
+/*//////////////////////////abstraer hasta aqui
 
 	flush_buffer(&newline, buffer); // Ensure remaining buffer is flushed
 	if (!newline)
