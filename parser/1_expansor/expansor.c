@@ -55,7 +55,9 @@ bool skip_singleq(char **marker)
 
 static char *join_line_buffer(char **newline, char *buffer)
 {
-	char *auxline = ft_strjoin(*newline, buffer);
+	char *auxline;
+
+	auxline = ft_strjoin(*newline, buffer);
 	if (!auxline)
 		return NULL;
 	free(*newline);
@@ -104,9 +106,10 @@ static char *expand_key(char **newline, char *marker, int *i, char **envp)
 
 int expand_one(char **newline, char *buffer, char *marker, char **envp)
 {
-	int i = 1; // Starts at 1 assuming marker[0] contains $
+	int i; // Starts at 1 assuming marker[0] contains $
 	char *auxline;
 
+	i = 1;
 	// Append buffer to newline
 	auxline = join_line_buffer(newline, buffer);
 	if (!auxline)
@@ -129,7 +132,7 @@ int expand_one(char **newline, char *buffer, char *marker, char **envp)
 
 	return i;
 }
-
+/*
 static void flush_buffer(char **newline, char *buffer)
 {
 	char *auxline;
@@ -145,7 +148,7 @@ static void flush_buffer(char **newline, char *buffer)
 	*newline = auxline;
 	ft_bzero(buffer, BUFFER_SIZE);
 }
-
+*/
 static bool handle_expansion(char **marker, char **newline, char *buffer, char **envp)
 {
 	int expanded;
@@ -167,7 +170,7 @@ static bool append_to_buffer(char **newline, char *buffer, char **marker, int *i
 {
 	if (*i == BUFFER_SIZE - 1)
 	{
-		flush_buffer(newline, buffer);
+		join_line_buffer(newline, buffer);
 		if (!*newline)
 			return (FALSE); // Handle memory allocation failure
 		*i = 0;
@@ -216,29 +219,8 @@ e_errors expandstr(char **origin, t_garbage *garbage, char *envp[])
 
 	if(expandstr_motor(origin, &newline, buffer, envp))
 		return (ERROR_MALLOC);
-/*////////////////////ABSTRAER desde aqui
-	int quoted = 0;
-	char *marker = *origin;
-	int i = 0;
 
-	while (*marker)
-	{
-		quoted = is_quoted(marker, quoted);
-		if (quoted != 1 && *marker == '$')
-		{
-			if (!handle_expansion(&marker, &newline, buffer, envp))
-				return ERROR_MALLOC;
-			i = 0;
-		}
-		else
-		{
-			if (!append_to_buffer(&newline, buffer, &marker, &i))
-				return ERROR_MALLOC;
-		}
-	}
-/*//////////////////////////abstraer hasta aqui
-
-	flush_buffer(&newline, buffer); // Ensure remaining buffer is flushed
+	join_line_buffer(&newline, buffer); // Ensure remaining buffer is flushed
 	if (!newline)
 		return ERROR_MALLOC; // Handle memory allocation failure
 
