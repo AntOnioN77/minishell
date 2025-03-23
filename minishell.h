@@ -19,6 +19,7 @@
 # define DELIMITERS "|<> \r\n\v\t"
 # define S_LINE_MAX 4096
 # define IS_SIGNAL 128
+# define BUFFER_SIZE 1024
 //VARIABLE GLOBAL
 //static int	g_ctrlc;
 extern int	g_ctrlc;
@@ -286,11 +287,7 @@ char *getkey(char *var);
 void unquote(char *str);
 void	free_arr(char **s);
 void	handle_sigint_vis(int signal);
-int is_doublequoted(char *str, int original_flag);
+int is_quoted(char *str, int original_flag);
 int countargs(t_task *task);
-
-// ...
-
-
 
 #endif

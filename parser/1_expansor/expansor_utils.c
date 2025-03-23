@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/18 13:17:20 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/22 20:58:01 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,31 +15,48 @@
 //si str comienza por " y a continuacion hay una nueva ocurrencia de " retorna 1 para indicar que se habren comillas dobles.
 //si str comienza por " pero ya no hay mas a continuacion, retorna 0
 //si str comienza por algo distinto a " retorna original_flag, para no modificar el estado.
-int is_doublequoted(char *str, int original_flag)
+int is_quoted(char *str, int original_flag)
 {
-	if (*str == '"')
+//fprintf(stderr, "is_doublequ: str:%s\n", str);
+	if (original_flag == 0)
 	{
-		if(ft_strchr(str + 1, '"'))
+		if(*str == '"' && ft_strchr(str + 1, '"'))
+			return (2);
+		else if (*str == 39 && ft_strchr(str + 1, 39))
 			return (1);
 		else
 			return (0);
+	}
+	else if (original_flag == 1 )
+	{
+		if(*str == 39)
+			return (0);
+		else
+			return (1);
+	}
+	else if (original_flag == 2)
+	{
+		if(*str == '"')
+			return (0);
+		else
+			return (2);
 	}
 	return (original_flag);
 }
 
 int	is_expansible(char *str)
 {
-	int doubleq;
+	int quotes;
 
-	doubleq = 0;
+	quotes = 0;
 	if(!str)
 		return (0);
 	while (*str)
 	{
-		doubleq = is_doublequoted(str, doubleq);
+		quotes = is_quoted(str, quotes);
 		if (*str == '$')
 			return (1);
-		if (*str == 39 && ft_strchr(str + 1, 39) && doubleq == 0)
+		if (*str == 39 && ft_strchr(str + 1, 39) && quotes != 2)
 			str = ft_strchr(str + 1, 39);
 		str++;
 	}
@@ -75,6 +92,9 @@ char *getkey(char *var)
 	return(key);
 }
 
+/*
+//busca una variable con el nombre str, si no lo encuentra retorna cadena vacia que se debe liberar
+//Si str es un espacio u otro delimitador, retorna $. En caso de error retorna NULL 
 char *foundvar(char *str, char *envp[])
 {
 	char *validvar;
@@ -103,8 +123,8 @@ char *foundvar(char *str, char *envp[])
 	}
 	return(validvar);
 }
-
-
+*/
+/*
 // Si el principio de str coincide con el nombre de alguna variable, retorna strlen(nombre_de variable), en otro caso 0.
 // Si varias variables cumplen con este criterio, elegirá la de nombre mas largo.
 //ejemplo $PWDdsfsdfsd retorna "3" por PWD.
@@ -118,7 +138,8 @@ size_t var_name_len(char *str, char **envp)
 	free(namevar);
 	return(len);
 }
-
+*/
+/*
 ////consume en str $NOMBRE_DE_VARIABLE y retorna el tamaño del valor apuntado por esa variable
 //si ocurrio un error retorna -1
 static int	var_expansion_len(char **str, char *envp[])
@@ -137,14 +158,16 @@ static int	var_expansion_len(char **str, char *envp[])
 
 	return (len);
 }
-
+*/
+/*
 int is_closed_quote(char *str)
 {
 	if ((*str == 39 || *str == '"') &&  ft_strchr(str +1, *str))
 		return (1);
 	return (0);
 }
-
+*/
+/*
 //consume hasta la siguiente comilla simple.
 //Retorna el numero de caracteres consumidos.
 //Ignora el primer caracter apuntado por str. No verifica que el primer caracter sea una comilla.
@@ -156,20 +179,21 @@ int consume_simplequotes(char **str)
 	*str = ft_strchr(*str + 1, 39);
 	return (*str - aux);
 }
+*/
 
-//NO SEPARAR DE EXPANDSTR()
+/*
 int	calculate_expansion_length(char *str, char *envp[])
 {
 	int len;
 	int	ret;
-	int doublequot;
+	int quoted;
 
-	doublequot = 0;
+	quoted = 0;
 	len = 0;
 	while (*str)
 	{
-		doublequot = is_doublequoted(str, doublequot);
-		if (*str == 39 && ft_strchr(str + 1, 39) && doublequot == 0)//compara con flag que indique si estamos dentro de doblequotes (si estas simplequotes estan anidadas no evitan la expansion))
+		quoted = is_quoted(str, quoted);
+		if (*str == 39 && ft_strchr(str + 1, 39) && quoted != 2)//compara con flag que indique si estamos dentro de doblequotes (si estas simplequotes estan anidadas no evitan la expansion))
 			len += consume_simplequotes(&str);
 		else if(*str == '$')
 		{
@@ -184,7 +208,8 @@ int	calculate_expansion_length(char *str, char *envp[])
 	}
 	return (len);
 }
-
+*/
+/*
 int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 {
 	char *key;
@@ -193,15 +218,13 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 	ft_strlcpy(*new_str, *str, *marker - *str + 1);
 	*new_str = *new_str + (*marker - *str);
 	(*marker)++;
-//fprintf(stderr, "-------169 *maker: %s\n", *marker);
 	key = foundvar(*marker, envp);
-//fprintf(stderr, "-------171 key: %s\n", key);
 	if (ft_strcmp("$", key))
 	{
 		*marker = *marker + ft_strlen(key);
 	}
-//fprintf(stderr, "-------169 *maker: %s\n", *marker);
-		if (!is_closed_quote(*marker) && (!ft_strcmp("", key) || !ft_strcmp("$", key)))
+	if (!is_closed_quote(*marker) && (!ft_strcmp("", key)
+			|| !ft_strcmp("$", key)))
 	{
 		**new_str = '$';
 		(*new_str)++;
@@ -213,3 +236,4 @@ int handle_dollar(char **new_str, char **str, char **marker, char *envp[])
 	*new_str = *new_str + ft_strlen(*new_str);
 	return (0);
 }
+*/
