@@ -44,9 +44,11 @@ FREE			2/2
 		void		free_task(t_tree *node)
 		static void	cleanup_garbage(t_garbage *garbage)
 BUILTINS		6/6
-	BUILTINS.C			2/2
+	BUILTINS.C			4/4
 		e_errors	ft_echo(t_task *task)
 		void		ft_env(t_environ *environ)
+		int			is_builtin(char *cmd)
+		e_errors	builtins_exe(t_task *task, t_environ *environ)
 	FT_CD.C				2/2
 		void		ft_cd(t_task *task, t_environ *environ)						//ojocuidao esta
 		int	cd_destination(t_task *task, char **destination, t_environ *environ)	//quizá es mejor pasarle para modificar freedest que destination
@@ -64,7 +66,7 @@ BUILTINS		6/6
 	NON_PIPABLE_BUILTIN.C	2/2
 		int			countargs(t_task *task)
 		int			non_pipable_builtin(t_tree *tree, t_environ *environ)
-EXECUTOR
+EXECUTOR		3/4
 	PROCESS.C			2/2
 		int			wait_all(t_tree *node)
 		void		close_fds(int fd_since)
@@ -77,8 +79,11 @@ EXECUTOR
 		static int	get_index_path(char **envp)
 		static char	*match_pathcmd(char *cmd, char **enpath, e_errors *err)
 		static char	*form_path(char *cmd, char **enpath, e_errors *err, int i)		//Esta hay que mirarla con lupa por si el slash no se libera. probar en 42 con valgrind
-	EXECUTOR.C			0/7
-
-
-
-
+	EXECUTOR.C			2/2
+		e_errors	executor(t_tree *node, t_environ *environ , int in, int out)
+		e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
+	CHILD.C				3/4
+		e_errors	create_child(t_task *task, t_environ *environ , int in, int out)
+		e_errors	child(t_task *task, t_environ *environ, int in, int out)		//Hacer pruebas por si acaso el err = errno diera problemas
+		static e_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
+		static e_errors	child_error_handler(e_errors err, char *cmd)

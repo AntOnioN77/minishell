@@ -1,5 +1,5 @@
-#include "../executor.h"
-#include "../minishell.h"
+#include "executor.h"
+#include "minishell.h"
 
 e_errors	ft_echo(t_task *task)
 {
@@ -40,4 +40,40 @@ void	ft_env(t_environ *environ)
 		ft_putchar_fd('\n', 1);
 		i++;
 	}
+}
+
+int	is_builtin(char *cmd)
+{
+	if (!ft_strcmp(cmd, "echo") ||!ft_strcmp(cmd, "cd") ||!ft_strcmp(cmd, "pwd")
+		||!ft_strcmp(cmd, "export") ||!ft_strcmp(cmd, "unset")
+		||!ft_strcmp(cmd, "env") ||!ft_strcmp(cmd, "exit"))
+		return (1);
+	return (0);
+}
+
+e_errors	builtins_exe(t_task *task, t_environ *environ)
+{
+	char	*cmd;
+
+	(void)environ;//silenciar unused eviron
+	cmd = task->cmd;
+	if (!ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "exit")
+	|| !ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "unset"))
+	{
+		return (FINISH);
+	}
+	if (!ft_strcmp(cmd, "echo"))
+	{
+		return (ft_echo(task));
+	}
+	if (!ft_strcmp(cmd, "pwd"))
+	{
+		ft_putstr_fd(ft_getenv("PWD", environ->envp), 1);
+		ft_putchar_fd('\n', 1);
+	}
+	if (!ft_strcmp(cmd, "env"))
+	{
+		ft_env(environ);
+	}
+	return (FINISH);
 }

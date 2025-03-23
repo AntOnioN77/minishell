@@ -15,7 +15,7 @@ free/free.c free/free_tree.c executor/process.c signal.c\
 builtins/non_pipable_builtin.c builtins/ft_cd.c builtins/ft_exit.c\
 builtins/ft_export.c builtins/ft_unset.c builtins/builtins.c\
 executor/apply_redirs.c executor/path.c GNL/get_next_line.c cmd_tree_builder.c\
-parser/create_heredoc.c parser/3_touch_up_tree.c handler_error.c\
+parser/create_heredoc.c parser/3_touch_up_tree.c handler_error.c executor/child.c\
 environment/create_envp.c environment/get_envp.c environment/init_envp.c environment/var_operation.c
 OBJECTS = $(SOURCES:.c=.o)
 HEADERS = libft/headers/libft.h minishell.h executor.h

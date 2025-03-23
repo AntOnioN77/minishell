@@ -247,6 +247,8 @@ int			search_var(char **envp, const char* var);
 //LOCATIONS: builtins.c
 e_errors	ft_echo(t_task *task);
 void		ft_env(t_environ *environ);
+int			is_builtin(char *cmd);
+e_errors	builtins_exe(t_task *task, t_environ *environ);
 //LOCATIONS: ft_cd.c
 void		ft_cd(t_task *task, t_environ *environ);
 int			cd_destination(t_task *task, char **dest, t_environ *environ);
@@ -275,8 +277,11 @@ e_errors	apply_redirs(t_redir *redir, char **word_fail);
 //LOCATIONS: path.c
 char		*com_path(char *cmd, char **envp, e_errors *err);
 //LOCATIONS: executor.c
-
-
+e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in);
+e_errors	executor(t_tree *node, t_environ *environ , int in, int out);
+//LOCATIONS: child.c
+e_errors	child(t_task *task, t_environ *environ, int in, int out);
+e_errors	create_child(t_task *task, t_environ *environ , int in, int out);
 
 /*______________________________Others_Prototypes_________________________*/
 e_errors expansor(char **line, char **envp);
