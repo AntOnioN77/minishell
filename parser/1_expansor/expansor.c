@@ -54,16 +54,16 @@ bool skip_singleq(char **marker)
 }
 */
 
-static char	*join_line_buffer(char **newline, char *buffer)
+e_errors	join_line_buffer(char **newline, char *buffer)
 {
 	char	*auxline;
 
 	auxline = ft_strjoin(*newline, buffer);
-	free(*newline);
 	if (!auxline)
-		return (NULL);
+		return (ERROR_MALLOC);
+	free(*newline);
 	*newline = auxline;
-	return (auxline);
+	return (ALL_OK);
 }
 
 e_errors	append_dollar_sign(char **newline)
@@ -71,16 +71,17 @@ e_errors	append_dollar_sign(char **newline)
 	char	*auxline;
 
 	auxline = ft_strjoin(*newline, "$");
-	free(*newline);
 	if (!auxline)
 		return (ERROR_MALLOC);
+	free(*newline);
 	*newline = auxline;
 	return (ALL_OK);
 }
 
-static char	*expand_key(char **newline, char *marker, int *i, char **envp)
+e_errors	expand_key(char **newline, char *marker, int *i, char **envp)
 {
 	char	*key;
+	char	*value;
 	char	*auxline;
 
 	if (marker[*i] == '?')
@@ -92,29 +93,29 @@ static char	*expand_key(char **newline, char *marker, int *i, char **envp)
 			&& !ft_strchr("$\'\"", marker[*i]))
 			(*i)++;
 	}
-	key = ft_calloc(sizeof(char), *i);
+	key = ft_calloc(sizeof(char), *i); //CHECKED
 	if (!key)
-		return (NULL);
+		return (ERROR_MALLOC);
 	ft_strlcpy(key, &(marker[1]), *i);
 	auxline = NULL;
-	if (search_var(envp, key) != -1)
-		auxline = ft_strjoin(*newline, ft_getenv(key, envp));
+	value = ft_getenv(key, envp);
+	auxline = ft_strjoin(*newline, value);
 	free(key);
+	if (!value)
+		return (ALL_OK);
 	if (!auxline)
-		return (NULL);
+		return (ERROR_MALLOC);
 	free(*newline);
 	*newline = auxline;
-	return (auxline);
+	return (ALL_OK);
 }
 
 int expand_one(char **newline, char *buffer, char *marker, char **envp)
 {
 	int		i;
-	char	*auxline;
 
 	i = 1;
-	auxline = join_line_buffer(newline, buffer);
-	if (!auxline)
+	if (join_line_buffer(newline, buffer))
 		return (-1);
 	if (ft_strchr(DELIMITERS, marker[i]) || ft_strchr(WHITESPACES, marker[i])
 		|| ft_strchr("\'\"", marker[i]))
@@ -124,7 +125,8 @@ int expand_one(char **newline, char *buffer, char *marker, char **envp)
 	}
 	else
 	{
-		auxline = expand_key(newline, marker, &i, envp);
+		if (expand_key(newline, marker, &i, envp))
+			return(-1);
 	}
 	return (i);
 }
@@ -145,36 +147,36 @@ static void flush_buffer(char **newline, char *buffer)
 	ft_bzero(buffer, BUFFER_SIZE);
 }
 */
-static bool handle_expansion(char **marker, char **newline, char *buffer, char **envp)
+e_errors handle_expansion(char **marker, char **newline, char *buffer, char **envp)
 {
 	int expanded;
 
 	expanded = expand_one(newline, buffer, *marker, envp);
-	if(expanded > 0)
+	if(expanded >= 0)
 		*marker += expanded;
 	else
 	{
-		return (FALSE);
+		return (ERROR_MALLOC);
 	} 
 	if (!*newline)
-		return (FALSE); // Handle memory allocation failure
+		return (ERROR_MALLOC); // Handle memory allocation failure
 	ft_bzero(buffer, BUFFER_SIZE);
-	return (TRUE);
+	return (ALL_OK);
 }
 
-static bool append_to_buffer(char **newline, char *buffer, char **marker, int *i)
+static e_errors	append_to_buffer(char **newline, char *buffer,
+	char **marker, int *i)
 {
 	if (*i == BUFFER_SIZE - 1)
 	{
-		join_line_buffer(newline, buffer);
-		if (!*newline)
-			return (FALSE); // Handle memory allocation failure
+		if (join_line_buffer(newline, buffer))
+			return (ERROR_MALLOC); // Handle memory allocation failure
 		*i = 0;
 	}
 	buffer[*i] = **marker;
 	(*i)++;
 	(*marker)++;
-	return (TRUE);
+	return (ALL_OK);
 }
 e_errors expandstr_motor(char **origin, char **newline, char *buffer, char *envp[])
 {
@@ -187,13 +189,13 @@ e_errors expandstr_motor(char **origin, char **newline, char *buffer, char *envp
 		quoted = is_quoted(marker, quoted);
 		if (quoted != 1 && *marker == '$')
 		{
-			if (!handle_expansion(&marker, newline, buffer, envp))
+			if (handle_expansion(&marker, newline, buffer, envp))
 				return ERROR_MALLOC;
 			i = 0;
 		}
 		else
 		{
-			if (!append_to_buffer(newline, buffer, &marker, &i))
+			if (append_to_buffer(newline, buffer, &marker, &i))
 				return ERROR_MALLOC;
 		}
 	}
@@ -214,10 +216,12 @@ e_errors expandstr(char **origin, t_garbage *garbage, char *envp[])
 		return ERROR_MALLOC; // Handle memory allocation failure
 
 	if(expandstr_motor(origin, &newline, buffer, envp))
+	{
+		free(newline);
 		return (ERROR_MALLOC);
-
-	join_line_buffer(&newline, buffer); // Ensure remaining buffer is flushed
-	if (!newline)
+	}
+	; // Ensure remaining buffer is flushed
+	if (join_line_buffer(&newline, buffer))
 		return ERROR_MALLOC; // Handle memory allocation failure
 
 	garbage->pointers[garbage->current] = newline;
