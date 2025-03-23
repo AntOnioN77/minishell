@@ -42,7 +42,7 @@ static int	prepare_expansion(char **origin, char **new_str, t_garbage *garbage, 
 	return (0);
 }
 */
-
+/*
 bool skip_singleq(char **marker)
 {
 	if(ft_strchr((*marker) + 1, 39))
@@ -52,85 +52,86 @@ bool skip_singleq(char **marker)
 	}
 	return (0);
 }
+*/
 
-static char *join_line_buffer(char **newline, char *buffer)
+static char	*join_line_buffer(char **newline, char *buffer)
 {
-	char *auxline;
+	char	*auxline;
 
 	auxline = ft_strjoin(*newline, buffer);
 	if (!auxline)
-		return NULL;
+		return (NULL);
 	free(*newline);
 	*newline = auxline;
-	return auxline;
+	return (auxline);
 }
 
-static char *handle_dollar_sign(char **newline)
+static char	*append_dollar_sign(char **newline)
 {
-	char *auxline = ft_strjoin(*newline, "$");
+	char	*auxline;
+
+	auxline = ft_strjoin(*newline, "$");
 	if (!auxline)
-		return NULL;
+		return (NULL);
 	free(*newline);
 	*newline = auxline;
-	return auxline;
+	return (auxline);
 }
 
-static char *expand_key(char **newline, char *marker, int *i, char **envp)
+static char	*expand_key(char **newline, char *marker, int *i, char **envp)
 {
-	char *key;
-	char *auxline;
+	char	*key;
+	char	*auxline;
 
 	if (marker[*i] == '?')
 		(*i)++;
 	else
 	{
-		while (marker[*i] && !ft_strchr(DELIMITERS, marker[*i]) && 
-			   !ft_strchr(WHITESPACES, marker[*i]) && 
-			   !ft_strchr("$\'\"", marker[*i]))
+		while (marker[*i] && !ft_strchr(DELIMITERS, marker[*i])
+			&& !ft_strchr(WHITESPACES, marker[*i])
+			&& !ft_strchr("$\'\"", marker[*i]))
 			(*i)++;
 	}
 	key = ft_calloc(sizeof(char), *i);
 	if (!key)
-		return NULL;
+		return (NULL);
 	ft_strlcpy(key, &(marker[1]), *i);
 	auxline = NULL;
 	if (search_var(envp, key) != -1)
 		auxline = ft_strjoin(*newline, ft_getenv(key, envp));
 	free(key);
 	if (!auxline)
-		return NULL;
+		return (NULL);
 	free(*newline);
 	*newline = auxline;
-	return auxline;
+	return (auxline);
 }
 
 int expand_one(char **newline, char *buffer, char *marker, char **envp)
 {
-	int i; // Starts at 1 assuming marker[0] contains $
-	char *auxline;
+	int		i;
+	char	*auxline;
 
 	i = 1;
-	// Append buffer to newline
 	auxline = join_line_buffer(newline, buffer);
 	if (!auxline)
-		return -1;
-
-	// Handle expansion
-	if (ft_strchr(DELIMITERS, marker[i]) || ft_strchr(WHITESPACES, marker[i]) || ft_strchr("\'\"", marker[i]))
+		return (-1);
+	if (ft_strchr(DELIMITERS, marker[i]) || ft_strchr(WHITESPACES, marker[i])
+		|| ft_strchr("\'\"", marker[i]))
 	{
-		auxline = handle_dollar_sign(newline);
+		auxline = append_dollar_sign(newline);
 		if (!auxline)
-			return -1;
+			return (-1);
 	}
 	else
 	{
 
 		auxline = expand_key(newline, marker, &i, envp);
-		if(!newline)
-			return -1;
+		if (!newline)
+			return (-1);
 	}
 
-	return i;
+	return (i);
 }
 /*
 static void flush_buffer(char **newline, char *buffer)
