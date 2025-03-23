@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expansor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/23 22:19:40 by fibo              #+#    #+#             */
+/*   Updated: 2025/03/23 22:19:44 by fibo             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../minishell.h"
 #include "../../libft/headers/libft.h"
@@ -8,7 +19,7 @@ e_errors	join_line_buffer(char **newline, char *buffer)
 
 	auxline = ft_strjoin(*newline, buffer);
 	if (!auxline)
-		return (ERROR_MALLOC);//CHECKED
+		return (ERROR_MALLOC);
 	free(*newline);
 	*newline = auxline;
 	return (ALL_OK);
@@ -18,7 +29,7 @@ e_errors	append_dollar_sign(char **newline)
 {
 	char	*auxline;
 
-	auxline = ft_strjoin(*newline, "$"); //CHECKED
+	auxline = ft_strjoin(*newline, "$");
 	if (!auxline)
 		return (ERROR_MALLOC);
 	free(*newline);
@@ -26,12 +37,8 @@ e_errors	append_dollar_sign(char **newline)
 	return (ALL_OK);
 }
 
-e_errors	expand_key(char **newline, char *marker, int *i, char **envp)
+static void	skip_key_length(const char *marker, int *i)
 {
-	char	*key;
-	char	*value;
-	char	*auxline;
-
 	if (marker[*i] == '?')
 		(*i)++;
 	else
@@ -41,13 +48,23 @@ e_errors	expand_key(char **newline, char *marker, int *i, char **envp)
 			&& !ft_strchr("$\'\"", marker[*i]))
 			(*i)++;
 	}
-	key = ft_calloc(sizeof(char), *i); //CHECKED
+}
+
+e_errors	expand_key(char **newline, char *marker, int *i, char **envp)
+{
+	char	*key;
+	char	*value;
+	char	*auxline;
+
+	skip_key_length(marker, i);
+
+	key = ft_calloc(sizeof(char), *i);
 	if (!key)
 		return (ERROR_MALLOC);
 	ft_strlcpy(key, &(marker[1]), *i);
 	auxline = NULL;
 	value = ft_getenv(key, envp);
-	auxline = ft_strjoin(*newline, value); //CHECKED
+	auxline = ft_strjoin(*newline, value);
 	free(key);
 	if (!value)
 		return (ALL_OK);
@@ -58,7 +75,9 @@ e_errors	expand_key(char **newline, char *marker, int *i, char **envp)
 	return (ALL_OK);
 }
 
-int expand_one(char **newline, char *buffer, char *marker, char **envp)
+/*Appends the contents of the buffer to <newline>, expands the variable
+pointed to by <marker>. Returns the size of the expansion*/
+int	expand_one(char **newline, char *buffer, char *marker, char **envp)
 {
 	int		i;
 
@@ -74,7 +93,7 @@ int expand_one(char **newline, char *buffer, char *marker, char **envp)
 	else
 	{
 		if (expand_key(newline, marker, &i, envp))
-			return(-1);
+			return (-1);
 	}
 	return (i);
 }
@@ -95,19 +114,20 @@ static void flush_buffer(char **newline, char *buffer)
 	ft_bzero(buffer, BUFFER_SIZE);
 }
 */
-e_errors handle_expansion(char **marker, char **newline, char *buffer, char **envp)
+e_errors handle_expansion(char **marker, char **newline, char *buffer,
+char **envp)
 {
-	int expanded;
+	int	expanded;
 
 	expanded = expand_one(newline, buffer, *marker, envp);
-	if(expanded >= 0)
+	if (expanded >= 0)
 		*marker += expanded;
 	else
 	{
 		return (ERROR_MALLOC);
-	} 
+	}
 	if (!*newline)
-		return (ERROR_MALLOC); // Handle memory allocation failure
+		return (ERROR_MALLOC);
 	ft_bzero(buffer, BUFFER_SIZE);
 	return (ALL_OK);
 }
@@ -118,7 +138,7 @@ static e_errors	append_to_buffer(char **newline, char *buffer,
 	if (*i == BUFFER_SIZE - 1)
 	{
 		if (join_line_buffer(newline, buffer))
-			return (ERROR_MALLOC); // Handle memory allocation failure
+			return (ERROR_MALLOC);
 		*i = 0;
 	}
 	buffer[*i] = **marker;
@@ -126,25 +146,29 @@ static e_errors	append_to_buffer(char **newline, char *buffer,
 	(*marker)++;
 	return (ALL_OK);
 }
-e_errors expandstr_motor(char **origin, char **newline, char *buffer, char *envp[])
+e_errors expandstr_motor(char **origin, char **newline, char *buffer,
+	char *envp[])
 {
-	int quoted = 0;
-	char *marker = *origin;
-	int i = 0;
+	int		quoted;
+	char	*marker;
+	int		i;
 
+	quoted = 0;
+	marker = *origin;
+	i = 0;
 	while (*marker)
 	{
 		quoted = is_quoted(marker, quoted);
 		if (quoted != 1 && *marker == '$')
 		{
 			if (handle_expansion(&marker, newline, buffer, envp))
-				return ERROR_MALLOC;
+				return (ERROR_MALLOC);
 			i = 0;
 		}
 		else
 		{
 			if (append_to_buffer(newline, buffer, &marker, &i))
-				return ERROR_MALLOC;
+				return (ERROR_MALLOC);
 		}
 	}
 	return (0);
@@ -152,17 +176,17 @@ e_errors expandstr_motor(char **origin, char **newline, char *buffer, char *envp
 
 e_errors expandstr(char **origin, t_garbage *garbage, char *envp[])
 {
-	char buffer[BUFFER_SIZE];
-	char *newline;
+	char	buffer[BUFFER_SIZE];
+	char	*newline;
 
 	if (!is_expansible(*origin))
-		return ALL_OK;
+		return (ALL_OK);
 
 	ft_bzero(buffer, BUFFER_SIZE);
 	newline = ft_strdup("");
 	if (!newline)
-		return ERROR_MALLOC;
-	if(expandstr_motor(origin, &newline, buffer, envp))
+		return (ERROR_MALLOC);
+	if (expandstr_motor(origin, &newline, buffer, envp))
 	{
 		free(newline);
 		return (ERROR_MALLOC);
@@ -170,12 +194,12 @@ e_errors expandstr(char **origin, t_garbage *garbage, char *envp[])
 	if (join_line_buffer(&newline, buffer))
 	{
 		free(newline);
-		return ERROR_MALLOC;
+		return (ERROR_MALLOC);
 	}
 	garbage->pointers[garbage->current] = newline;
 	garbage->current++;
 	*origin = newline;
-	return ALL_OK;
+	return (ALL_OK);
 }
 
 e_errors	expand_task(t_task *node, char *envp[])
@@ -187,7 +211,6 @@ e_errors	expand_task(t_task *node, char *envp[])
 	if (node->garb.pointers == NULL)
 		return (1);
 	(node->garb.pointers)[node->garb.size -1] = NULL;
-	
 	if (expandstr(&(node->cmd), &(node->garb), envp))
 		return (1);
 	if (node->redir.insymbol != heredoc)
@@ -204,5 +227,5 @@ e_errors	expand_task(t_task *node, char *envp[])
 			return (1);
 		i++;
 	}
-	return(0);
+	return (0);
 }
