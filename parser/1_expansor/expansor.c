@@ -66,16 +66,16 @@ static char	*join_line_buffer(char **newline, char *buffer)
 	return (auxline);
 }
 
-static char	*append_dollar_sign(char **newline)
+e_errors	append_dollar_sign(char **newline)
 {
 	char	*auxline;
 
 	auxline = ft_strjoin(*newline, "$");
 	free(*newline);
 	if (!auxline)
-		return (NULL);
+		return (ERROR_MALLOC);
 	*newline = auxline;
-	return (auxline);
+	return (ALL_OK);
 }
 
 static char	*expand_key(char **newline, char *marker, int *i, char **envp)
@@ -119,18 +119,13 @@ int expand_one(char **newline, char *buffer, char *marker, char **envp)
 	if (ft_strchr(DELIMITERS, marker[i]) || ft_strchr(WHITESPACES, marker[i])
 		|| ft_strchr("\'\"", marker[i]))
 	{
-		auxline = append_dollar_sign(newline);
-		if (!auxline)
+		if (append_dollar_sign(newline))
 			return (-1);
 	}
 	else
 	{
-
 		auxline = expand_key(newline, marker, &i, envp);
-		if (!newline)
-			return (-1);
 	}
-
 	return (i);
 }
 /*
