@@ -59,9 +59,9 @@ static char	*join_line_buffer(char **newline, char *buffer)
 	char	*auxline;
 
 	auxline = ft_strjoin(*newline, buffer);
+	free(*newline);
 	if (!auxline)
 		return (NULL);
-	free(*newline);
 	*newline = auxline;
 	return (auxline);
 }
@@ -71,9 +71,9 @@ static char	*append_dollar_sign(char **newline)
 	char	*auxline;
 
 	auxline = ft_strjoin(*newline, "$");
+	free(*newline);
 	if (!auxline)
 		return (NULL);
-	free(*newline);
 	*newline = auxline;
 	return (auxline);
 }
