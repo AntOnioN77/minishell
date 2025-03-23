@@ -6,37 +6,38 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/22 20:58:01 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/23 22:49:31 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//si str comienza por " y a continuacion hay una nueva ocurrencia de " retorna 1 para indicar que se habren comillas dobles.
-//si str comienza por " pero ya no hay mas a continuacion, retorna 0
-//si str comienza por algo distinto a " retorna original_flag, para no modificar el estado.
+// si str comienza por " y a continuacion hay una nueva ocurrencia de " retorna
+// 1 para indicar que se habren comillas dobles. si str comienza por " pero ya
+// no hay mas a continuacion, retorna 0 si str comienza por algo distinto a "
+// retorna original_flag, para no modificar el estado.
 int is_quoted(char *str, int original_flag)
 {
-//fprintf(stderr, "is_doublequ: str:%s\n", str);
+	// fprintf(stderr, "is_doublequ: str:%s\n", str);
 	if (original_flag == 0)
 	{
-		if(*str == '"' && ft_strchr(str + 1, '"'))
+		if (*str == '"' && ft_strchr(str + 1, '"'))
 			return (2);
 		else if (*str == 39 && ft_strchr(str + 1, 39))
 			return (1);
 		else
 			return (0);
 	}
-	else if (original_flag == 1 )
+	else if (original_flag == 1)
 	{
-		if(*str == 39)
+		if (*str == 39)
 			return (0);
 		else
 			return (1);
 	}
 	else if (original_flag == 2)
 	{
-		if(*str == '"')
+		if (*str == '"')
 			return (0);
 		else
 			return (2);
@@ -49,7 +50,7 @@ int	is_expansible(char *str)
 	int quotes;
 
 	quotes = 0;
-	if(!str)
+	if (!str)
 		return (0);
 	while (*str)
 	{
@@ -63,12 +64,13 @@ int	is_expansible(char *str)
 	return (0);
 }
 
-int	count_expansions(t_task *node)
+int count_expansions(t_task *node)
 {
-	int	count;
-	int	i;
-	
-	count = 1;//reservamos al menos uno extra para add_pathname(), aunque pueda quedar sin uso en algunos casos.
+	int count;
+	int i;
+
+	count = 1; // reservamos al menos uno extra para add_pathname(), aunque
+			   // pueda quedar sin uso en algunos casos.
 	count += is_expansible(node->cmd);
 	count += is_expansible(node->redir.infoo);
 	count += is_expansible(node->redir.outfile);
@@ -82,20 +84,22 @@ int	count_expansions(t_task *node)
 	return (count);
 }
 
-char *getkey(char *var)
+char *
+getkey(char *var)
 {
 	size_t len;
-	char *key;
+	char  *key;
 
 	len = ft_strchr(var, '=') - var;
 	key = ft_substr(var, 0, len);
-	return(key);
+	return (key);
 }
 
 /*
-//busca una variable con el nombre str, si no lo encuentra retorna cadena vacia que se debe liberar
-//Si str es un espacio u otro delimitador, retorna $. En caso de error retorna NULL 
-char *foundvar(char *str, char *envp[])
+//busca una variable con el nombre str, si no lo encuentra retorna cadena vacia
+que se debe liberar
+//Si str es un espacio u otro delimitador, retorna $. En caso de error retorna
+NULL char *foundvar(char *str, char *envp[])
 {
 	char *validvar;
 	char *namevar;
@@ -125,8 +129,10 @@ char *foundvar(char *str, char *envp[])
 }
 */
 /*
-// Si el principio de str coincide con el nombre de alguna variable, retorna strlen(nombre_de variable), en otro caso 0.
-// Si varias variables cumplen con este criterio, elegirá la de nombre mas largo.
+// Si el principio de str coincide con el nombre de alguna variable, retorna
+strlen(nombre_de variable), en otro caso 0.
+// Si varias variables cumplen con este criterio, elegirá la de nombre mas
+largo.
 //ejemplo $PWDdsfsdfsd retorna "3" por PWD.
 size_t var_name_len(char *str, char **envp)
 {
@@ -140,7 +146,8 @@ size_t var_name_len(char *str, char **envp)
 }
 */
 /*
-////consume en str $NOMBRE_DE_VARIABLE y retorna el tamaño del valor apuntado por esa variable
+////consume en str $NOMBRE_DE_VARIABLE y retorna el tamaño del valor apuntado
+por esa variable
 //si ocurrio un error retorna -1
 static int	var_expansion_len(char **str, char *envp[])
 {
@@ -170,8 +177,8 @@ int is_closed_quote(char *str)
 /*
 //consume hasta la siguiente comilla simple.
 //Retorna el numero de caracteres consumidos.
-//Ignora el primer caracter apuntado por str. No verifica que el primer caracter sea una comilla.
-int consume_simplequotes(char **str)
+//Ignora el primer caracter apuntado por str. No verifica que el primer caracter
+sea una comilla. int consume_simplequotes(char **str)
 {
 	char *aux;
 
@@ -193,15 +200,13 @@ int	calculate_expansion_length(char *str, char *envp[])
 	while (*str)
 	{
 		quoted = is_quoted(str, quoted);
-		if (*str == 39 && ft_strchr(str + 1, 39) && quoted != 2)//compara con flag que indique si estamos dentro de doblequotes (si estas simplequotes estan anidadas no evitan la expansion))
-			len += consume_simplequotes(&str);
-		else if(*str == '$')
+		if (*str == 39 && ft_strchr(str + 1, 39) && quoted != 2)//compara con
+flag que indique si estamos dentro de doblequotes (si estas simplequotes estan
+anidadas no evitan la expansion)) len += consume_simplequotes(&str); else
+if(*str == '$')
 		{
-			ret = var_expansion_len(&str, envp);//consume en str $NOMBRE_DE_VARIABLE
-			if (ret < 0)
-				return (-1);
-			len += ret;
-			continue ;
+			ret = var_expansion_len(&str, envp);//consume en str
+$NOMBRE_DE_VARIABLE if (ret < 0) return (-1); len += ret; continue ;
 		}
 		str++;
 		len++;
