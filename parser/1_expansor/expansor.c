@@ -1,58 +1,6 @@
+
 #include "../../minishell.h"
 #include "../../libft/headers/libft.h"
-
-/*
-int	add_pathname(char **cmd,  t_garbage *garbage, char *envp[])
-{
-	//usa access para verificar cmd como ruta absoluta
-	if ((*cmd)[0] == '/' || strncmp((*cmd), "../", 3) == 0 || strncmp((*cmd), "./", 2) == 0)
-
-
-	//busca en PATH una ruta valida para cmd
-		
-		//	si la encuentra:
-		//	-libera garbaje (aun no se como va a saber si cmd fue o no fue expandida )
-		//	-costruye path/name
-	return(0);
-}
-*/
-
-//puede que innecesaria
-
-/*
-static int	prepare_expansion(char **origin, char **new_str, t_garbage *garbage, char *envp[])
-{
-	int	len;
-
-	len = calculate_expansion_length(*origin, envp);
-	if (len < 0)
-		return (1);
-	*new_str = ft_calloc(len + 1, sizeof(char));
-	if (*new_str == NULL)
-	 	return (1);
-	if (garbage->size <= garbage->current)
-	{
-		ft_putstr_fd("Bad count on expandstr", 2);//DEBUGEO
-	 	return(1);
-	}
-	garbage->pointers[garbage->current] = *new_str;
-	garbage->current++;
-	*origin = *new_str;
-	(*new_str)[len] = '\0';
-	return (0);
-}
-*/
-/*
-bool skip_singleq(char **marker)
-{
-	if(ft_strchr((*marker) + 1, 39))
-	{
-		*marker = ft_strchr((*marker) + 1, 39) + 1;
-		return (1);
-	}
-	return (0);
-}
-*/
 
 e_errors	join_line_buffer(char **newline, char *buffer)
 {
@@ -60,7 +8,7 @@ e_errors	join_line_buffer(char **newline, char *buffer)
 
 	auxline = ft_strjoin(*newline, buffer);
 	if (!auxline)
-		return (ERROR_MALLOC);
+		return (ERROR_MALLOC);//CHECKED
 	free(*newline);
 	*newline = auxline;
 	return (ALL_OK);
@@ -70,7 +18,7 @@ e_errors	append_dollar_sign(char **newline)
 {
 	char	*auxline;
 
-	auxline = ft_strjoin(*newline, "$");
+	auxline = ft_strjoin(*newline, "$"); //CHECKED
 	if (!auxline)
 		return (ERROR_MALLOC);
 	free(*newline);
@@ -99,7 +47,7 @@ e_errors	expand_key(char **newline, char *marker, int *i, char **envp)
 	ft_strlcpy(key, &(marker[1]), *i);
 	auxline = NULL;
 	value = ft_getenv(key, envp);
-	auxline = ft_strjoin(*newline, value);
+	auxline = ft_strjoin(*newline, value); //CHECKED
 	free(key);
 	if (!value)
 		return (ALL_OK);
@@ -213,17 +161,17 @@ e_errors expandstr(char **origin, t_garbage *garbage, char *envp[])
 	ft_bzero(buffer, BUFFER_SIZE);
 	newline = ft_strdup("");
 	if (!newline)
-		return ERROR_MALLOC; // Handle memory allocation failure
-
+		return ERROR_MALLOC;
 	if(expandstr_motor(origin, &newline, buffer, envp))
 	{
 		free(newline);
 		return (ERROR_MALLOC);
 	}
-	; // Ensure remaining buffer is flushed
 	if (join_line_buffer(&newline, buffer))
-		return ERROR_MALLOC; // Handle memory allocation failure
-
+	{
+		free(newline);
+		return ERROR_MALLOC;
+	}
 	garbage->pointers[garbage->current] = newline;
 	garbage->current++;
 	*origin = newline;
@@ -258,87 +206,3 @@ e_errors	expand_task(t_task *node, char *envp[])
 	}
 	return(0);
 }
-
-/*void unquote(char *str)
-{
-	char *newstr;
-	char *pntnew;
-	int quotlen;
-	char *pntstr;
-
-	pntstr = str;
-    if (!str || !*str)
-		return;
-	newstr = ft_calloc(ft_strlen(pntstr) + 1, sizeof(char));
-	pntnew = newstr;
-	while(*pntstr)
-	{
-		if ((*pntstr == 39 || *pntstr == '"') &&  ft_strchr(pntstr +1, *pntstr))
-		{
-			quotlen = ft_strchr(pntstr +1, *pntstr) - (pntstr +1) ;
-			ft_strlcpy(pntnew, pntstr +1, quotlen +1);
-			pntnew = pntnew + quotlen;
-			pntstr = ft_strchr(pntstr +1, *pntstr);
-		}
-		else
-		{
-			ft_strlcpy(pntnew, pntstr, 2);
-			pntnew++;
-		}
-		pntstr++;
-	}
-	ft_strlcpy(str, newstr, 1 + ft_strlen(str));
-	free(newstr);
-}
-
-static int	unquote_task(t_task *node)
-{
-	int	i;
-
-	unquote(node->cmd);
-	unquote(node->redir.infoo);
-	unquote(node->redir.outfile);
-	i = 0;
-	while ((node->argv)[i])
-	{
-		unquote((node->argv)[i]);
-		i++;
-	}
-	return(0);
-}*/
-
-//FIN TEMPORAL
-
-//Si retorna 1 imprimir perror(errno)
-//trabaja en este orden: 1.Expande variables 2.Desenvuelve comillas no anidadas 3.Crea documento temporal para heredoc si fuera necesario
-//Nueva funcionalidad (requiere cambio de nombre): ahora tambien escribe en archivo temporal para heredocs
-/*e_errors	expand_vars_tree(t_tree *node, char *envp[])
-{
-	t_task *task;
-	t_pipe *pipe;
-	e_errors error;
-
-	error = INVALID_TYPE;
-	if (node->type == PIPE)
-	{
-		pipe = (t_pipe *)node;
-		error=expand_task(pipe->left, envp);
-		if(error)
-			return (error);
-		unquote_task(((t_task *)pipe->left));
-		error=create_herefile(&(pipe->left->redir)); //si hubo error lo anota, sera encontrado por check_tree
-		if (error)
-			return (error);
-		error= expand_vars_tree((t_tree *)pipe->rigth, envp);
-	}
-	else if (node->type == TASK)
-	{
-		task = (t_task *)node;
-		error = expand_task(task, envp);
-		if(error)
-			return (error);
-		unquote_task(task);
-		error = create_herefile(&(task->redir)); //si hubo error lo anota, sera encontrado por check_tree
-	}
-	return (error);
-}*/
