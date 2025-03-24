@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtins.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 20:53:21 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 20:54:07 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "executor.h"
 #include "minishell.h"
 
@@ -55,10 +67,10 @@ e_errors	builtins_exe(t_task *task, t_environ *environ)
 {
 	char	*cmd;
 
-	(void)environ;//silenciar unused eviron
+	(void)environ;
 	cmd = task->cmd;
 	if (!ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "exit")
-	|| !ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "unset"))
+		|| !ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "unset"))
 	{
 		return (FINISH);
 	}

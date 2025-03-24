@@ -1,8 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_export.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 20:56:16 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 20:56:48 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
-
-//retorna 1 si key es valido (el primer caracter es alfabetico, contiene solo caracteres alphanumericos y no es una cadena vacía)
 int	validate_key(char *key)
 {
 	int	i;
@@ -47,14 +56,13 @@ char	*getvalue(char *var)
 	return (ft_strdup(start));
 }
 
-//export no debe cambiar variables como $? $PWD o $OLDPWD
 void	ft_export(t_task *task, t_environ *environ)
 {
 	char	*key;
 	char	*value;
 	int		i;
 
-	i = 1; //1 porque argv[0] contiene el nombre del comando y solo queremos los argumentos
+	i = 1;
 	change_var("?", "0", environ);
 	while (task->argv[i])
 	{

@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 20:55:40 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 20:55:59 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -18,7 +29,6 @@ int	select_exitcode(t_task *task, t_environ *environ, char *argument)
 		return (ft_atoi(ft_getenv("?", environ->envp)));
 }
 
-//libera todo y termina minishell con exit(), solo retorna en caso de error
 void	ft_exit(t_task *task, t_tree *tree, t_environ *environ)
 {
 	int				exitcode;

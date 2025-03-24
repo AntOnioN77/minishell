@@ -1,17 +1,16 @@
-//Hay buitins que en el contexto de minishell no tiene sentido que formen parte de un pipe
-//Son: cd, export, unset y exit.
-//la solucion mas directa es ejecutarlos solo cuando el arbol sea unicamente de un nodo
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   non_pipable_builtin.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 20:57:43 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 20:58:41 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
-//#include <linux/limits.h>
-#include <limits.h>
-
-/*
-static char *getnamevar()
-{
-	//probablemente ya hay una funcion que hace esto
-}
-*/
 
 int	countargs(t_task *task)
 {
@@ -35,18 +34,14 @@ int	non_pipable_builtin(t_tree *tree, t_environ *environ)
 		if (!((t_task *)tree)->cmd)
 			return (ALL_OK);
 		if (!ft_strcmp(task->cmd, "cd"))
-		{
 			ft_cd(task, environ);
-		}
 		else if (!ft_strcmp(task->cmd, "exit"))
-		{
 			ft_exit(task, tree, environ);
-		}
 		else if (!ft_strcmp(task->cmd, "export"))
 			ft_export(task, environ);
 		else if (!ft_strcmp(task->cmd, "unset"))
 			ft_unset(task->argv, environ);
-		else		//si se cumple alguna de las condiciones retornamos continue, si la task no era un builtin retornamos all ok, para no interrumpir el flujo normal
+		else
 			return (ALL_OK);
 		return (CONTINUE);
 	}
