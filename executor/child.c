@@ -1,6 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   child.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 21:14:20 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 21:15:59 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "executor.h"
-#include <limits.h>
 #include <sys/stat.h>
 #include <stdio.h>
 
@@ -35,7 +46,7 @@ static e_errors	child_error_handler(e_errors err, char *cmd)
 static e_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
 {
 	e_errors	err;
-//fprintf(stderr,"process:%d line:158 executor.c repipechild in:%d  out%d\n", getpid(),in, out);
+
 	if (out != STDOUT_FILENO)
 	{
 		dup2(out, STDOUT_FILENO);
@@ -47,12 +58,10 @@ static e_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
 		close(in);
 	}
 	close(3);
-	close(4);//soluciona lo de el cat|cat|ls pero no es pretty
+	close(4);
 	err = apply_redirs(&(task->redir), word_fail);
-//fprintf(stderr, "!!!!!!!!!!!!!!!! executor.c 168¬ err:%d\n", (int)err);
 	if (err != 0)
 		return (err);
-//test_fds("176 executor.c repipechild");
 	return (0);
 }
 
@@ -66,13 +75,12 @@ e_errors	child(t_task *task, t_environ *environ, int in, int out)
 	envp = environ->envp;
 	word_fail = NULL;
 	signal(SIGINT, SIG_DFL);
-//printf("Proceso hijo: PID=%d, PPID=%d\n", getpid(), getppid());
 	err = repipe_child(task, in, out, &word_fail);
 	if (child_error_handler(err, word_fail))
 		return (1);
 	if (is_builtin(task->cmd))
 		return (builtins_exe(task, environ));
-	pathcmd = com_path(task->cmd, envp, &err); 			//no Builtin
+	pathcmd = com_path(task->cmd, envp, &err);
 	if (err)
 		return (child_error_handler(err, task->cmd));
 	rl_clear_history();

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 21:14:05 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 21:18:06 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "executor.h"
 #include <limits.h>
@@ -10,7 +22,6 @@ e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
 	e_errors	err;
 
 	pipe(pipefd);
-
 	if (pipe_node->left)
 	{
 		err = executor((t_tree *)pipe_node->left, environ, in, pipefd[1]);
@@ -26,7 +37,7 @@ e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
 	return (0);
 }
 
-e_errors	executor(t_tree *node, t_environ *environ , int in, int out)
+e_errors	executor(t_tree *node, t_environ *environ, int in, int out)
 {
 	t_pipe		*pipe_node;
 	t_task		*task;

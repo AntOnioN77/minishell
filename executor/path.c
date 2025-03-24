@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   path.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 21:13:24 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 21:13:51 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "executor.h"
 #include <limits.h>
@@ -54,10 +66,6 @@ static char	*match_pathcmd(char *cmd, char **enpath, e_errors *err)
 	return (NULL);
 }
 
-/**
- * Busca el array que comienza con "PATH" (donde se encuentran las rutas de los
- * ejecutables) y devuelve su posición.
- */
 int	get_index_path(char **envp)
 {
 	int		pos;
