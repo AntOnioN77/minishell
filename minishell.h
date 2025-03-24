@@ -221,6 +221,9 @@ void		free_tree(t_tree *node);
 //LOCATION
 e_errors	continue_cmd_tree(t_tree **tree, char **envp);
 e_errors	get_cmd_tree(t_tree **tree, t_environ *environ);
+//LOCATION parser/1_expansor/expand_one.c
+int	expand_one(char **newline, char *buffer, char *marker, char **envp);
+e_errors	join_line_buffer(char **newline, char *buffer);
 
 
 /*_____________________Environment_Prototypes_________________________________*/

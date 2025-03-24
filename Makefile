@@ -16,7 +16,9 @@ builtins/non_pipable_builtin.c builtins/ft_cd.c builtins/ft_exit.c\
 builtins/ft_export.c builtins/ft_unset.c builtins/builtins.c\
 executor/apply_redirs.c executor/path.c GNL/get_next_line.c cmd_tree_builder.c\
 parser/create_heredoc.c parser/3_touch_up_tree.c handler_error.c executor/child.c\
-environment/create_envp.c environment/get_envp.c environment/init_envp.c environment/var_operation.c
+environment/create_envp.c environment/get_envp.c environment/init_envp.c environment/var_operation.c\
+parser/1_expansor/expand_one.c
+
 OBJECTS = $(SOURCES:.c=.o)
 HEADERS = libft/headers/libft.h minishell.h executor.h
 SRC_PARS_TEST = mooks.c parser/2_build_tree/build_tree/constructors.c\
@@ -26,7 +28,8 @@ parser/2_build_tree/build_tree.c parser/str_utils.c executor/executor.c\
 free.c executor/process.c builtins/non_pipable_builtin.c signal.c\
 executor/apply_redirs.c GNL/get_next_line_utils.c GNL/get_next_line.c\
 parser/create_heredoc.c create_envp.c parser/3_touch_up_tree.c handler_error.c\
-environment/create_envp.c environment/get_envp.c environment/init_envp.c environment/var_operation.c
+environment/create_envp.c environment/get_envp.c\
+environment/init_envp.c environment/var_operation.c parser/1_expansor/expand_one.c
 OBJ_PARS_TEST = $(SRC_PARS_TEST:.c=.o)
 
 

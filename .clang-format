@@ -1,0 +1,17 @@
+BasedOnStyle: LLVM
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+BreakBeforeBraces: Allman
+AlignConsecutiveDeclarations: true
+AlignAfterOpenBracket: Align
+ColumnLimit: 80
+BreakBeforeBinaryOperators: All
+PenaltyBreakBeforeFirstCallParameter: 1
+PenaltyBreakString: 1
+PenaltyExcessCharacter: 1
+AlwaysBreakAfterReturnType: None
+BinPackParameters: false
+PenaltyReturnTypeOnItsOwnLine: 1000
+DerivePointerAlignment: false
+PointerAlignment: Right

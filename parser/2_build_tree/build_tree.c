@@ -12,24 +12,20 @@
 
 #include "../../minishell.h"
 
-
-//almacena un puntero a la primera letra de esa palabra, consume la siguiente palabra en segment. Si dst es NULL solamente consume un redir en segment
 void	getpntword(char **segment, char *end, char **dst)
 {
 	skipwhitesp(segment, end);
 	if (dst != NULL)
 		*dst = *segment;
-	if(*segment == end && dst != NULL)
+	if (*segment == end && dst != NULL)
 	{
 		*dst = NULL;
-		return;
+		return ;
 	}
-
 	while (*segment < end)
 	{
 		skip_quotes(segment, end);
-		//	(*segment)++;
-		if(!isdelimiter(**segment))
+		if (!isdelimiter(**segment))
 			(*segment)++;
 		else
 		{
@@ -40,82 +36,67 @@ void	getpntword(char **segment, char *end, char **dst)
 	return ;
 }
 
-//SEPARAR a getredir.c
-
-// hasta aqui separar
-
-//NO FUNCIONA
-int count_cmdflags(char *segment, char *end)
+int	count_cmdflags(char *segment, char *end)
 {
-	int i;
-	char *tmp;
+	int		i;
+	char	*tmp;
 
 	i = 0;
-	while(segment < end)
+	while (segment < end)
 	{
-		get_redir(&segment, end, NULL);// aqui lo usamos solo para consumir las redirecciones, no almacenamos nada
+		get_redir(&segment, end, NULL);
 		tmp = segment;
 		getpntword(&segment, end, NULL);
-		if (tmp != segment)//si getpntword consumio algo, entonces habia una palabra
+		if (tmp != segment)
 			i++;
 	}
 
-	return(i);
+	return (i);
 }
 
-
-//NO TESTEADA
-//si falla alocando memoria retorna 1
-//get_pathname no se ha implementado aún
-//add_arg no implementada
-int parse_task(char *segment, char *end, t_task *task)
+int	parse_task(char *segment, char *end, t_task *task)
 {
 	int i;
 
 	i = 0;
-	while(segment < end)
+	while (segment < end)
 	{
-		get_redir(&segment, end, &(task->redir));//si lo primero que encuentra en segment es uno o varios redir los consume, avanzando segment.
+		get_redir(&segment, end, &(task->redir));
 		if (!(segment < end))
 			break ;
-		if(!(task->cmd))
+		if (!(task->cmd))
 		{
-			getpntword(&segment, end, &(task->cmd));//get_word toma la primera palabra que encuentra en segment como comando,la funcion que ejecute debe encargarse de gestionar F_OK X_OK y buscar un path.
-			task->argv[0] = task->cmd; // execve por convencion recibe por argv primero el nombre del comando y despues los argumentos con que se ejecuta.
+			getpntword(&segment, end, &(task->cmd));
+			task->argv[0] = task->cmd;
 			i++;
 		}
 		else
 		{
-			getpntword(&segment, end, &(task->argv[i]));//¿debe comprobar !'\0'. Debe saltarse los espacios vacíos //MIRAR &(task...
+			getpntword(&segment, end, &(task->argv[i]));
 			i++;
 		}
-//printf("task->argv[%d]:%s\n", i-1, task->argv[i-1]);
 	}
 	task->argv[i] = NULL;
 	return (0);
 }
 
-int parsepipe(char *line, t_tree **ret)// desde aqui gestionar solo errores de ejecución, no de sintaxis.
+int	parsepipe(char *line, t_tree **ret)
 {
-	char *pnt;
+	char	*pnt;
 
 	pnt = line;
-	if(!strnchr_outquot(&pnt, pnt + ft_strlen(pnt), '|'))
+	if (!strnchr_outquot(&pnt, pnt + ft_strlen(pnt), '|'))
 		return (0);
 	*ret = createpipe(line, pnt);
 	return (1);
 }
 
-//no me gusta el nombre proccessline. deberia ser algo como build_tree o line_to_tree
-t_tree *build_tree(char *line)//debe retornar un arbol con un nodo para cada fraccion del comando introducido
+t_tree	*build_tree(char *line)
 {
-	t_tree *ret;
+	t_tree	*ret;
 
-	if(0 == parsepipe(line, &ret))
+	if (0 == parsepipe(line, &ret))
 		ret = (t_tree *)createtask(line, line + ft_strlen(line));
-	if (!ret)
-		printf("Error en reserva de memoria, gestionar");//BORRAESTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-//DESCOMENTAR CUANDO SE HAGA	check_tree(ret);
-	nullify_delimiters(line); //argumentos y redirecciones son punteros al string original line, esta funcion debe nulificar: whitespaces, |, <, >>, >, <<, y cualquier otro separador
+	nullify_delimiters(line);
 	return (ret);
 }
