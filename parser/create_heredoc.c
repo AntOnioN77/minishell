@@ -1,7 +1,7 @@
 #include "../minishell.h"
 #include "../executor.h"
 #include <errno.h>
-#include "../GNL/get_next_line.h"
+//#include "../GNL/get_next_line.h"
 
 char *compose_filename(int i, e_errors *error)
 {
@@ -94,7 +94,7 @@ static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
 	}
 	return (status);
 }
-// Se ocupa de abrir, cerrar y desligar el archivo temporal que utiliza el 
+// Se ocupa de abrir, cerrar y desligar el archivo temporal que utiliza el
 // heredoc cuando es necesario
 // El bucle permite la ejecución de la función write_heredoc_fork mientras
 // devuelva el estado CONTINUE (162)

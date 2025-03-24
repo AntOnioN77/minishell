@@ -1,22 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmd_tree_builder.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 20:44:27 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 20:47:27 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "executor.h"
 
-//Esta funcion es llamada cuando encontramos un pipe con el nodo a su derecha vacío por ejemplo "ls|(vacio)".
-// antes de llamar a esta funcion hay que liberar la t_task vacía.
-//El parametro t_tree **right recibe un puntero al elemento pipe->right
-//Solicita nueva entrada de usuario, y despliega un nuevo arbol, partiendo del nodo vacío, continuacion del arbol original. 
 e_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
 	char		*line;
 	e_errors	error;
 
 	line = readline("> ");
-	if(!line)
-		return (READLINE_FAIL);//pasar codigo de señal??
-	if(line[0] == '\0')// si la cadena leida esta vacía, vuelve a pedir entrada
+	if (!line)
+		return (READLINE_FAIL);
+	if (line[0] == '\0')
 	{
-		free(line); //COMPROBARRRR!!!!!!!!!!
-		return(continue_cmd_tree(right, envp));
+		free(line);
+		return (continue_cmd_tree(right, envp));
 	}
 	add_history(line);
 	*right = build_tree(line);
@@ -29,23 +37,17 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	}
 	(*right)->line_extra = line;
 	error = touch_up_tree(*right, envp);
-	//fprintf(stderr, "heredoc: %d\n", error);
 	if (error)
-		return(error);
-	return (check_tree(*right, envp)); // gestionar retorno
+		return (error);
+	return (check_tree(*right, envp));
 }
 
-/**
- * Aquí se comprueba si se ha pulsado Ctrl+C sin ninguna ejecución,
- * si se ha pulsado Ctrl+D o ha habido algún fallo con readline
- * y el límite de caracteres por línea
- */
 e_errors	line_control(char *line, t_environ *environ)
 {
 	if (g_ctrlc == 2)
 		change_var("?", "130", environ);
 	if (!line)
-		return (READLINE_FAIL); //Requerimos pasar señal aqui, si fue una señal la que fallo (errno queda a 0 con ctrl+D pues es una señal EOF perfectamente legal)
+		return (READLINE_FAIL);
 	if (ft_strlen(line) >= S_LINE_MAX)
 	{
 		free(line);
@@ -80,5 +82,5 @@ e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
 	error = touch_up_tree(*tree, envp);
 	if (error)
 		return (error);
-	return (check_tree(*tree, envp)); // gestionar retorno
+	return (check_tree(*tree, envp));
 }
