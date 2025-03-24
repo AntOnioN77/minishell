@@ -1,5 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_tree.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 21:21:31 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 21:21:47 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdlib.h>
-#include "../minishell.h"
+#include "minishell.h"
 
 static void	cleanup_garbage(t_garbage *garbage)
 {
@@ -32,7 +44,7 @@ void	free_task(t_tree *node)
 	free(task_node);
 }
 
-void	free_tree(t_tree *node) //DEMASIADO LARGA
+void	free_tree(t_tree *node)
 {
 	t_pipe	*pipe_node;
 
