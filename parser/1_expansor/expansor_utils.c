@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/24 16:32:40 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/24 23:40:49 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ int	count_expansions(t_task *node)
 	count += is_expansible(node->cmd);
 	count += is_expansible(node->redir.infoo);
 	count += is_expansible(node->redir.outfile);
-
 	i = 0;
 	while ((node->argv)[i])
 	{

@@ -2,7 +2,8 @@
 	"files.associations": {
 		"minishell.h": "c",
 		"*.tcc": "c",
-		"ostream": "c"
+		"ostream": "c",
+		"libft.h": "c"
 	}
 }/*
 {

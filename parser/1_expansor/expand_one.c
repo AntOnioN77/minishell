@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_one.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 23:39:21 by fibo              #+#    #+#             */
+/*   Updated: 2025/03/24 23:40:20 by fibo             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../minishell.h"
 #include "../../libft/headers/libft.h"
@@ -46,7 +57,6 @@ e_errors	expand_key(char **newline, char *marker, int *i, char **envp)
 	char	*auxline;
 
 	skip_key_length(marker, i);
-
 	key = ft_calloc(sizeof(char), *i);
 	if (!key)
 		return (ERROR_MALLOC);

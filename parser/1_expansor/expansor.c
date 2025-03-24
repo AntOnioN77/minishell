@@ -6,10 +6,9 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 22:19:40 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/24 16:50:31 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/24 23:46:20 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../../minishell.h"
 #include "../../libft/headers/libft.h"
@@ -82,7 +81,6 @@ e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[])
 
 	if (!is_expansible(*origin))
 		return (ALL_OK);
-
 	ft_bzero(buffer, BUFFER_SIZE);
 	newline = ft_strdup("");
 	if (!newline)

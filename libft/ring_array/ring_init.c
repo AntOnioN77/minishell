@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ring_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 12:02:27 by antofern          #+#    #+#             */
-/*   Updated: 2024/08/27 12:46:42 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/24 23:34:17 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ t_ring	*ring_init(int size)
 	circular_array = (t_ring *)malloc(sizeof(t_ring));
 	if (circular_array == NULL)
 		return (NULL);
-	circular_array->buff = (int *)malloc(sizeof(int) * (size + 1)); 
+	circular_array->buff = (int *)malloc(sizeof(int) * (size + 1));
 	if (circular_array->buff == NULL)
 	{
 		free(circular_array);

@@ -50,13 +50,12 @@ int	count_cmdflags(char *segment, char *end)
 		if (tmp != segment)
 			i++;
 	}
-
 	return (i);
 }
 
 int	parse_task(char *segment, char *end, t_task *task)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (segment < end)

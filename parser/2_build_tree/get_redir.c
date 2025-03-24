@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/24 17:05:41 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/24 23:49:23 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*findchars(char *str, char *end, char *wanted)
 	return (end);
 }
 
-static void handle_heredoc(char **segment, char *end, t_redir *redir)
+static void	handle_heredoc(char **segment, char *end, t_redir *redir)
 {
 	(*segment) += 2;
 	if (redir)
@@ -47,19 +47,19 @@ static void handle_heredoc(char **segment, char *end, t_redir *redir)
 	}
 	else
 		getpntword(segment, end, NULL);
-	return;
+	return ;
 }
 
 // si el archivo no existe lo crea.
-// Introduce un error en redir->error en caso de que el archivo exista pero no tengamos permisos de escritura
-void create_file(char *segment, char *end, int flag, t_redir *redir)
+// Introduce un error en redir->error en caso de que el archivo exista
+//pero no tengamos permisos de escritura
+void	create_file(char *segment, char *end, int flag, t_redir *redir)
 {
-	int	  fd;
-	char *file;
+	int		fd;
+	char	*file;
 
 	if (!redir)
-		return;
-	// Crear el archivo si no existe y si redir no es NULL (redir NULL significa que solo estamos usando get redir para skippear redirs)
+		return ;
 	file = ft_substr(segment, 0, findchars(segment, end, DELIMITERS) - segment);
 	unquote(file);
 	if (!access(file, F_OK) && access(file, W_OK) == -1)
@@ -72,7 +72,7 @@ void create_file(char *segment, char *end, int flag, t_redir *redir)
 	free(file);
 }
 
-static void handle_append(char **segment, char *end, t_redir *redir)
+static void	handle_append(char **segment, char *end, t_redir *redir)
 {
 	(*segment) += 2;
 	if (redir)
@@ -83,14 +83,12 @@ static void handle_append(char **segment, char *end, t_redir *redir)
 	}
 	else
 		getpntword(segment, end, NULL);
-	return;
+	return ;
 }
 
-// introduce error en redir->error en caso de que el archivo no exista o no se disponga de permiso de lectura
-// si redir es == NULL no hace nada, esto es util cuando simplemente estamos skipeando redirs
-void check_file(char *segment, char *end, t_redir *redir)
+void	check_file(char *segment, char *end, t_redir *redir)
 {
-	char *file;
+	char	*file;
 
 	if (!redir)
 		return ;
@@ -101,7 +99,7 @@ void check_file(char *segment, char *end, t_redir *redir)
 	free(file);
 }
 
-static void handle_input(char **segment, char *end, t_redir *redir)
+static void	handle_input(char **segment, char *end, t_redir *redir)
 {
 	(*segment)++;
 	if (redir)
@@ -121,22 +119,17 @@ static void handle_output(char **segment, char *end, t_redir *redir)
 		if (redir)
 		{
 			create_file(*segment, end, O_TRUNC, redir);
-
-			// instanciar redir >
 			redir->outsymbol = outfile;
 			getpntword(segment, end, &(redir->outfile));
 		}
 		else
 			getpntword(segment, end, NULL);
-		return;
+		return ;
 	}
 }
 
-// si lo primero que encuentra en segment es uno o varios redir los consume, avanzando segment. Si <redir> no es null, rellena las istancias consumidas
-// Si hay un heredoc, crea el archivo temporal necesario.
 void get_redir(char **segment, char *end, t_redir *redir)
 {
-	// fprintf(stderr, "___________________________________get redir\n");
 	while (*segment < end)
 	{
 		if (redir && !(redir->error == ALL_OK))
@@ -153,7 +146,7 @@ void get_redir(char **segment, char *end, t_redir *redir)
 		else if (**segment == '>')
 			handle_output(segment, end, redir);
 		else
-			return;
+			return ;
 	}
-	return;
+	return ;
 }

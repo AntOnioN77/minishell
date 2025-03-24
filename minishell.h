@@ -297,5 +297,6 @@ void	free_arr(char **s);
 void	handle_sigint_vis(int signal);
 int is_quoted(char *str, int original_flag);
 int countargs(t_task *task);
+void	unquote_task(t_task *node);
 
 #endif
