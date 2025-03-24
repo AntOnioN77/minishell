@@ -1,10 +1,19 @@
-#include "../minishell.h"
-#include "../libft/headers/libft.h"
-#include <errno.h>
-// #include <linux/limits.h>
-#include <limits.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_envp.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 21:02:57 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 21:03:23 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-//NO alloca memoria, debuelve un puntero a la cadena original en envp, a continuacion de '='
+#include "minishell.h"
+#include "libft/headers/libft.h"
+#include <errno.h>
+
 char	*ft_getenv(const char *name, char *envp[])
 {
 	int		pos;

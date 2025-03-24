@@ -1,7 +1,18 @@
-#include "../minishell.h"
-#include "../libft/headers/libft.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_envp.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 21:02:53 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 21:08:42 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+#include "libft/headers/libft.h"
 #include <errno.h>
-// #include <linux/limits.h>
 #include <limits.h>
 
 e_errors	set_shlvl(t_environ *environ)
@@ -33,7 +44,6 @@ e_errors	set_pathshell(t_environ *environ, char *path, e_errors error)
 	return (error);
 }
 
-//SHLVL PWD HOME OLDPWD $?
 e_errors	init_envp(t_environ *environ)
 {
 	e_errors	error;
@@ -50,11 +60,11 @@ e_errors	init_envp(t_environ *environ)
 	else if (!error)
 		error = change_var("PWD", path, environ);
 	if (!error && ft_getenv("HOME", environ->envp) == NULL)
-		error = add_var("HOME", path, environ); //si no tenemos acceso a las variables de entorno, establece la carpeta actual como home (pues es la unica de la que tiene certeza existe y es utilizable)
+		error = add_var("HOME", path, environ);
 	if (!error && ft_getenv("OLDPWD", environ->envp) == NULL)
-		error = add_var("OLDPWD", "", environ); //al ser el principio de la ejecucion no hay una carpeta previa
+		error = add_var("OLDPWD", "", environ);
 	else if (!error)
-		error = change_var("OLDPWD", "", environ);// si existe, solo la reinicia como cadena vacía
+		error = change_var("OLDPWD", "", environ);
 	if (!error && ft_getenv("?", environ->envp) == NULL)
 		error = add_var("?", "0", environ);
 	else if (!error)
