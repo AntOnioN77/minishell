@@ -8,7 +8,7 @@ LDFLAGS = -L ./libft -lft -lreadline
 CFLAGS += -I/usr/local/opt/readline/include
 LDFLAGS += -L/usr/local/opt/readline/lib -lreadline
 
-SOURCES = main.c mooks.c parser/4_check_tree.c\
+SOURCES = main.c parser/4_check_tree.c\
 parser/2_build_tree/constructors.c parser/1_expansor/expansor_utils.c\
 parser/1_expansor/expansor.c parser/2_build_tree/get_redir.c\
 parser/2_build_tree/build_tree.c parser/2_build_tree/str_utils.c\
