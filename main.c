@@ -1,48 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 20:33:54 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 20:35:20 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 #include "executor.h"
 
-int g_ctrlc = 0;
+int	g_ctrlc = 0;
 
 void	status_control(int status, t_environ *environ)
 {
 	char	*str_status;
 
 	str_status = NULL;
-	if (((((status) & 0x7f) + 1) >> 1) > 0) //aplicamos mascara WIFSIGNALED(status)
-		str_status = ft_itoa(((status) & 0x7f) + IS_SIGNAL);//aplicamos mascara WTERMSIG(status) y sumamos 128 (los codigos de señal en bash empiezan en 128)
+	if (((((status) & 0x7f) + 1) >> 1) > 0)
+		str_status = ft_itoa(((status) & 0x7f) + IS_SIGNAL);
 	else
-		str_status = ft_itoa(((status) & 0xff00) >> 8);//aplicamos mascara (WEXISTATUS)
+		str_status = ft_itoa(((status) & 0xff00) >> 8);
 	change_var("?", str_status, environ);
-	free(str_status);//NO GESTIONADO POR HANDLE ERROR
+	free(str_status);
 }
 
-/*
-	la expansion de estos macros, que por norma no podemos usar ensucia el codigo,
-	deberiamos simplemente crear funciones para suplirlos:
-	WIFSIGNALED(status) se expande en (((signed char) (((status) & 0x7f) + 1) >> 1) > 0)
-	WTERMSIG(status) se expande en ((status) & 0x7f)
-	WTERMSIG(status)
-	WEXISTATUS*/
 void	shell_cycle(t_tree *tree, t_environ *environ)
 {
 	int		status;
+
 	signal_conf();
 	if (handlerr(get_cmd_tree(&tree, environ), &tree, environ))
 		return ;
 	if (handlerr(non_pipable_builtin(tree, environ), &tree, environ))
 		return ;
-	if (0 == handlerr(executor(tree, environ, 0, 1), &tree, environ)) //executor deberia simplemente ignorar los builtin no pipeables
+	if (0 == handlerr(executor(tree, environ, 0, 1), &tree, environ))
 	{
-		status = wait_all(tree);//, envp);
+		status = wait_all(tree);
 		if (g_ctrlc == SIGINT)
 		{
 			write(1, "\n", 1);
 			change_var("?", "130", environ);
 		}
-		else 
+		else
 			status_control(status, environ);
-		close_fds(3);//SOBRA?????????
+		close_fds(3);
 		free_tree(tree);
 	}
 }

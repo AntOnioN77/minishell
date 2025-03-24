@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signal.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 20:32:33 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 20:32:58 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 #include <readline/readline.h>
@@ -5,9 +16,6 @@
 #include <signal.h>
 #include "executor.h"
 
-/**
- * Imprime una nueva línea y redibuja el prompt de readline
- */
 void	handle_sigint(int signal)
 {
 	g_ctrlc = signal;
@@ -17,9 +25,6 @@ void	handle_sigint(int signal)
 	rl_redisplay();
 }
 
-/**
- * Gestiona Ctrl+C con heredoc
- */
 void	handle_sigint_heredoc(int signal)
 {
 	(void)signal;
@@ -29,9 +34,6 @@ void	handle_sigint_heredoc(int signal)
 	exit(E_SIGINT);
 }
 
-/**
- * Configura las señales para CTRL+C (SIGINT) y CTRL+\ (SIGQUIT)
- */
 void	signal_conf(void)
 {
 	signal(SIGINT, handle_sigint);

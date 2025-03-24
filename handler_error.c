@@ -1,8 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handler_error.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 20:36:07 by jperez-r          #+#    #+#             */
+/*   Updated: 2025/03/24 20:38:04 by jperez-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 #include "executor.h"
 
-void	print_error(char *cmd, char *error_msg) //USADA EN IMPRIMIR ERRORES DE PROCESO HIJO
+void	print_error(char *cmd, char *error_msg)
 {
 	char	*msg_error;
 
@@ -17,7 +28,6 @@ void	ft_perror(int error)
 	char	*strerr;
 	char	*num;
 
-	//msg = NULL;
 	if (error == SYNTAX_ERROR)
 		msg = ft_strdup("minishell: syntax error\n");
 	else if (error == LINE_TOO_LONG)
@@ -36,14 +46,14 @@ void	ft_perror(int error)
 
 e_errors	error_var(e_errors error, t_environ *environ)
 {
-	if (error == CONTINUE || error == TASK_IS_VOID|| error == SYNTAX_ERROR 
+	if (error == CONTINUE || error == TASK_IS_VOID || error == SYNTAX_ERROR
 		|| error == LINE_TOO_LONG || error == E_SIGINT)
 	{
 		if (error == SYNTAX_ERROR)
 			change_var("?", "2", environ);
 		else if (error == E_SIGINT)
 			change_var("?", "130", environ);
-		return (error);//continue
+		return (error);
 	}
 	return (0);
 }
