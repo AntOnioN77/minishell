@@ -224,7 +224,10 @@ e_errors	get_cmd_tree(t_tree **tree, t_environ *environ);
 //LOCATION parser/1_expansor/expand_one.c
 int	expand_one(char **newline, char *buffer, char *marker, char **envp);
 e_errors	join_line_buffer(char **newline, char *buffer);
-
+//LOCATION parser/2_build_tree/files.c
+char	*findchars(char *str, char *end, char *wanted);
+void	check_file(char *segment, char *end, t_redir *redir);
+void	create_file(char *segment, char *end, int flag, t_redir *redir);
 
 /*_____________________Environment_Prototypes_________________________________*/
 //LOCATIONS: create_envp.c

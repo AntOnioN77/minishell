@@ -1,41 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   create_heredoc.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/25 00:22:02 by fibo              #+#    #+#             */
+/*   Updated: 2025/03/25 00:23:48 by fibo             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 #include "../executor.h"
 #include <errno.h>
 //#include "../GNL/get_next_line.h"
 
-char *compose_filename(int i, e_errors *error)
+char	*compose_filename(int i, e_errors *error)
 {
-	char *num;
-	char *str;
+	char	*num;
+	char	*str;
 
 	num = NULL;
 	num = ft_itoa(i);
 	if (num == NULL)
 	{
 		*error = errno;
-		return(NULL);
+		return (NULL);
 	}
 	str = ft_strjoin("/tmp/.minishell.", num);
 	ft_free_null((void **)&num);
-	if(str == NULL)
+	if (str == NULL)
 	{
 		*error = errno;
-		return(NULL);
+		return (NULL);
 	}
-	return(str);
+	return (str);
 }
-//#include <fcntl.h>
-//#include <unistd.h>
-//#include "get_next_line.h"
 
 //la linea creada, almacenada en redir->tmp_file debe ser liberada (esta sin implementar)
-char *get_tmp_name(e_errors *error)
+char	*get_tmp_name(e_errors *error)
 {
-	char *str;
-	int i;
+	char	*str;
+	int		i;
 
 	i = 0;
-
 	str = NULL;
 	while (i < 500)
 	{

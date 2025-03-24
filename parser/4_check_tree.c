@@ -1,21 +1,18 @@
-
-	//to do: -Si tree es null, ocurrio un error de reserva de
-	//memoria en la construccion del arbol
-
-
-	//to do: si pipe->left o pipe->right son null, ocurrio un error de reserva de
-	//memoria en la construccion del arbol
-
-	//to do: si pipe->left existe pero tiene todos los elementos a 0 es un error
-	//de sintaxis
-
-	//si pipe->right.type == task, y esa task es valida pero esta vaćia
-	//hay que solicitar nueva entrada de usuario y seguir construyendo el arbol
-	//si en este punto llega alguna señal como ctrl+c ctrl+d o ctrl+\ hay que gestionarlo
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   4_check_tree.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/25 00:10:31 by fibo              #+#    #+#             */
+/*   Updated: 2025/03/25 00:19:34 by fibo             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
-int bad_redir(t_redir *redir)
+int	bad_redir(t_redir *redir)
 {
 	if (redir->insymbol && !redir->infoo)
 		return (1);
@@ -24,66 +21,73 @@ int bad_redir(t_redir *redir)
 	return (0);
 }
 
-int is_void_task(t_task *task)
+int	is_void_task(t_task *task)
 {
-	char *cmd;
-	int i;
+	char	*cmd;
+	int		i;
 
-	if(task->cmd == NULL && task->redir.insymbol == 0&& task->redir.outsymbol == 0)
+	if (task->cmd == NULL && task->redir.insymbol == 0
+		&& task->redir.outsymbol == 0)
 		return (1);
 	cmd = task->cmd;
-	if(!cmd)
+	if (!cmd)
 		return (1);
 	i=0;
 	while (cmd[i] && ft_strchr(WHITESPACES, cmd[i]))
 		i++;
-	if(!cmd[i])
+	if (!cmd[i])
 		return (1);
-	return(0);
+	return (0);
 }
 
-int	 check_tree(t_tree *tree, char **envp)
+static e_errors	check_pipe(t_tree *tree, char *envp[])
 {
-	t_pipe *pipenode;
-	t_task *tasknode;
-	e_errors error;
-	
-	if(tree == NULL)
+	t_pipe		*pipenode;
+	e_errors	error;
+
+	pipenode = (t_pipe *)tree;
+	if (!pipenode->left)
+		return (ERROR_MALLOC);
+	error = check_tree((t_tree *)(pipenode->left), envp);
+	if (error == TASK_IS_VOID)
+		return (SYNTAX_ERROR);
+	else if (error)
+		return (error);
+	if (!pipenode->rigth)
+		return (ERROR_MALLOC);
+	error = check_tree(pipenode->rigth, envp);
+	if (error == TASK_IS_VOID)
 	{
-		return(ERROR_MALLOC);
+		free_tree(pipenode->rigth);
+		error = continue_cmd_tree(&(pipenode->rigth), envp);
 	}
-	if(tree->type == PIPE)
+	return (error);
+}
+
+int	check_tree(t_tree *tree, char **envp)
+{
+	t_task		*tasknode;
+	e_errors	error;
+
+	if (tree == NULL)
+		return (ERROR_MALLOC);
+	if (tree->type == PIPE)
 	{
-		pipenode = (t_pipe *)tree;
-		if (!pipenode->left)
-			return(ERROR_MALLOC);
-		error = check_tree((t_tree *)(pipenode->left), envp);
-		if (error == TASK_IS_VOID)
-			return (SYNTAX_ERROR);
-		else if (error)
-			return (error);
-		if (!pipenode->rigth)
-			return(ERROR_MALLOC);
-		error = check_tree(pipenode->rigth, envp);
-		if (error == TASK_IS_VOID)
-		{
-			free_tree(pipenode->rigth);//libera solamente el nodo vacío
-			error = continue_cmd_tree(&(pipenode->rigth), envp);//añade un nuevo arbol se construye sobre rama rigth
-		}
+		error = check_pipe(tree, envp);
 		if (error)
 			return (error);
 	}
 	else if (tree->type == TASK)
 	{
 		tasknode = (t_task *)tree;
-		if(bad_redir(&(tasknode->redir)))
+		if (bad_redir(&(tasknode->redir)))
 			return (SYNTAX_ERROR);
-		if (is_void_task(tasknode))//NO SIRVE, SI METEN UNA REDIRECCION NADA MAS HACE SIGFAULT
+		if (is_void_task(tasknode))
 			return (TASK_IS_VOID);
-		if(tasknode->redir.error == SYNTAX_ERROR ) //se podria retornar sin hacer el if, pero parece mas claro así;
-			return(SYNTAX_ERROR);
+		if (tasknode->redir.error == SYNTAX_ERROR)
+			return (SYNTAX_ERROR);
 	}
 	else
-		return(INVALID_TYPE);
+		return (INVALID_TYPE);
 	return (0);
 }

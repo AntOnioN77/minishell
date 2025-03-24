@@ -6,33 +6,25 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:11:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/24 23:49:23 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 00:06:09 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 #include <errno.h>
 
-char	*findchars(char *str, char *end, char *wanted)
+static void	handle_append(char **segment, char *end, t_redir *redir)
 {
-	char	*ptr;
-	char	*w;
-
-	if (!str || !end || !wanted)
-		return (end);
-	ptr = str;
-	while (ptr < end)
+	(*segment) += 2;
+	if (redir)
 	{
-		w = wanted;
-		while (*w != '\0')
-		{
-			if (*ptr == *w)
-				return (ptr);
-			w++;
-		}
-		ptr++;
+		create_file(*segment, end, O_APPEND, redir);
+		redir->outsymbol = append;
+		getpntword(segment, end, &(redir->outfile));
 	}
-	return (end);
+	else
+		getpntword(segment, end, NULL);
+	return ;
 }
 
 static void	handle_heredoc(char **segment, char *end, t_redir *redir)
@@ -50,55 +42,6 @@ static void	handle_heredoc(char **segment, char *end, t_redir *redir)
 	return ;
 }
 
-// si el archivo no existe lo crea.
-// Introduce un error en redir->error en caso de que el archivo exista
-//pero no tengamos permisos de escritura
-void	create_file(char *segment, char *end, int flag, t_redir *redir)
-{
-	int		fd;
-	char	*file;
-
-	if (!redir)
-		return ;
-	file = ft_substr(segment, 0, findchars(segment, end, DELIMITERS) - segment);
-	unquote(file);
-	if (!access(file, F_OK) && access(file, W_OK) == -1)
-		redir->error = NO_PERMISSION;
-	else
-	{
-		fd = open(file, O_WRONLY | O_CREAT | flag, 0664);
-		close(fd);
-	}
-	free(file);
-}
-
-static void	handle_append(char **segment, char *end, t_redir *redir)
-{
-	(*segment) += 2;
-	if (redir)
-	{
-		create_file(*segment, end, O_APPEND, redir);
-		redir->outsymbol = append;
-		getpntword(segment, end, &(redir->outfile));
-	}
-	else
-		getpntword(segment, end, NULL);
-	return ;
-}
-
-void	check_file(char *segment, char *end, t_redir *redir)
-{
-	char	*file;
-
-	if (!redir)
-		return ;
-	file = ft_substr(segment, 0, findchars(segment, end, DELIMITERS) - segment);
-	unquote(file);
-	if (access(file, F_OK) || access(file, R_OK))
-		redir->error = NO_PERMISSION;
-	free(file);
-}
-
 static void	handle_input(char **segment, char *end, t_redir *redir)
 {
 	(*segment)++;
@@ -112,7 +55,7 @@ static void	handle_input(char **segment, char *end, t_redir *redir)
 		getpntword(segment, end, NULL);
 }
 
-static void handle_output(char **segment, char *end, t_redir *redir)
+static void	handle_output(char **segment, char *end, t_redir *redir)
 {
 	{
 		(*segment)++;
@@ -128,7 +71,7 @@ static void handle_output(char **segment, char *end, t_redir *redir)
 	}
 }
 
-void get_redir(char **segment, char *end, t_redir *redir)
+void	get_redir(char **segment, char *end, t_redir *redir)
 {
 	while (*segment < end)
 	{
