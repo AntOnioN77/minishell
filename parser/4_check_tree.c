@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 00:10:31 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 00:19:34 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 00:35:57 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	is_void_task(t_task *task)
 	cmd = task->cmd;
 	if (!cmd)
 		return (1);
-	i=0;
+	i = 0;
 	while (cmd[i] && ft_strchr(WHITESPACES, cmd[i]))
 		i++;
 	if (!cmd[i])

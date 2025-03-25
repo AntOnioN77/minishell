@@ -3,17 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   apply_redirs.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:17:14 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 21:17:43 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 01:03:59 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include "executor.h"
 

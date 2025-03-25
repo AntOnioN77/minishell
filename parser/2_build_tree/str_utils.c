@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:03:40 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/25 00:10:07 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 00:34:50 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	skip_quotes(char **strpnt, char *end)
 	tmp = *strpnt;
 	while (**strpnt == '"' || **strpnt == 39)
 	{
-		if (**strpnt == '"' && ft_strnchr((*strpnt) +1, '"', (end - *strpnt)))
+		if (**strpnt == '"' && ft_strnchr((*strpnt) + 1, '"', (end - *strpnt)))
 			*strpnt = 1 + ft_strnchr(*strpnt +1, '"', (end - *strpnt));
 		else if (**strpnt == 39 && ft_strnchr(*strpnt +1, 39, (end - *strpnt)))
 			*strpnt = 1 + ft_strnchr(*strpnt +1, 39, (end - *strpnt));

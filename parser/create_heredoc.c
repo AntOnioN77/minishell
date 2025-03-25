@@ -6,14 +6,13 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 00:22:02 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 00:23:48 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 00:40:52 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "../executor.h"
 #include <errno.h>
-//#include "../GNL/get_next_line.h"
 
 char	*compose_filename(int i, e_errors *error)
 {
@@ -37,7 +36,7 @@ char	*compose_filename(int i, e_errors *error)
 	return (str);
 }
 
-//la linea creada, almacenada en redir->tmp_file debe ser liberada (esta sin implementar)
+//la linea creada, almacenada en redir->tmp_file debe ser liberada
 char	*get_tmp_name(e_errors *error)
 {
 	char	*str;
@@ -53,13 +52,13 @@ char	*get_tmp_name(e_errors *error)
 		i++;
 		ft_free_null((void **)&str);
 	}
-	ft_putstr_fd("mini$hell: Could not name temporary file required by heredoc", 2);
+	ft_putstr_fd("mini$hell: Could not name temporary file required by \
+		heredoc", 2);
 	*error = TMP_FILE_ERROR;
 	return (NULL);
 }
 
-
-static e_errors write_heredoc_line(int fd, char *separator, size_t seplen)
+static e_errors	write_heredoc_line(int fd, char *separator, size_t seplen)
 {
 	char	*line;
 
@@ -82,7 +81,7 @@ static e_errors write_heredoc_line(int fd, char *separator, size_t seplen)
 	exit (CONTINUE);
 }
 
-static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
+static e_errors	write_heredoc_fork(int fd, char *separator, size_t seplen)
 {
 	pid_t	pid;
 	int		status;
@@ -90,69 +89,66 @@ static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen)
 	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
-		return (errno); //Habrá que devolver el error correspondiente al fork
+		return (errno);
 	if (pid == 0)
 		status = write_heredoc_line(fd, separator, seplen);
 	else
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			return (errno); // igual que el fork, pero en waitpid
+			return (errno);
 		signal(SIGINT, handle_sigint);
 		status = ((status) & 0xff00) >> 8;
 	}
 	return (status);
 }
+
 // Se ocupa de abrir, cerrar y desligar el archivo temporal que utiliza el
 // heredoc cuando es necesario
 // El bucle permite la ejecución de la función write_heredoc_fork mientras
 // devuelva el estado CONTINUE (162)
-e_errors heredoc_writer(char *separator, t_redir *redir)
+e_errors	heredoc_writer(char *separator, t_redir *redir)
 {
-	int fd;
-	size_t seplen;
-	e_errors status;
+	int			fd;
+	size_t		seplen;
+	e_errors	status;
 
 	fd = open(redir->tmp_file, O_WRONLY | O_TRUNC);
 	if (fd < 0)
 		return (errno);
 	seplen = ft_strlen(separator);
-	status = CONTINUE; //he cambiado la condición del bucle para que no sea infinito evitando
-	while (status == CONTINUE) //problemas y aunando el cierre, el desligado y el return
+	status = CONTINUE;
+	while (status == CONTINUE)
 		status = write_heredoc_fork(fd, separator, seplen);
 	if (close(fd) < 0)
-		return (errno); //ver qué error devolver
+		return (errno);
 	if (status == E_SIGINT && unlink(redir->tmp_file) < 0)
-		return (errno); //ver qué error devolver*/
+		return (errno);
 	return (status);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //el archivo creado debe ser eliminiado en free_tree, no implementado aun
-e_errors create_heredoc(t_redir *redir)
+e_errors	create_heredoc(t_redir *redir)
 {
-	e_errors error;
-	char *tmp_file;
-	int fd;
+	e_errors	error;
+	char		*tmp_file;
+	int			fd;
 
-	if(redir->insymbol != heredoc)
+	if (redir->insymbol != heredoc)
 		return (0);
-	if(redir->infoo == NULL || (redir->infoo[0]) == '\0')
+	if (redir->infoo == NULL || (redir->infoo[0]) == '\0')
 		return (SYNTAX_ERROR);
 	error = 0;
 	tmp_file = get_tmp_name(&error);
 	if (error || !tmp_file)
 		return (error);
-	//crear archivo temporal
 	fd = open(tmp_file, O_CREAT | O_WRONLY | O_APPEND, 00600);
-	if(fd == -1)
-		return(errno);
+	if (fd == -1)
+		return (errno);
 	else
 	{
 		redir->tmp_file = tmp_file;
 		close(fd);
 	}
-
 	error = heredoc_writer(redir->infoo, redir);
-	return(error);
+	return (error);
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

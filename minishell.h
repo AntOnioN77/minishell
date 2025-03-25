@@ -222,19 +222,18 @@ void		free_tree(t_tree *node);
 e_errors	continue_cmd_tree(t_tree **tree, char **envp);
 e_errors	get_cmd_tree(t_tree **tree, t_environ *environ);
 //LOCATION parser/1_expansor/expand_one.c
-int	expand_one(char **newline, char *buffer, char *marker, char **envp);
+int			expand_one(char **newline, char *buffer, char *marker, char **envp);
 e_errors	join_line_buffer(char **newline, char *buffer);
 //LOCATION parser/2_build_tree/files.c
-char	*findchars(char *str, char *end, char *wanted);
-void	check_file(char *segment, char *end, t_redir *redir);
-void	create_file(char *segment, char *end, int flag, t_redir *redir);
+char		*findchars(char *str, char *end, char *wanted);
+void		check_file(char *segment, char *end, t_redir *redir);
+void		create_file(char *segment, char *end, int flag, t_redir *redir);
 
 /*_____________________Environment_Prototypes_________________________________*/
 //LOCATIONS: create_envp.c
 int			count_to_null(void **pnt);
 e_errors	copy_prev_envp(char **original, t_environ *environ);
 e_errors	create_envp(char **original, t_environ *environ);
-void test_fds(char *where);
 void print_env(t_environ *environ);
 //LOCATION: init_envp.c
 e_errors	set_shlvl(t_environ *environ);
@@ -276,18 +275,14 @@ int			non_pipable_builtin(t_tree *tree, t_environ *environ);
 /*_____________________Executor Prototypes____________________________________*/
 //LOCATIONS: process.c
 int			wait_all(t_tree *node);
-void		close_fds(int fd_since);
 //LOCATIONS: apply_redirs.c
 e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail);
-e_errors	apply_redirs(t_redir *redir, char **word_fail);
 //LOCATIONS: path.c
 char		*com_path(char *cmd, char **envp, e_errors *err);
 //LOCATIONS: executor.c
 e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in);
-e_errors	executor(t_tree *node, t_environ *environ , int in, int out);
 //LOCATIONS: child.c
 e_errors	child(t_task *task, t_environ *environ, int in, int out);
-e_errors	create_child(t_task *task, t_environ *environ , int in, int out);
 
 /*______________________________Others_Prototypes_________________________*/
 e_errors expansor(char **line, char **envp);
