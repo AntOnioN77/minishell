@@ -1,0 +1,80 @@
+echo $foo $foo $foo AAA "echo no deberia imprimir espacios donde hay variables inexistentes"
+echo "" "" "" AAA "echo deberia imporimir un espacio por cada cadena vacia"
+echo $PWDdsfsdf
+echo dfgadg$PWD
+echo "'$sdf'"
+echo "'$PW'"
+echo "'$PWD'"
+echo "'$PWDd'"
+echo "'$PWD d'"
+echo "'$PWD 'd"
+echo "'$PWD'd"
+echo '"$PWD"'
+echo '"$PWD'
+echo '"$PWDf dgdg'
+echo '"$PWD dgdg'
+echo A"'$sdf'"
+echo "A'$PW'"
+echo "'A$PWD'"
+echo "'$PWDd'"
+echo a"b'c$PWD d'"
+echo a"'$PWD 'd"
+echo "a"'$PWD'd
+echo 'a'"$PWD"
+echo 'a''"$PWD'
+echo '"$PWDf dgdg'"a"
+echo '"$PWD dgdg''a'
+echo "a"a"'$PWD 'd"
+echo 'b'"a"'$PWD'd
+echo hello world
+echo "hello world"
+echo 'hello world'
+echo hello'world'
+echo hello""world
+echo ''
+echo "$PWD"
+echo '$PWD'
+echo "aspas ->'"
+echo "aspas -> ' "
+echo 'aspas ->"'
+echo 'aspas -> " '
+echo "> >> < * ? [ ] | ; [ ] || && ( ) & # $ \ <<"
+echo '> >> < * ? [ ] | ; [ ] || && ( ) & # $ \ <<'
+echo "exit_code ->$? user ->$USER home -> $HOME"
+echo 'exit_code ->$? user ->$USER home -> $HOME'
+echo "$"
+echo '$'
+echo $
+echo $?
+echo $?HELLO
+pwd
+pwd oi
+export hello
+export HELLO=123
+export A-
+export HELLO=123 A
+export HELLO="123 A-"
+export hello world
+export HELLO-=123
+export =
+export 123
+unset
+unset HELLO
+unset HELLO1 HELLO2
+unset HOME
+unset PATH
+unset SHELL
+cd $PWD
+cd $PWD hi 
+cd 123123
+exit 123
+exit 298
+exit +100
+exit "+100"
+exit +"100"
+exit -100
+exit "-100"
+exit -"100"
+exit hello
+exit 42 world
+

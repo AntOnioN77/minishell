@@ -6,14 +6,14 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:53:21 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:46:55 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
 #include "minishell.h"
 
-enum e_errors	ft_echo(t_task *task)
+enum e_err	ft_echo(t_task *task)
 {
 	int		i;
 	char	**argv;
@@ -63,7 +63,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-enum e_errors	builtins_exe(t_task *task, t_environ *environ)
+enum e_err	builtins_exe(t_task *task, t_environ *environ)
 {
 	char	*cmd;
 

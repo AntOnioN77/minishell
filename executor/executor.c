@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:14:05 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:46:55 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-enum e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
+enum e_err	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
 {
 	int			pipefd[2];
-	enum e_errors	err;
+	enum e_err	err;
 
 	pipe(pipefd);
 	if (pipe_node->left)
@@ -37,11 +37,11 @@ enum e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
 	return (0);
 }
 
-enum e_errors	executor(t_tree *node, t_environ *environ, int in, int out)
+enum e_err	executor(t_tree *node, t_environ *environ, int in, int out)
 {
 	t_pipe		*pipe_node;
 	t_task		*task;
-	enum e_errors	err;
+	enum e_err	err;
 
 	if (!node)
 		return (0);

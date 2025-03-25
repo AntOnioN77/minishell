@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:03:30 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:46:55 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	count_to_null(void **pnt)
 	return (i);
 }
 
-enum e_errors	copy_prev_envp(char **original, t_environ *environ)
+enum e_err	copy_prev_envp(char **original, t_environ *environ)
 {
 	int		i;
 	char	*var;
@@ -41,7 +41,7 @@ enum e_errors	copy_prev_envp(char **original, t_environ *environ)
 	return (0);
 }
 
-enum e_errors	create_envp(char **original, t_environ *environ)
+enum e_err	create_envp(char **original, t_environ *environ)
 {
 	int	count;
 	int	error;

@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:36:07 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:46:55 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	ft_perror(int error)
 	free (msg);
 }
 
-enum e_errors	error_var(enum e_errors error, t_environ *environ)
+enum e_err	error_var(enum e_err error, t_environ *environ)
 {
 	if (error == CONTINUE || error == TASK_IS_VOID || error == SYNTAX_ERROR
 		|| error == LINE_TOO_LONG || error == E_SIGINT)
@@ -58,7 +58,7 @@ enum e_errors	error_var(enum e_errors error, t_environ *environ)
 	return (0);
 }
 
-enum e_errors	handlerr(enum e_errors error, t_tree **tree, t_environ *environ)
+enum e_err	handlerr(enum e_err error, t_tree **tree, t_environ *environ)
 {
 	if (error == ALL_OK)
 		return (0);

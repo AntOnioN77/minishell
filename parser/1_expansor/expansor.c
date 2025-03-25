@@ -6,13 +6,13 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 22:19:40 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:46:55 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-enum e_errors	handle_expansion(char **marker, char **newline, char *buffer,
+enum e_err	handle_expansion(char **marker, char **newline, char *buffer,
 char **envp)
 {
 	int	expanded;
@@ -30,7 +30,7 @@ char **envp)
 	return (ALL_OK);
 }
 
-static enum e_errors	append_to_buffer(char **newline, char *buffer,
+static enum e_err	append_to_buffer(char **newline, char *buffer,
 	char **marker, int *i)
 {
 	if (*i == BUFFER_SIZE - 1)
@@ -45,7 +45,7 @@ static enum e_errors	append_to_buffer(char **newline, char *buffer,
 	return (ALL_OK);
 }
 
-enum e_errors	expandstr_motor(char **origin, char **newline, char *buffer,
+enum e_err	expandstr_motor(char **origin, char **newline, char *buffer,
 	char *envp[])
 {
 	int		quoted;
@@ -73,7 +73,7 @@ enum e_errors	expandstr_motor(char **origin, char **newline, char *buffer,
 	return (0);
 }
 
-enum e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[])
+enum e_err	expandstr(char **origin, t_garbage *garbage, char *envp[])
 {
 	char	buffer[BUFFER_SIZE];
 	char	*newline;
@@ -100,7 +100,7 @@ enum e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[])
 	return (ALL_OK);
 }
 
-enum e_errors	expand_task(t_task *node, char *envp[])
+enum e_err	expand_task(t_task *node, char *envp[])
 {
 	int	i;
 

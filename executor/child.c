@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:14:20 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:49:07 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-static enum e_errors	child_error_handler(enum e_errors err, char *cmd)
+static enum e_err	child_error_handler(enum e_err err, char *cmd)
 {
 	if (err != 0)
 	{
@@ -43,9 +43,9 @@ static enum e_errors	child_error_handler(enum e_errors err, char *cmd)
 	return (0);
 }
 
-static enum e_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
+enum e_err	repipe_child(t_task *task, int in, int out, char **word_fail)
 {
-	enum e_errors	err;
+	enum e_err	err;
 
 	if (out != STDOUT_FILENO)
 	{
@@ -65,9 +65,9 @@ static enum e_errors	repipe_child(t_task *task, int in, int out, char **word_fai
 	return (0);
 }
 
-enum e_errors	child(t_task *task, t_environ *environ, int in, int out)
+enum e_err	child(t_task *task, t_environ *environ, int in, int out)
 {
-	enum e_errors	err;
+	enum e_err	err;
 	char		*pathcmd;
 	char		*word_fail;
 	char		**envp;
@@ -90,10 +90,10 @@ enum e_errors	child(t_task *task, t_environ *environ, int in, int out)
 	return (err);
 }
 
-enum e_errors	create_child(t_task *task, t_environ *environ, int in, int out)
+enum e_err	create_child(t_task *task, t_environ *environ, int in, int out)
 {
 	int			pid;
-	enum e_errors	err;
+	enum e_err	err;
 
 	err = 0;
 	pid = fork();
