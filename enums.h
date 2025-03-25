@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 12:57:52 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/25 12:57:58 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/25 13:41:14 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,5 @@ typedef enum e_errors
 	FAIL_BUILTINS_EXE,//SOLO ODEBUG BORRAR!!!!!!!!!!!!!!!!!
 	CONTINUE,
 	END_CYCLE,
-	FINISH
+	FINISH,
 }	t_errors;
