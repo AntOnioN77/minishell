@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 00:10:31 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 02:46:55 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ int	is_void_task(t_task *task)
 	return (0);
 }
 
-static enum e_err	check_pipe(t_tree *tree, char *envp[])
+static t_err	check_pipe(t_tree *tree, char *envp[])
 {
 	t_pipe		*pipenode;
-	enum e_err	error;
+	t_err	error;
 
 	pipenode = (t_pipe *)tree;
 	if (!pipenode->left)
@@ -67,7 +67,7 @@ static enum e_err	check_pipe(t_tree *tree, char *envp[])
 int	check_tree(t_tree *tree, char **envp)
 {
 	t_task		*tasknode;
-	enum e_err	error;
+	t_err	error;
 
 	if (tree == NULL)
 		return (ERROR_MALLOC);

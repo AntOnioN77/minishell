@@ -6,17 +6,17 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:44:27 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 02:46:55 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "executor.h"
 
-enum e_err	continue_cmd_tree(t_tree **right, char **envp)
+t_err	continue_cmd_tree(t_tree **right, char **envp)
 {
 	char		*line;
-	enum e_err	error;
+	t_err	error;
 
 	line = readline("> ");
 	if (!line)
@@ -42,7 +42,7 @@ enum e_err	continue_cmd_tree(t_tree **right, char **envp)
 	return (check_tree(*right, envp));
 }
 
-enum e_err	line_control(char *line, t_environ *environ)
+t_err	line_control(char *line, t_environ *environ)
 {
 	if (g_ctrlc == 2)
 		change_var("?", "130", environ);
@@ -58,11 +58,11 @@ enum e_err	line_control(char *line, t_environ *environ)
 	return (0);
 }
 
-enum e_err	get_cmd_tree(t_tree **tree, t_environ *environ)
+t_err	get_cmd_tree(t_tree **tree, t_environ *environ)
 {
 	char		*line;
 	char		**envp;
-	enum e_err	error;
+	t_err	error;
 
 	envp = environ->envp;
 	g_ctrlc = 0;

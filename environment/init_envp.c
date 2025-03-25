@@ -6,16 +6,16 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:02:53 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 02:46:55 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include <errno.h>
 
-enum e_err	set_shlvl(t_environ *environ)
+t_err	set_shlvl(t_environ *environ)
 {
-	enum e_err	error;
+	t_err	error;
 	char		*num;
 
 	if (ft_getenv("SHLVL", environ->envp) == NULL)
@@ -29,7 +29,7 @@ enum e_err	set_shlvl(t_environ *environ)
 	return (error);
 }
 
-enum e_err	set_pathshell(t_environ *environ, char *path, enum e_err error)
+t_err	set_pathshell(t_environ *environ, char *path, t_err error)
 {
 	char		*pathshell;
 
@@ -42,9 +42,9 @@ enum e_err	set_pathshell(t_environ *environ, char *path, enum e_err error)
 	return (error);
 }
 
-enum e_err	init_envp(t_environ *environ)
+t_err	init_envp(t_environ *environ)
 {
-	enum e_err	error;
+	t_err	error;
 	char		path[PATH_MAX];
 
 	if (environ == NULL || environ->envp == NULL)

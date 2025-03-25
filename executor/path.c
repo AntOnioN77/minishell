@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:13:24 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 02:46:55 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-static char	*form_path(char *cmd, char **enpath, enum e_err *err, int i)
+static char	*form_path(char *cmd, char **enpath, t_err *err, int i)
 {
 	char	*pathcmd;
 	char	*slash;
@@ -39,7 +39,7 @@ static char	*form_path(char *cmd, char **enpath, enum e_err *err, int i)
 	return (pathcmd);
 }
 
-static char	*match_pathcmd(char *cmd, char **enpath, enum e_err *err)
+static char	*match_pathcmd(char *cmd, char **enpath, t_err *err)
 {
 	char	*pathcmd;
 	int		i;
@@ -88,7 +88,7 @@ int	get_index_path(char **envp)
 	return (-1);
 }
 
-static int	is_absolutepath(char *cmd, enum e_err *err)
+static int	is_absolutepath(char *cmd, t_err *err)
 {
 	struct stat	tipe;
 
@@ -114,7 +114,7 @@ static int	is_absolutepath(char *cmd, enum e_err *err)
 	}
 }
 
-char	*com_path(char *cmd, char **envp, enum e_err *err)
+char	*com_path(char *cmd, char **envp, t_err *err)
 {
 	char	**enpath;
 	int		pos;
