@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:54:34 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 20:55:30 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 01:29:35 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include <limits.h>
+#include "../minishell.h"
 
 int	cd_destination(t_task *task, char **dest, t_environ *environ)
 {

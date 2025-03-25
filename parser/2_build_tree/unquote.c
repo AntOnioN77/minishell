@@ -6,12 +6,11 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 23:45:03 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 00:10:16 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 01:33:43 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include "../../libft/headers/libft.h"
 
 char	*unquote_one(char **pntnew, char *pntstr)
 {

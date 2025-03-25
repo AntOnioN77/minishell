@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 00:49:23 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 01:10:40 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 01:31:50 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,13 @@
 # include <sys/wait.h>
 # include <sys/types.h>
 # include <errno.h>
-# include <fcntl.h>
 # include "minishell.h"
 
-int	free_null_arr(char ***s);
+int			free_null_arr(char ***s);
 e_errors	create_child(t_task *task, t_environ *environ, int in, int out);
 e_errors	executor(t_tree *node, t_environ *environ, int in, int out);
-void	close_fds(int fd_since);
+void		close_fds(int fd_since);
 e_errors	apply_redirs(t_redir *redir, char **word_fail);
-void	ft_free_null(void **pnt);
+void		ft_free_null(void **pnt);
 
 #endif

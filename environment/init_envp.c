@@ -3,17 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   init_envp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:02:53 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 21:08:42 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 01:24:43 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include "libft/headers/libft.h"
+#include "../minishell.h"
 #include <errno.h>
-#include <limits.h>
 
 e_errors	set_shlvl(t_environ *environ)
 {

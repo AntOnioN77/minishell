@@ -23,7 +23,7 @@ parser/1_expansor/expand_one.c parser/2_build_tree/unquote.c\
 parser/2_build_tree/files.c
 
 OBJECTS = $(SOURCES:.c=.o)
-HEADERS = libft/headers/libft.h minishell.h executor.h
+HEADERS = libft/headers/libft.h minishell.h executor.h enums.h structs.h
 
 all: $(NAME)
 debug: CFLAGS += $(DBGFLAGS)

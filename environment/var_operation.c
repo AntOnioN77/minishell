@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   var_operation.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:02:47 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 21:10:25 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 01:33:46 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft/headers/libft.h"
 #include <errno.h>
 
 void	*custom_realloc(void **pnt, size_t oldsize, size_t newsize)

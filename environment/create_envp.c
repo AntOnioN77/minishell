@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   create_envp.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:03:30 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 21:11:55 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 01:17:37 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft/headers/libft.h"
 #include <errno.h>
 
 int	count_to_null(void **pnt)

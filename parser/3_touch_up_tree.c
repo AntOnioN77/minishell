@@ -6,12 +6,11 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 23:41:02 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/24 23:45:58 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 01:33:28 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include "../libft/headers/libft.h"
 
 static e_errors	handle_pipe_node(t_pipe *pipe, char *envp[])
 {

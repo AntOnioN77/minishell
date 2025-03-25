@@ -6,12 +6,11 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 22:19:40 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/24 23:46:20 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 01:33:35 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include "../../libft/headers/libft.h"
 
 e_errors	handle_expansion(char **marker, char **newline, char *buffer,
 char **envp)

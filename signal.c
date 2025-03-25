@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:32:33 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 20:32:58 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 01:35:36 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <signal.h>
 #include "executor.h"
 
 void	handle_sigint(int signal)
