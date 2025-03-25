@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 00:22:02 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/25 13:07:35 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/25 23:45:01 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ char	*compose_filename(int i, t_errors *error)
 	return (str);
 }
 
-//la linea creada, almacenada en redir->tmp_file debe ser liberada
 char	*get_tmp_name(t_errors *error)
 {
 	char	*str;
@@ -102,10 +101,6 @@ static t_errors	write_heredoc_fork(int fd, char *separator, size_t seplen)
 	return (status);
 }
 
-// Se ocupa de abrir, cerrar y desligar el archivo temporal que utiliza el
-// heredoc cuando es necesario
-// El bucle permite la ejecución de la función write_heredoc_fork mientras
-// devuelva el estado CONTINUE (162)
 t_errors	heredoc_writer(char *separator, t_redir *redir)
 {
 	int			fd;
@@ -126,7 +121,6 @@ t_errors	heredoc_writer(char *separator, t_redir *redir)
 	return (status);
 }
 
-//el archivo creado debe ser eliminiado en free_tree, no implementado aun
 t_errors	create_heredoc(t_redir *redir)
 {
 	t_errors	error;

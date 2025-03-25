@@ -6,14 +6,13 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 10:13:49 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/25 23:33:54 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/ring.h"
 #include <limits.h>
 
-/*Busca el valor mas alto contenido en el anillo*/
 int	ring_find_bigest(t_ring *ring)
 {
 	int	i;

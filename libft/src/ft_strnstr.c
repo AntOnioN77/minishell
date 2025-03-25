@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/14 18:26:39 by antofern          #+#    #+#             */
-/*   Updated: 2024/08/26 13:33:19 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/25 23:38:47 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,3 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 	}
 	return (NULL);
 }
-
-/*
-#include <string.h>
-#include <stdio.h>
-
-int	main(void)
-{
-	char *result;
-	char *haystack = "lorem ipsum";
-	char *needle = "ips";
-	result = ft_strnstr(haystack, needle, 0);
-	printf("%s", result);
-	return (0);
-}
-*/

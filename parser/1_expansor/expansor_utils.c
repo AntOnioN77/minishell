@@ -6,16 +6,12 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 13:15:56 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/25 23:38:43 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// si str comienza por " y a continuacion hay una nueva ocurrencia de " retorna
-// 1 para indicar que se habren comillas dobles. si str comienza por " pero ya
-// no hay mas a continuacion, retorna 0 si str comienza por algo distinto a "
-// retorna original_flag, para no modificar el estado.
 int	is_quoted(char *str, int original_flag)
 {
 	if (original_flag == 0)

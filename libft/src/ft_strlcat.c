@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 10:40:23 by antofern          #+#    #+#             */
-/*   Updated: 2024/08/26 13:33:19 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/25 23:36:38 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,25 +34,3 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 		j++;
 	return (i + j);
 }
-
-/*
-#include <stdio.h>
-#include <bsd/string.h>
-int main(void)
-{
-	char dest[14];
-	char *src;
-	int i;
-	
-	i = 0;
-	while(i < 3)
-		{
-			dest[i] = 'a';
-			i++;
-		}
-	dest[i] = '\0';
-	src = "hola mundo";
-	strlcat(src, NULL, 0);
-	printf("%s", dest);
-}
-*/

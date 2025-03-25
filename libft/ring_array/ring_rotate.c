@@ -6,14 +6,13 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 09:45:01 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/25 23:35:00 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/ring.h"
 #include "../headers/libft.h"
 
-// situa el primer elemento (head) en el ultimo lugar
 int	ring_rotate(t_ring *ring)
 {
 	if (ring->fill < 2)

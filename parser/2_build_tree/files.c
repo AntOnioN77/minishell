@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 00:01:59 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/25 13:07:35 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/25 23:38:37 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,6 @@ void	check_file(char *segment, char *end, t_redir *redir)
 	free(file);
 }
 
-// si el archivo no existe lo crea.
-// Introduce un error en redir->error en caso de que el archivo exista
-//pero no tengamos permisos de escritura
 void	create_file(char *segment, char *end, int flag, t_redir *redir)
 {
 	int		fd;
