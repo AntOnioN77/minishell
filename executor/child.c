@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:14:20 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 21:15:59 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-static e_errors	child_error_handler(e_errors err, char *cmd)
+static enum e_errors	child_error_handler(enum e_errors err, char *cmd)
 {
 	if (err != 0)
 	{
@@ -43,9 +43,9 @@ static e_errors	child_error_handler(e_errors err, char *cmd)
 	return (0);
 }
 
-static e_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
+static enum e_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
 {
-	e_errors	err;
+	enum e_errors	err;
 
 	if (out != STDOUT_FILENO)
 	{
@@ -65,9 +65,9 @@ static e_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
 	return (0);
 }
 
-e_errors	child(t_task *task, t_environ *environ, int in, int out)
+enum e_errors	child(t_task *task, t_environ *environ, int in, int out)
 {
-	e_errors	err;
+	enum e_errors	err;
 	char		*pathcmd;
 	char		*word_fail;
 	char		**envp;
@@ -90,10 +90,10 @@ e_errors	child(t_task *task, t_environ *environ, int in, int out)
 	return (err);
 }
 
-e_errors	create_child(t_task *task, t_environ *environ, int in, int out)
+enum e_errors	create_child(t_task *task, t_environ *environ, int in, int out)
 {
 	int			pid;
-	e_errors	err;
+	enum e_errors	err;
 
 	err = 0;
 	pid = fork();

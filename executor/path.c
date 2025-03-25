@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:13:24 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 21:13:51 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-static char	*form_path(char *cmd, char **enpath, e_errors *err, int i)
+static char	*form_path(char *cmd, char **enpath, enum e_errors *err, int i)
 {
 	char	*pathcmd;
 	char	*slash;
@@ -39,7 +39,7 @@ static char	*form_path(char *cmd, char **enpath, e_errors *err, int i)
 	return (pathcmd);
 }
 
-static char	*match_pathcmd(char *cmd, char **enpath, e_errors *err)
+static char	*match_pathcmd(char *cmd, char **enpath, enum e_errors *err)
 {
 	char	*pathcmd;
 	int		i;
@@ -88,7 +88,7 @@ int	get_index_path(char **envp)
 	return (-1);
 }
 
-static int	is_absolutepath(char *cmd, e_errors *err)
+static int	is_absolutepath(char *cmd, enum e_errors *err)
 {
 	struct stat	tipe;
 
@@ -114,7 +114,7 @@ static int	is_absolutepath(char *cmd, e_errors *err)
 	}
 }
 
-char	*com_path(char *cmd, char **envp, e_errors *err)
+char	*com_path(char *cmd, char **envp, enum e_errors *err)
 {
 	char	**enpath;
 	int		pos;

@@ -38,9 +38,9 @@ void		print_error(char *cmd, char *error_msg);
 t_task		*createtask(char *segment, char *end);
 t_tree		*createpipe(char *line,char *pnt);
 //Location parser/expansor.c
-e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
-e_errors	touch_up_tree(t_tree *node, char *envp[]);
-e_errors	expand_task(t_task *node, char *envp[]);
+enum e_errors	expandstr(char **origin, t_garbage *garbage, char *envp[]); //cuando test-expandstr no sea necesario, hacer esta funcion estatica
+enum e_errors	touch_up_tree(t_tree *node, char *envp[]);
+enum e_errors	expand_task(t_task *node, char *envp[]);
 //Location: parser/expansor_utils.c
 int			is_expansible(char *str);
 int			count_expansions(t_task *node);
@@ -68,11 +68,11 @@ void		print_tree(t_tree *node, int depth); //BORRAR funcion solo para pruebas
 //LOCATION: parser/check_tree.c
 int			check_tree(t_tree *tree, char **envp);
 //LOCATION: create_heredoc.c
-e_errors	create_heredoc(t_redir *redir);
-char		*get_tmp_name(e_errors *error);
-e_errors	heredoc_writer(char *separator, t_redir *redir);
-/*static e_errors write_heredoc_fork(int fd, char *separator, size_t seplen);
-static e_errors write_heredoc_line(int fd, char *separator, size_t seplen);*/
+enum e_errors	create_heredoc(t_redir *redir);
+char		*get_tmp_name(enum e_errors *error);
+enum e_errors	heredoc_writer(char *separator, t_redir *redir);
+/*static enum e_errors write_heredoc_fork(int fd, char *separator, size_t seplen);
+static enum e_errors write_heredoc_line(int fd, char *separator, size_t seplen);*/
 //LOCATION: signal.c
 void		handle_sigint(int signal);
 void		handle_sigint_heredoc(int signal);
@@ -80,17 +80,17 @@ void		signal_conf(void);
 //LOCATION: handler_error.c
 void		print_error(char *cmd, char *error_msg);
 void		ft_perror(int error);
-e_errors	error_var(e_errors error, t_environ *environ);
-e_errors	handlerr(e_errors error, t_tree **tree, t_environ *environ);
+enum e_errors	error_var(enum e_errors error, t_environ *environ);
+enum e_errors	handlerr(enum e_errors error, t_tree **tree, t_environ *environ);
 //LOCATION
 void		free_task(t_tree *node);
 void		free_tree(t_tree *node);
 //LOCATION
-e_errors	continue_cmd_tree(t_tree **tree, char **envp);
-e_errors	get_cmd_tree(t_tree **tree, t_environ *environ);
+enum e_errors	continue_cmd_tree(t_tree **tree, char **envp);
+enum e_errors	get_cmd_tree(t_tree **tree, t_environ *environ);
 //LOCATION parser/1_expansor/expand_one.c
 int			expand_one(char **newline, char *buffer, char *marker, char **envp);
-e_errors	join_line_buffer(char **newline, char *buffer);
+enum e_errors	join_line_buffer(char **newline, char *buffer);
 //LOCATION parser/2_build_tree/files.c
 char		*findchars(char *str, char *end, char *wanted);
 void		check_file(char *segment, char *end, t_redir *redir);
@@ -99,28 +99,28 @@ void		create_file(char *segment, char *end, int flag, t_redir *redir);
 /*_____________________Environment_Prototypes_________________________________*/
 //LOCATIONS: create_envp.c
 int			count_to_null(void **pnt);
-e_errors	copy_prev_envp(char **original, t_environ *environ);
-e_errors	create_envp(char **original, t_environ *environ);
+enum e_errors	copy_prev_envp(char **original, t_environ *environ);
+enum e_errors	create_envp(char **original, t_environ *environ);
 void		print_env(t_environ *environ);
 //LOCATION: init_envp.c
-e_errors	set_shlvl(t_environ *environ);
-e_errors	set_pathshell(t_environ *environ, char *path, e_errors error);
-e_errors	init_envp(t_environ *environ);
+enum e_errors	set_shlvl(t_environ *environ);
+enum e_errors	set_pathshell(t_environ *environ, char *path, enum e_errors error);
+enum e_errors	init_envp(t_environ *environ);
 //LOCATION: get_envp.c
 char		*ft_getenv(const char *name, char *envp[]);
 //LOCATION: var_operation.c
 void		*custom_realloc(void **pnt, size_t oldsize, size_t newsize);
 char		*var_buid(char *key, char *newvalue);
-e_errors	change_var(char *key, char *newvalue, t_environ *environ);
-e_errors	add_var(char *key, char *value, t_environ *environ);
+enum e_errors	change_var(char *key, char *newvalue, t_environ *environ);
+enum e_errors	add_var(char *key, char *value, t_environ *environ);
 int			search_var(char **envp, const char *var);
 
 /*_____________________Builtins Prototypes____________________________________*/
 //LOCATIONS: builtins.c
-e_errors	ft_echo(t_task *task);
+enum e_errors	ft_echo(t_task *task);
 void		ft_env(t_environ *environ);
 int			is_builtin(char *cmd);
-e_errors	builtins_exe(t_task *task, t_environ *environ);
+enum e_errors	builtins_exe(t_task *task, t_environ *environ);
 //LOCATIONS: ft_cd.c
 void		ft_cd(t_task *task, t_environ *environ);
 int			cd_destination(t_task *task, char **dest, t_environ *environ);
@@ -143,19 +143,19 @@ int			non_pipable_builtin(t_tree *tree, t_environ *environ);
 //LOCATIONS: process.c
 int			wait_all(t_tree *node);
 //LOCATIONS: apply_redirs.c
-e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail);
+enum e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail);
 //LOCATIONS: path.c
-char		*com_path(char *cmd, char **envp, e_errors *err);
+char		*com_path(char *cmd, char **envp, enum e_errors *err);
 //LOCATIONS: executor.c
-e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in);
+enum e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in);
 //LOCATIONS: child.c
-e_errors	child(t_task *task, t_environ *environ, int in, int out);
+enum e_errors	child(t_task *task, t_environ *environ, int in, int out);
 
 /*______________________________Others_Prototypes_________________________*/
-e_errors	expansor(char **line, char **envp);
+enum e_errors	expansor(char **line, char **envp);
 int			search_var(char **envp, const char *var);
-e_errors	change_var(char *key, char *newvalue, t_environ *environ);
-e_errors	add_var(char *key, char *value, t_environ *environ);
+enum e_errors	change_var(char *key, char *newvalue, t_environ *environ);
+enum e_errors	add_var(char *key, char *value, t_environ *environ);
 char		*getkey(char *var);
 void		unquote(char *str);
 void		free_arr(char **s);

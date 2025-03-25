@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:14:05 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 21:18:06 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
+enum e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
 {
 	int			pipefd[2];
-	e_errors	err;
+	enum e_errors	err;
 
 	pipe(pipefd);
 	if (pipe_node->left)
@@ -37,11 +37,11 @@ e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
 	return (0);
 }
 
-e_errors	executor(t_tree *node, t_environ *environ, int in, int out)
+enum e_errors	executor(t_tree *node, t_environ *environ, int in, int out)
 {
 	t_pipe		*pipe_node;
 	t_task		*task;
-	e_errors	err;
+	enum e_errors	err;
 
 	if (!node)
 		return (0);

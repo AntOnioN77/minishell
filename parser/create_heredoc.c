@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 00:22:02 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 00:40:52 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../executor.h"
 #include <errno.h>
 
-char	*compose_filename(int i, e_errors *error)
+char	*compose_filename(int i, enum e_errors *error)
 {
 	char	*num;
 	char	*str;
@@ -37,7 +37,7 @@ char	*compose_filename(int i, e_errors *error)
 }
 
 //la linea creada, almacenada en redir->tmp_file debe ser liberada
-char	*get_tmp_name(e_errors *error)
+char	*get_tmp_name(enum e_errors *error)
 {
 	char	*str;
 	int		i;
@@ -58,7 +58,7 @@ char	*get_tmp_name(e_errors *error)
 	return (NULL);
 }
 
-static e_errors	write_heredoc_line(int fd, char *separator, size_t seplen)
+static enum e_errors	write_heredoc_line(int fd, char *separator, size_t seplen)
 {
 	char	*line;
 
@@ -81,7 +81,7 @@ static e_errors	write_heredoc_line(int fd, char *separator, size_t seplen)
 	exit (CONTINUE);
 }
 
-static e_errors	write_heredoc_fork(int fd, char *separator, size_t seplen)
+static enum e_errors	write_heredoc_fork(int fd, char *separator, size_t seplen)
 {
 	pid_t	pid;
 	int		status;
@@ -106,11 +106,11 @@ static e_errors	write_heredoc_fork(int fd, char *separator, size_t seplen)
 // heredoc cuando es necesario
 // El bucle permite la ejecución de la función write_heredoc_fork mientras
 // devuelva el estado CONTINUE (162)
-e_errors	heredoc_writer(char *separator, t_redir *redir)
+enum e_errors	heredoc_writer(char *separator, t_redir *redir)
 {
 	int			fd;
 	size_t		seplen;
-	e_errors	status;
+	enum e_errors	status;
 
 	fd = open(redir->tmp_file, O_WRONLY | O_TRUNC);
 	if (fd < 0)
@@ -127,9 +127,9 @@ e_errors	heredoc_writer(char *separator, t_redir *redir)
 }
 
 //el archivo creado debe ser eliminiado en free_tree, no implementado aun
-e_errors	create_heredoc(t_redir *redir)
+enum e_errors	create_heredoc(t_redir *redir)
 {
-	e_errors	error;
+	enum e_errors	error;
 	char		*tmp_file;
 	int			fd;
 

@@ -6,14 +6,14 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:17:14 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 01:03:59 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <sys/stat.h>
 #include "executor.h"
 
-e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail)
+enum e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail)
 {
 	struct stat	tipe;
 	int			fd;
@@ -42,9 +42,9 @@ e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail)
 	return (ALL_OK);
 }
 
-e_errors	apply_redirs(t_redir *redir, char **word_fail)
+enum e_errors	apply_redirs(t_redir *redir, char **word_fail)
 {
-	e_errors	error;
+	enum e_errors	error;
 
 	error = 0;
 	if (redir->insymbol == infile)

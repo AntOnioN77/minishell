@@ -6,8 +6,8 @@ RAIZ			3/5 mooks?
 		void		shell_cycle(t_tree *tree, t_environ *environ)
 		void		status_control(int status, t_environ *environ)
 	HANDLER_ERROR.C		4/4
-		e_errors	handlerr(e_errors error, t_tree **tree, t_environ *environ)
-		e_errors	error_var(e_errors error, t_environ *environ)
+		enum e_errors	handlerr(enum e_errors error, t_tree **tree, t_environ *environ)
+		enum e_errors	error_var(enum e_errors error, t_environ *environ)
 		void		ft_perror(int error)
 		void		print_error(char *cmd, char *error_msg)
 	SIGNAL.C			3/3
@@ -15,23 +15,23 @@ RAIZ			3/5 mooks?
 		void		handle_sigint(int signal)
 		void		handle_sigint_heredoc(int signal)
 	CMD_TREE_BUILDER.C	2/3
-		e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
-		e_errors	line_control(char *line, t_environ *environ)
+		enum e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
+		enum e_errors	line_control(char *line, t_environ *environ)
 ENVIRONMENT		4/4
 	CREATE_ENVP			3/3
-		e_errors	create_envp(char **original, t_environ *environ)
+		enum e_errors	create_envp(char **original, t_environ *environ)
 		int			count_to_null(void **pnt)
-		e_errors	copy_prev_envp(char **original, t_environ *environ)
+		enum e_errors	copy_prev_envp(char **original, t_environ *environ)
 	INIT_ENVP			3/3
-		e_errors	init_envp(t_environ *environ) //ECHAR VISTAZO A LA NORMA
-		e_errors	set_shlvl(t_environ *environ)
-		e_errors	set_pathshell(t_environ *environ, char *path, e_errors error)
+		enum e_errors	init_envp(t_environ *environ) //ECHAR VISTAZO A LA NORMA
+		enum e_errors	set_shlvl(t_environ *environ)
+		enum e_errors	set_pathshell(t_environ *environ, char *path, enum e_errors error)
 	GET_ENVP			1/1
 		char		*ft_getenv(const char *name, char *envp[])
 	VAR_OPERATION		5/5
-		e_errors 	add_var(char *key, char *value, t_environ *environ)
+		enum e_errors 	add_var(char *key, char *value, t_environ *environ)
 		void		*custom_realloc(void **pnt, size_t oldsize, size_t newsize) //LIBFT?
-		e_errors	change_var(char *key, char *newvalue, t_environ *environ)
+		enum e_errors	change_var(char *key, char *newvalue, t_environ *environ)
 		char		*var_buid(char *key, char *newvalue)
 		int			search_var(char **envp, const char* var)
 FREE			2/2
@@ -45,10 +45,10 @@ FREE			2/2
 		static void	cleanup_garbage(t_garbage *garbage)
 BUILTINS		6/6
 	BUILTINS.C			4/4
-		e_errors	ft_echo(t_task *task)
+		enum e_errors	ft_echo(t_task *task)
 		void		ft_env(t_environ *environ)
 		int			is_builtin(char *cmd)
-		e_errors	builtins_exe(t_task *task, t_environ *environ)
+		enum e_errors	builtins_exe(t_task *task, t_environ *environ)
 	FT_CD.C				2/2
 		void		ft_cd(t_task *task, t_environ *environ)						//ojocuidao esta
 		int	cd_destination(t_task *task, char **destination, t_environ *environ)	//quizá es mejor pasarle para modificar freedest que destination
@@ -71,19 +71,19 @@ EXECUTOR		3/4
 		int			wait_all(t_tree *node)
 		void		close_fds(int fd_since)
 	APPLY_REDIRS.C		2/2
-		e_errors	apply_redirs(t_redir *redir, char **word_fail)
-		e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail)		//hay que echarle un vistazo por los comentarios, que quizá sobre código. le he quitado lo estático por lo largo del prototipo
+		enum e_errors	apply_redirs(t_redir *redir, char **word_fail)
+		enum e_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail)		//hay que echarle un vistazo por los comentarios, que quizá sobre código. le he quitado lo estático por lo largo del prototipo
 	PATH.C				5/5
-		char		*com_path(char *cmd, char **envp, e_errors *err)
-		static int	is_absolutepath(char *cmd, e_errors *err)
+		char		*com_path(char *cmd, char **envp, enum e_errors *err)
+		static int	is_absolutepath(char *cmd, enum e_errors *err)
 		static int	get_index_path(char **envp)
-		static char	*match_pathcmd(char *cmd, char **enpath, e_errors *err)
-		static char	*form_path(char *cmd, char **enpath, e_errors *err, int i)		//Esta hay que mirarla con lupa por si el slash no se libera. probar en 42 con valgrind
+		static char	*match_pathcmd(char *cmd, char **enpath, enum e_errors *err)
+		static char	*form_path(char *cmd, char **enpath, enum e_errors *err, int i)		//Esta hay que mirarla con lupa por si el slash no se libera. probar en 42 con valgrind
 	EXECUTOR.C			2/2
-		e_errors	executor(t_tree *node, t_environ *environ , int in, int out)
-		e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
+		enum e_errors	executor(t_tree *node, t_environ *environ , int in, int out)
+		enum e_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in)
 	CHILD.C				3/4
-		e_errors	create_child(t_task *task, t_environ *environ , int in, int out)
-		e_errors	child(t_task *task, t_environ *environ, int in, int out)		//Hacer pruebas por si acaso el err = errno diera problemas
-		static e_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
-		static e_errors	child_error_handler(e_errors err, char *cmd)
+		enum e_errors	create_child(t_task *task, t_environ *environ , int in, int out)
+		enum e_errors	child(t_task *task, t_environ *environ, int in, int out)		//Hacer pruebas por si acaso el err = errno diera problemas
+		static enum e_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
+		static enum e_errors	child_error_handler(enum e_errors err, char *cmd)

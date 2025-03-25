@@ -6,15 +6,15 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 23:41:02 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 01:33:28 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static e_errors	handle_pipe_node(t_pipe *pipe, char *envp[])
+static enum e_errors	handle_pipe_node(t_pipe *pipe, char *envp[])
 {
-	e_errors	error;
+	enum e_errors	error;
 
 	error = expand_task(pipe->left, envp);
 	if (error)
@@ -27,9 +27,9 @@ static e_errors	handle_pipe_node(t_pipe *pipe, char *envp[])
 	return (error);
 }
 
-static e_errors	handle_task_node(t_task *task, char *envp[])
+static enum e_errors	handle_task_node(t_task *task, char *envp[])
 {
-	e_errors	error;
+	enum e_errors	error;
 
 	error = expand_task(task, envp);
 	if (error)
@@ -39,9 +39,9 @@ static e_errors	handle_task_node(t_task *task, char *envp[])
 	return (error);
 }
 
-e_errors	touch_up_tree(t_tree *node, char *envp[])
+enum e_errors	touch_up_tree(t_tree *node, char *envp[])
 {
-	e_errors	error;
+	enum e_errors	error;
 
 	if (node->type == PIPE)
 	{

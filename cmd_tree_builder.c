@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_tree_builder.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:44:27 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/24 20:47:27 by jperez-r         ###   ########.fr       */
+/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "executor.h"
 
-e_errors	continue_cmd_tree(t_tree **right, char **envp)
+enum e_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
 	char		*line;
-	e_errors	error;
+	enum e_errors	error;
 
 	line = readline("> ");
 	if (!line)
@@ -42,7 +42,7 @@ e_errors	continue_cmd_tree(t_tree **right, char **envp)
 	return (check_tree(*right, envp));
 }
 
-e_errors	line_control(char *line, t_environ *environ)
+enum e_errors	line_control(char *line, t_environ *environ)
 {
 	if (g_ctrlc == 2)
 		change_var("?", "130", environ);
@@ -58,11 +58,11 @@ e_errors	line_control(char *line, t_environ *environ)
 	return (0);
 }
 
-e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
+enum e_errors	get_cmd_tree(t_tree **tree, t_environ *environ)
 {
 	char		*line;
 	char		**envp;
-	e_errors	error;
+	enum e_errors	error;
 
 	envp = environ->envp;
 	g_ctrlc = 0;

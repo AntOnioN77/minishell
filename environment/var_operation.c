@@ -6,7 +6,7 @@
 /*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:02:47 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 01:33:46 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 02:28:12 by fibo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char	*var_buid(char *key, char *newvalue)
 	return (newvar);
 }
 
-e_errors	change_var(char *key, char *newvalue, t_environ *environ)
+enum e_errors	change_var(char *key, char *newvalue, t_environ *environ)
 {
 	size_t	keylen;
 	char	*newvar;
@@ -74,7 +74,7 @@ e_errors	change_var(char *key, char *newvalue, t_environ *environ)
 	return (1);
 }
 
-e_errors	add_var(char *key, char *value, t_environ *environ)
+enum e_errors	add_var(char *key, char *value, t_environ *environ)
 {
 	size_t	len;
 	char	*newvar;
