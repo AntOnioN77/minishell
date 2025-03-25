@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:53:21 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
 #include "minishell.h"
 
-t_err	ft_echo(t_task *task)
+t_errors	ft_echo(t_task *task)
 {
 	int		i;
 	char	**argv;
@@ -63,7 +63,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-t_err	builtins_exe(t_task *task, t_environ *environ)
+t_errors	builtins_exe(t_task *task, t_environ *environ)
 {
 	char	*cmd;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handler_error.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 20:36:07 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Created: 2025/03/25 12:58:36 by antofern          #+#    #+#             */
+/*   Updated: 2025/03/25 12:58:38 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	ft_perror(int error)
 	free (msg);
 }
 
-t_err	error_var(t_err error, t_environ *environ)
+t_errors	error_var(t_errors error, t_environ *environ)
 {
 	if (error == CONTINUE || error == TASK_IS_VOID || error == SYNTAX_ERROR
 		|| error == LINE_TOO_LONG || error == E_SIGINT)
@@ -58,7 +58,7 @@ t_err	error_var(t_err error, t_environ *environ)
 	return (0);
 }
 
-t_err	handlerr(t_err error, t_tree **tree, t_environ *environ)
+t_errors	handlerr(t_errors error, t_tree **tree, t_environ *environ)
 {
 	if (error == ALL_OK)
 		return (0);

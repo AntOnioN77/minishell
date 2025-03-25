@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   4_check_tree.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/25 00:10:31 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Created: 2025/03/25 00:10:31 by antofern          #+#    #+#             */
+/*   Updated: 2025/03/25 13:07:35 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ int	is_void_task(t_task *task)
 	return (0);
 }
 
-static t_err	check_pipe(t_tree *tree, char *envp[])
+static t_errors	check_pipe(t_tree *tree, char *envp[])
 {
 	t_pipe		*pipenode;
-	t_err	error;
+	t_errors	error;
 
 	pipenode = (t_pipe *)tree;
 	if (!pipenode->left)
@@ -67,7 +67,7 @@ static t_err	check_pipe(t_tree *tree, char *envp[])
 int	check_tree(t_tree *tree, char **envp)
 {
 	t_task		*tasknode;
-	t_err	error;
+	t_errors	error;
 
 	if (tree == NULL)
 		return (ERROR_MALLOC);

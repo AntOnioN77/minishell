@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/25 01:43:53 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Created: 2025/03/25 01:43:53 by antofern          #+#    #+#             */
+/*   Updated: 2025/03/25 13:06:25 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct s_redir
 	enum e_symbols	outsymbol;//>> o >
 	char			*outfile;
 	char			*tmp_file;
-	t_err	error; //Error causado durante la creación de tmp_file
+	t_errors		error; //Error causado durante la creación de tmp_file
 }	t_redir;
 
 typedef struct s_garbage

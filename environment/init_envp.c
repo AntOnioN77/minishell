@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   init_envp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:02:53 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include <errno.h>
 
-t_err	set_shlvl(t_environ *environ)
+t_errors	set_shlvl(t_environ *environ)
 {
-	t_err	error;
+	t_errors	error;
 	char		*num;
 
 	if (ft_getenv("SHLVL", environ->envp) == NULL)
@@ -29,7 +29,7 @@ t_err	set_shlvl(t_environ *environ)
 	return (error);
 }
 
-t_err	set_pathshell(t_environ *environ, char *path, t_err error)
+t_errors	set_pathshell(t_environ *environ, char *path, t_errors error)
 {
 	char		*pathshell;
 
@@ -42,9 +42,9 @@ t_err	set_pathshell(t_environ *environ, char *path, t_err error)
 	return (error);
 }
 
-t_err	init_envp(t_environ *environ)
+t_errors	init_envp(t_environ *environ)
 {
-	t_err	error;
+	t_errors	error;
 	char		path[PATH_MAX];
 
 	if (environ == NULL || environ->envp == NULL)

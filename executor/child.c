@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:14:20 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-static t_err	child_error_handler(t_err err, char *cmd)
+static t_errors	child_error_handler(t_errors err, char *cmd)
 {
 	if (err != 0)
 	{
@@ -43,9 +43,9 @@ static t_err	child_error_handler(t_err err, char *cmd)
 	return (0);
 }
 
-t_err	repipe_child(t_task *task, int in, int out, char **word_fail)
+t_errors	repipe_child(t_task *task, int in, int out, char **word_fail)
 {
-	t_err	err;
+	t_errors	err;
 
 	if (out != STDOUT_FILENO)
 	{
@@ -65,9 +65,9 @@ t_err	repipe_child(t_task *task, int in, int out, char **word_fail)
 	return (0);
 }
 
-t_err	child(t_task *task, t_environ *environ, int in, int out)
+t_errors	child(t_task *task, t_environ *environ, int in, int out)
 {
-	t_err	err;
+	t_errors	err;
 	char		*pathcmd;
 	char		*word_fail;
 	char		**envp;
@@ -90,10 +90,10 @@ t_err	child(t_task *task, t_environ *environ, int in, int out)
 	return (err);
 }
 
-t_err	create_child(t_task *task, t_environ *environ, int in, int out)
+t_errors	create_child(t_task *task, t_environ *environ, int in, int out)
 {
 	int			pid;
-	t_err	err;
+	t_errors	err;
 
 	err = 0;
 	pid = fork();

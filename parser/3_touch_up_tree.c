@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   3_touch_up_tree.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 23:41:02 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Created: 2025/03/24 23:41:02 by antofern          #+#    #+#             */
+/*   Updated: 2025/03/25 13:07:35 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static t_err	handle_pipe_node(t_pipe *pipe, char *envp[])
+static t_errors	handle_pipe_node(t_pipe *pipe, char *envp[])
 {
-	t_err	error;
+	t_errors	error;
 
 	error = expand_task(pipe->left, envp);
 	if (error)
@@ -27,9 +27,9 @@ static t_err	handle_pipe_node(t_pipe *pipe, char *envp[])
 	return (error);
 }
 
-static t_err	handle_task_node(t_task *task, char *envp[])
+static t_errors	handle_task_node(t_task *task, char *envp[])
 {
-	t_err	error;
+	t_errors	error;
 
 	error = expand_task(task, envp);
 	if (error)
@@ -39,9 +39,9 @@ static t_err	handle_task_node(t_task *task, char *envp[])
 	return (error);
 }
 
-t_err	touch_up_tree(t_tree *node, char *envp[])
+t_errors	touch_up_tree(t_tree *node, char *envp[])
 {
-	t_err	error;
+	t_errors	error;
 
 	if (node->type == PIPE)
 	{

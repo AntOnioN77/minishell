@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   expansor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/23 22:19:40 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Created: 2025/03/23 22:19:40 by antofern          #+#    #+#             */
+/*   Updated: 2025/03/25 13:07:35 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-t_err	handle_expansion(char **marker, char **newline, char *buffer,
+t_errors	handle_expansion(char **marker, char **newline, char *buffer,
 char **envp)
 {
 	int	expanded;
@@ -30,7 +30,7 @@ char **envp)
 	return (ALL_OK);
 }
 
-static t_err	append_to_buffer(char **newline, char *buffer,
+static t_errors	append_to_buffer(char **newline, char *buffer,
 	char **marker, int *i)
 {
 	if (*i == BUFFER_SIZE - 1)
@@ -45,7 +45,7 @@ static t_err	append_to_buffer(char **newline, char *buffer,
 	return (ALL_OK);
 }
 
-t_err	expandstr_motor(char **origin, char **newline, char *buffer,
+t_errors	expandstr_motor(char **origin, char **newline, char *buffer,
 	char *envp[])
 {
 	int		quoted;
@@ -73,7 +73,7 @@ t_err	expandstr_motor(char **origin, char **newline, char *buffer,
 	return (0);
 }
 
-t_err	expandstr(char **origin, t_garbage *garbage, char *envp[])
+t_errors	expandstr(char **origin, t_garbage *garbage, char *envp[])
 {
 	char	buffer[BUFFER_SIZE];
 	char	*newline;
@@ -100,7 +100,7 @@ t_err	expandstr(char **origin, t_garbage *garbage, char *envp[])
 	return (ALL_OK);
 }
 
-t_err	expand_task(t_task *node, char *envp[])
+t_errors	expand_task(t_task *node, char *envp[])
 {
 	int	i;
 

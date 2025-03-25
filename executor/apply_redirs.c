@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   apply_redirs.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:17:14 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <sys/stat.h>
 #include "executor.h"
 
-t_err	file_redirector(int newfd, char *file, int opflag, char **wordfail)
+t_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail)
 {
 	struct stat	tipe;
 	int			fd;
@@ -42,9 +42,9 @@ t_err	file_redirector(int newfd, char *file, int opflag, char **wordfail)
 	return (ALL_OK);
 }
 
-t_err	apply_redirs(t_redir *redir, char **word_fail)
+t_errors	apply_redirs(t_redir *redir, char **word_fail)
 {
-	t_err	error;
+	t_errors	error;
 
 	error = 0;
 	if (redir->insymbol == infile)

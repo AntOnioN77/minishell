@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/25 00:49:23 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Created: 2025/03/25 12:58:13 by antofern          #+#    #+#             */
+/*   Updated: 2025/03/25 12:58:18 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 # include "minishell.h"
 
 int			free_null_arr(char ***s);
-t_err	create_child(t_task *task, t_environ *environ, int in, int out);
-t_err	executor(t_tree *node, t_environ *environ, int in, int out);
+t_errors	create_child(t_task *task, t_environ *environ, int in, int out);
+t_errors	executor(t_tree *node, t_environ *environ, int in, int out);
 void		close_fds(int fd_since);
-t_err	apply_redirs(t_redir *redir, char **word_fail);
+t_errors	apply_redirs(t_redir *redir, char **word_fail);
 void		ft_free_null(void **pnt);
 
 #endif

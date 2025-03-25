@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_operation.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:02:47 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char	*var_buid(char *key, char *newvalue)
 	return (newvar);
 }
 
-t_err	change_var(char *key, char *newvalue, t_environ *environ)
+t_errors	change_var(char *key, char *newvalue, t_environ *environ)
 {
 	size_t	keylen;
 	char	*newvar;
@@ -74,7 +74,7 @@ t_err	change_var(char *key, char *newvalue, t_environ *environ)
 	return (1);
 }
 
-t_err	add_var(char *key, char *value, t_environ *environ)
+t_errors	add_var(char *key, char *value, t_environ *environ)
 {
 	size_t	len;
 	char	*newvar;

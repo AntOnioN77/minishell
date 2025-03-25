@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enums.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/25 01:38:55 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 03:08:24 by fibo             ###   ########.fr       */
+/*   Created: 2025/03/25 12:57:52 by antofern          #+#    #+#             */
+/*   Updated: 2025/03/25 12:57:58 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ enum	e_symbols
 	append,//>>
 };
 
-typedef enum e_err
+typedef enum e_errors
 {
 	ALL_OK,
 	IS_A_DIR = 126,
@@ -53,4 +53,4 @@ typedef enum e_err
 	CONTINUE,
 	END_CYCLE,
 	FINISH
-}	t_err;
+}	t_errors;

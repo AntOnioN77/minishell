@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   expand_one.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 23:39:21 by fibo              #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Created: 2025/03/24 23:39:21 by antofern          #+#    #+#             */
+/*   Updated: 2025/03/25 13:07:35 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 #include "../../libft/headers/libft.h"
 
-t_err	join_line_buffer(char **newline, char *buffer)
+t_errors	join_line_buffer(char **newline, char *buffer)
 {
 	char	*auxline;
 
@@ -25,7 +25,7 @@ t_err	join_line_buffer(char **newline, char *buffer)
 	return (ALL_OK);
 }
 
-t_err	append_dollar_sign(char **newline)
+t_errors	append_dollar_sign(char **newline)
 {
 	char	*auxline;
 
@@ -50,7 +50,7 @@ static void	skip_key_length(const char *marker, int *i)
 	}
 }
 
-t_err	expand_key(char **newline, char *marker, int *i, char **envp)
+t_errors	expand_key(char **newline, char *marker, int *i, char **envp)
 {
 	char	*key;
 	char	*value;

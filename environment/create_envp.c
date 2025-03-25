@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_envp.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fibo <fibo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 21:03:30 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 03:07:59 by fibo             ###   ########.fr       */
+/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	count_to_null(void **pnt)
 	return (i);
 }
 
-t_err	copy_prev_envp(char **original, t_environ *environ)
+t_errors	copy_prev_envp(char **original, t_environ *environ)
 {
 	int		i;
 	char	*var;
@@ -41,7 +41,7 @@ t_err	copy_prev_envp(char **original, t_environ *environ)
 	return (0);
 }
 
-t_err	create_envp(char **original, t_environ *environ)
+t_errors	create_envp(char **original, t_environ *environ)
 {
 	int	count;
 	int	error;
