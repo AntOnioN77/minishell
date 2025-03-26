@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:33:54 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/26 01:24:08 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/26 14:49:04 by jperez-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ void	shell_cycle(t_tree *tree, t_environ *environ)
 		if (g_ctrlc == SIGINT)
 		{
 			write(1, "\n", 1);
-			change_var("?", "130", environ);
+			//change_var("?", "130", environ);
 		}
-		else
+		//else
 			status_control(status, environ);
 		close_fds(3);
 		free_tree(tree);

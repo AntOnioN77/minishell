@@ -20,7 +20,7 @@ parser/create_heredoc.c parser/3_touch_up_tree.c handler_error.c\
 executor/child.c environment/create_envp.c environment/get_envp.c\
 environment/init_envp.c environment/var_operation.c\
 parser/1_expansor/expand_one.c parser/2_build_tree/unquote.c\
-parser/2_build_tree/files.c
+parser/2_build_tree/files.c parser/heredoc_writer.c
 
 OBJECTS = $(SOURCES:.c=.o)
 HEADERS = libft/headers/libft.h minishell.h executor.h enums.h structs.h
