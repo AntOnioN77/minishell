@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:44:27 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/25 13:04:07 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/26 01:23:46 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,10 @@ t_errors	continue_cmd_tree(t_tree **right, char **envp)
 t_errors	line_control(char *line, t_environ *environ)
 {
 	if (g_ctrlc == 2)
+	{
 		change_var("?", "130", environ);
+		g_ctrlc = 0;
+	}
 	if (!line)
 		return (READLINE_FAIL);
 	if (ft_strlen(line) >= S_LINE_MAX)
