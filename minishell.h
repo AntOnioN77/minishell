@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 12:58:52 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/25 12:58:54 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/26 11:57:39 by jperez-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,6 @@ int			check_tree(t_tree *tree, char **envp);
 t_errors	create_heredoc(t_redir *redir);
 char		*get_tmp_name(t_errors *error);
 t_errors	heredoc_writer(char *separator, t_redir *redir);
-/*static t_errors write_heredoc_fork(int fd, char *separator, size_t seplen);
-static t_errors write_heredoc_line(int fd, char *separator, size_t seplen);*/
 //LOCATION: signal.c
 void		handle_sigint(int signal);
 void		handle_sigint_heredoc(int signal);
@@ -106,7 +104,7 @@ void		check_file(char *segment, char *end, t_redir *redir);
 void		create_file(char *segment, char *end, int flag, t_redir *redir);
 
 /*_____________________Environment_Prototypes_________________________________*/
-//LOCATIONS: create_envp.c
+//LOCATION: create_envp.c
 int			count_to_null(void **pnt);
 t_errors	copy_prev_envp(char **original, t_environ *environ);
 t_errors	create_envp(char **original, t_environ *environ);
@@ -125,39 +123,39 @@ t_errors	add_var(char *key, char *value, t_environ *environ);
 int			search_var(char **envp, const char *var);
 
 /*_____________________Builtins Prototypes____________________________________*/
-//LOCATIONS: builtins.c
+//LOCATION: builtins.c
 t_errors	ft_echo(t_task *task);
 void		ft_env(t_environ *environ);
 int			is_builtin(char *cmd);
 t_errors	builtins_exe(t_task *task, t_environ *environ);
-//LOCATIONS: ft_cd.c
+//LOCATION: ft_cd.c
 void		ft_cd(t_task *task, t_environ *environ);
 int			cd_destination(t_task *task, char **dest, t_environ *environ);
-//LOCATIONS: ft_exit.c
+//LOCATION: ft_exit.c
 void		ft_exit(t_task *task, t_tree *tree, t_environ *environ);
 int			select_exitcode(t_task *task, t_environ *environ, char *argument);
-//LOCATIONS: ft_export.c
+//LOCATION: ft_export.c
 int			validate_key(char *key);
 void		ft_export(t_task *task, t_environ *environ);
 char		*getvalue(char *var);
 void		export_error(char *identifier, t_environ *environ);
-//LOCATIONS: ft_unset.c
+//LOCATION: ft_unset.c
 void		ft_unset(char **argv, t_environ *environ);
 void		ft_unset_one(char *key, t_environ *environ, int index);
-//LOCATIONS: non_pipable_builtin.c
+//LOCATION: non_pipable_builtin.c
 int			countargs(t_task *task);
 int			non_pipable_builtin(t_tree *tree, t_environ *environ);
 
 /*_____________________Executor Prototypes____________________________________*/
-//LOCATIONS: process.c
+//LOCATION: process.c
 int			wait_all(t_tree *node);
-//LOCATIONS: apply_redirs.c
+//LOCATION: apply_redirs.c
 t_errors	file_redirector(int newfd, char *file, int opflag, char **wordfail);
-//LOCATIONS: path.c
+//LOCATION: path.c
 char		*com_path(char *cmd, char **envp, t_errors *err);
-//LOCATIONS: executor.c
+//LOCATION: executor.c
 t_errors	exec_pipe(t_pipe *pipe_node, t_environ *environ, int in);
-//LOCATIONS: child.c
+//LOCATION: child.c
 t_errors	child(t_task *task, t_environ *environ, int in, int out);
 
 /*______________________________Others_Prototypes_________________________*/
