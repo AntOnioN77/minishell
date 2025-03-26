@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   create_heredoc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: jperez-r <jperez-r@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 00:22:02 by antofern          #+#    #+#             */
-/*   Updated: 2025/03/25 23:45:01 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/26 11:21:17 by jperez-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
 #include "../executor.h"
 #include <errno.h>
 
@@ -55,70 +54,6 @@ char	*get_tmp_name(t_errors *error)
 		heredoc", 2);
 	*error = TMP_FILE_ERROR;
 	return (NULL);
-}
-
-static t_errors	write_heredoc_line(int fd, char *separator, size_t seplen)
-{
-	char	*line;
-
-	signal(SIGINT, SIG_DFL);
-	signal(SIGINT, handle_sigint_heredoc);
-	line = readline("> ");
-	if (!line)
-	{
-		ft_putstr_fd("minishell: warning: here-document delimited by EOF\n", 1);
-		exit (ALL_OK);
-	}
-	if (ft_strlen(line) == seplen && !ft_strncmp(line, separator, seplen))
-	{
-		free(line);
-		exit (ALL_OK);
-	}
-	ft_putstr_fd(line, fd);
-	ft_putchar_fd('\n', fd);
-	free(line);
-	exit (CONTINUE);
-}
-
-static t_errors	write_heredoc_fork(int fd, char *separator, size_t seplen)
-{
-	pid_t	pid;
-	int		status;
-
-	signal(SIGINT, SIG_IGN);
-	pid = fork();
-	if (pid < 0)
-		return (errno);
-	if (pid == 0)
-		status = write_heredoc_line(fd, separator, seplen);
-	else
-	{
-		if (waitpid(pid, &status, 0) == -1)
-			return (errno);
-		signal(SIGINT, handle_sigint);
-		status = ((status) & 0xff00) >> 8;
-	}
-	return (status);
-}
-
-t_errors	heredoc_writer(char *separator, t_redir *redir)
-{
-	int			fd;
-	size_t		seplen;
-	t_errors	status;
-
-	fd = open(redir->tmp_file, O_WRONLY | O_TRUNC);
-	if (fd < 0)
-		return (errno);
-	seplen = ft_strlen(separator);
-	status = CONTINUE;
-	while (status == CONTINUE)
-		status = write_heredoc_fork(fd, separator, seplen);
-	if (close(fd) < 0)
-		return (errno);
-	if (status == E_SIGINT && unlink(redir->tmp_file) < 0)
-		return (errno);
-	return (status);
 }
 
 t_errors	create_heredoc(t_redir *redir)
