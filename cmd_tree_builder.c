@@ -6,12 +6,18 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:44:27 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/27 01:29:52 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/27 01:37:14 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "executor.h"
+
+static t_errors	handle_empty_line(t_tree **right, char **envp, char *line)
+{
+	free(line);
+	return (continue_cmd_tree(right, envp));
+}
 
 t_errors	continue_cmd_tree(t_tree **right, char **envp)
 {
@@ -25,10 +31,7 @@ t_errors	continue_cmd_tree(t_tree **right, char **envp)
 		return (CONTINUE);
 	}
 	if (line[0] == '\0')
-	{
-		free(line);
-		return (continue_cmd_tree(right, envp));
-	}
+		return (handle_empty_line(right, envp, line));
 	add_history(line);
 	*right = build_tree(line);
 	if (*right == NULL)
