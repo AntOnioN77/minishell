@@ -6,7 +6,7 @@
 /*   By: antofern <antofern@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:44:27 by jperez-r          #+#    #+#             */
-/*   Updated: 2025/03/26 01:23:46 by antofern         ###   ########.fr       */
+/*   Updated: 2025/03/27 01:29:52 by antofern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,10 @@ t_errors	continue_cmd_tree(t_tree **right, char **envp)
 
 	line = readline("> ");
 	if (!line)
-		return (READLINE_FAIL);
+	{
+		*right = NULL;
+		return (CONTINUE);
+	}
 	if (line[0] == '\0')
 	{
 		free(line);
